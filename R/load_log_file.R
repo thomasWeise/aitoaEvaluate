@@ -1,6 +1,7 @@
 #' @importFrom bit64 as.integer64
 .int64.max.dbl.int <- as.integer64((2 ^ 53) - 1);
 .int64.0 <- as.integer64(0L);
+.default.colums <- c("fes", "t", "f");
 
 #' @title Load a Single Log File
 #' @description Load a log file and return the results as a data frame. The data
@@ -18,6 +19,9 @@
 #'   for this, we use the 64 bit integers from the \code{bit64} package, since
 #'   \code{R} does not support 64 bit integers natively.
 #' @param file the log file to load
+#' @param keepColumns the columns to keep, any vector containing elements
+#'   \code{"t"} (for time), \code{"f"} (for the objective value), and
+#'   \code{"fes"} (for the consumed FEs)
 #' @param makeTimeUnique should we make the time indices unique (except maybe
 #'   for the first and last point)? This makes sense when we want to plot
 #'   diagrams over a time axis, as we then have removed redundant points right
@@ -31,9 +35,12 @@
 #' @importFrom bit64 as.integer64
 #' @export aitoa.load.log.file
 aitoa.load.log.file <- function(file,
+                                keepColumns = .default.colums,
                                 makeTimeUnique=FALSE) {
   old.options <- options(warn=2);
   stopifnot(is.character(file),
+            is.character(keepColumns),
+            length(keepColumns) > 0L,
             is.logical(makeTimeUnique));
 
   file <- normalizePath(file, mustWork=TRUE);
@@ -44,6 +51,10 @@ aitoa.load.log.file <- function(file,
   # read file as text file, one line = one element
   data <- readLines(con=file, warn=FALSE);
   data <- force(data);
+
+  keepColumns <- unique(keepColumns);
+  stopifnot(length(keepColumns) > 0L,
+            all(keepColumns %in% .default.colums));
 
   # detect consumed FEs
   consumedFEs <- grep("# CONSUMED_FES:", data, fixed = TRUE);
@@ -201,18 +212,20 @@ aitoa.load.log.file <- function(file,
   }
 
   # finished converting
-  data <- data.frame(t=t, fes=fes, f=f);
-  data <- force(data);
+
+
+  data <- unique(data.frame(t=t, fes=fes, f=f)[keepColumns]);
   rm("f");
   rm("fes");
   rm("t");
+  data <- force(data);
 
   data <- force(data);
   data <- do.call(force, list(x=data));
   stopifnot(is.data.frame(data),
             nrow(data) > 0L,
-            ncol(data) == 3L,
-            names(data) == c("t", "fes", "f"));
+            ncol(data) == length(keepColumns),
+            names(data) == keepColumns);
   options(old.options);
 
   return(data);

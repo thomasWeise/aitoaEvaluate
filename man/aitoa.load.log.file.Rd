@@ -4,10 +4,15 @@
 \alias{aitoa.load.log.file}
 \title{Load a Single Log File}
 \usage{
-aitoa.load.log.file(file, makeTimeUnique = FALSE)
+aitoa.load.log.file(file, keepColumns = .default.colums,
+  makeTimeUnique = FALSE)
 }
 \arguments{
 \item{file}{the log file to load}
+
+\item{keepColumns}{the columns to keep, any vector containing elements
+\code{"t"} (for time), \code{"f"} (for the objective value), and
+\code{"fes"} (for the consumed FEs)}
 
 \item{makeTimeUnique}{should we make the time indices unique (except maybe
 for the first and last point)? This makes sense when we want to plot

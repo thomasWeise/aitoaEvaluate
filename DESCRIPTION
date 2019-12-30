@@ -21,3 +21,6 @@ LazyData: true
 RoxygenNote: 6.1.1
 Collate: 
     'load_log_file.R'
+    'load_instance_dir.R'
+    'load_algorithm_dir.R'
+    'load_results_dir.R'

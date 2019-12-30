@@ -64,13 +64,13 @@ test_that("Test aitoa.load.log.file 1", {
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 2L);
-  expect_identical(colnames(data), c("t", "fes", "f"));
+  expect_identical(colnames(data), c("fes", "t", "f"));
   expect_true(is.integer(data$f));
   expect_true(is.integer(data$fes));
   expect_true(is.integer(data$t));
 
-  expect_identical(as.list(data[1L,]), list(t=33L,     fes=1L,    f=11L));
-  expect_identical(as.list(data[2L,]), list(t=180000L, fes=1000L, f=11L));
+  expect_identical(as.list(data[1L,]), list(fes=1L,    t=33L,     f=11L));
+  expect_identical(as.list(data[2L,]), list(fes=1000L, t=180000L, f=11L));
 })
 
 
@@ -84,14 +84,14 @@ test_that("Test aitoa.load.log.file 2", {
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 3L);
-  expect_identical(colnames(data), c("t", "fes", "f"));
+  expect_identical(colnames(data), c("fes", "t", "f"));
   expect_true(is.integer(data$f));
   expect_true(is.integer(data$fes));
   expect_true(is.integer(data$t));
 
-  expect_identical(as.list(data[1L,]), list(t=33L,     fes=1L,    f=11L));
-  expect_identical(as.list(data[2L,]), list(t=35L,     fes=2L,    f=9L));
-  expect_identical(as.list(data[3L,]), list(t=180000L, fes=1000L, f=9L));
+  expect_identical(as.list(data[1L,]), list(fes=1L,    t=33L,     f=11L));
+  expect_identical(as.list(data[2L,]), list(fes=2L,    t=35L,     f=9L));
+  expect_identical(as.list(data[3L,]), list(fes=1000L, t=180000L, f=9L));
 })
 
 
@@ -107,14 +107,14 @@ test_that("Test aitoa.load.log.file 3", {
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 3L);
-  expect_identical(colnames(data), c("t", "fes", "f"));
+  expect_identical(colnames(data), c("fes", "t", "f"));
   expect_true(is.integer(data$f));
   expect_true(is.integer(data$fes));
   expect_true(is.integer(data$t));
 
-  expect_identical(as.list(data[1L,]), list(t=33L,     fes=1L,    f=11L));
-  expect_identical(as.list(data[2L,]), list(t=35L,     fes=2L,    f=9L));
-  expect_identical(as.list(data[3L,]), list(t=180000L, fes=1000L, f=8L));
+  expect_identical(as.list(data[1L,]), list(fes=1L,    t=33L,     f=11L));
+  expect_identical(as.list(data[2L,]), list(fes=2L,    t=35L,     f=9L));
+  expect_identical(as.list(data[3L,]), list(fes=1000L, t=180000L, f=8L));
 })
 
 
@@ -130,14 +130,14 @@ test_that("Test aitoa.load.log.file 4", {
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 3L);
-  expect_identical(colnames(data), c("t", "fes", "f"));
+  expect_identical(colnames(data), c("fes", "t", "f"));
   expect_true(is.integer(data$f));
   expect_true(is.integer(data$fes));
   expect_true(is.integer(data$t));
 
-  expect_identical(as.list(data[1L,]), list(t=33L,     fes=1L,    f=11L));
-  expect_identical(as.list(data[2L,]), list(t=35L,     fes=2L,    f=9L));
-  expect_identical(as.list(data[3L,]), list(t=180000L, fes=1000L, f=8L));
+  expect_identical(as.list(data[1L,]), list(fes=1L,    t=33L,     f=11L));
+  expect_identical(as.list(data[2L,]), list(fes=2L,    t=35L,     f=9L));
+  expect_identical(as.list(data[3L,]), list(fes=1000L, t=180000L, f=8L));
 })
 
 
@@ -152,15 +152,15 @@ test_that("Test aitoa.load.log.file 5", {
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 4L);
-  expect_identical(colnames(data), c("t", "fes", "f"));
+  expect_identical(colnames(data), c("fes", "t", "f"));
   expect_true(is.integer(data$f));
   expect_true(is.integer(data$fes));
   expect_true(is.integer(data$t));
 
-  expect_identical(as.list(data[1L,]), list(t=33L,     fes=1L,    f=11L));
-  expect_identical(as.list(data[2L,]), list(t=35L,     fes=2L,    f=9L));
-  expect_identical(as.list(data[3L,]), list(t=180000L, fes=1000L, f=8L));
-  expect_identical(as.list(data[4L,]), list(t=180003L, fes=1002L, f=8L));
+  expect_identical(as.list(data[1L,]), list(fes=1L,    t=33L,     f=11L));
+  expect_identical(as.list(data[2L,]), list(fes=2L,    t=35L,     f=9L));
+  expect_identical(as.list(data[3L,]), list(fes=1000L, t=180000L, f=8L));
+  expect_identical(as.list(data[4L,]), list(fes=1002L, t=180003L, f=8L));
 })
 
 
