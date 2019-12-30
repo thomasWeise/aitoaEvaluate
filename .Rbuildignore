@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+LICENSE
+README.md
+.travis.yml
+data-raw
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+examples
