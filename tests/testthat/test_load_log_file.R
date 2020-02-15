@@ -6,7 +6,13 @@ dir <- tempfile();
 dir.create(dir);
 
 .make.log.file <- function(values, consumedFEs, consumedTime) {
-  file <- tempfile(tmpdir = dir);
+  file <- tempfile("algo_inst", tmpdir = dir);
+  file <- paste0(file, "_0x");
+  for(i in seq_len(16)) {
+    file <- paste0(file, as.integer(runif(n=1L, min=0L, max=9L)));
+  }
+  file <- paste0(file, ".txt");
+  file <- normalizePath(file, mustWork = FALSE);
   writeLines(text=c(
     "",
     "# ALGORITHM_SETUP",
@@ -61,6 +67,20 @@ test_that("Test aitoa.load.log.file 1", {
                          180000);
   data <- aitoa.load.log.file(file);
   unlink(file);
+  file2 <- attr(data, "file");
+  expect_equal(file2, file);
+  attr(data, "file") <- NULL;
+  seed <- attr(data, "seed");
+  expect_true(nchar(seed) == 18L);
+  attr(data, "seed") <- NULL;
+  algorithm <- attr(data, "algorithm");
+  expect_true(nchar(algorithm) > 0L,
+              identical(algorithm, "algo"));
+  attr(data, "algorithm") <- NULL;
+  instance <- attr(data, "instance");
+  expect_true(nchar(instance) > 0L,
+              startsWith(instance, "inst"));
+  attr(data, "instance") <- NULL;
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 2L);
@@ -81,7 +101,21 @@ test_that("Test aitoa.load.log.file 2", {
                          180000);
   data <- aitoa.load.log.file(file);
   unlink(file);
+  file2 <- attr(data, "file");
+  expect_equal(file2, file);
+  attr(data, "file") <- NULL;
+  seed <- attr(data, "seed");
+  expect_true(nchar(seed) == 18L);
+  attr(data, "seed") <- NULL;
   expect_false(file.exists(file));
+  algorithm <- attr(data, "algorithm");
+  expect_true(nchar(algorithm) > 0L,
+              identical(algorithm, "algo"));
+  attr(data, "algorithm") <- NULL;
+  instance <- attr(data, "instance");
+  expect_true(nchar(instance) > 0L,
+              startsWith(instance, "inst"));
+  attr(data, "instance") <- NULL;
 
   expect_equal(nrow(data), 3L);
   expect_identical(colnames(data), c("fes", "t", "f"));
@@ -104,6 +138,20 @@ test_that("Test aitoa.load.log.file 3", {
                          180000);
   data <- aitoa.load.log.file(file);
   unlink(file);
+  file2 <- attr(data, "file");
+  expect_equal(file2, file);
+  attr(data, "file") <- NULL;
+  seed <- attr(data, "seed");
+  expect_true(nchar(seed) == 18L);
+  attr(data, "seed") <- NULL;
+  algorithm <- attr(data, "algorithm");
+  expect_true(nchar(algorithm) > 0L,
+              identical(algorithm, "algo"));
+  attr(data, "algorithm") <- NULL;
+  instance <- attr(data, "instance");
+  expect_true(nchar(instance) > 0L,
+              startsWith(instance, "inst"));
+  attr(data, "instance") <- NULL;
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 3L);
@@ -127,6 +175,20 @@ test_that("Test aitoa.load.log.file 4", {
                          180003);
   data <- aitoa.load.log.file(file);
   unlink(file);
+  file2 <- attr(data, "file");
+  expect_equal(file2, file);
+  attr(data, "file") <- NULL;
+  seed <- attr(data, "seed");
+  expect_true(nchar(seed) == 18L);
+  attr(data, "seed") <- NULL;
+  algorithm <- attr(data, "algorithm");
+  expect_true(nchar(algorithm) > 0L,
+              identical(algorithm, "algo"));
+  attr(data, "algorithm") <- NULL;
+  instance <- attr(data, "instance");
+  expect_true(nchar(instance) > 0L,
+              startsWith(instance, "inst"));
+  attr(data, "instance") <- NULL;
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 3L);
@@ -149,6 +211,20 @@ test_that("Test aitoa.load.log.file 5", {
                          180003);
   data <- aitoa.load.log.file(file);
   unlink(file);
+  file2 <- attr(data, "file");
+  expect_equal(file2, file);
+  attr(data, "file") <- NULL;
+  seed <- attr(data, "seed");
+  expect_true(nchar(seed) == 18L);
+  attr(data, "seed") <- NULL;
+  algorithm <- attr(data, "algorithm");
+  expect_true(nchar(algorithm) > 0L,
+              identical(algorithm, "algo"));
+  attr(data, "algorithm") <- NULL;
+  instance <- attr(data, "instance");
+  expect_true(nchar(instance) > 0L,
+              startsWith(instance, "inst"));
+  attr(data, "instance") <- NULL;
   expect_false(file.exists(file));
 
   expect_equal(nrow(data), 4L);

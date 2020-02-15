@@ -10,9 +10,11 @@
 #'   away. If \code{makeTimeUnique==FALSE}, then there may be multiple
 #'   improvements at the same time index due to the resolution of the computer
 #'   clock (while each improvement will definitely have a unique FE).
-#' @return a list of list of data frames, where the names are the instance IDs
+#' @return a list of list of list of data frames, each loaded via
+#'   \link{aitoa.load.algo.dir}, where the names are the instance IDs
 #' @export aitoa.load.results.dir
 #' @include load_algorithm_dir.R
+#' @seealso \link{aitoa.load.algo.dir}
 aitoa.load.results.dir <- function(resultsDir,
                                   keepColumns = .default.colums,
                                   makeTimeUnique=FALSE) {
@@ -30,22 +32,18 @@ aitoa.load.results.dir <- function(resultsDir,
   resultsDir <- force(resultsDir);
   stopifnot(dir.exists(resultsDir));
 
-  algoDirs <- list.dirs(path=resultsDir, full.names = FALSE, recursive = FALSE);
+  algoDirs <- list.dirs(path=resultsDir,
+                        full.names = TRUE,
+                        recursive = FALSE);
+  algoDirs <- sort(algoDirs);
+
   stopifnot(length(algoDirs) > 0L,
             length(unique(algoDirs)) == length(algoDirs));
 
-  data <- lapply(algoDirs, function(s) {
-    aitoa.load.algo.dir(algoDir=file.path(resultsDir, s),
-                        keepColumns=keepColumns,
-                        makeTimeUnique=makeTimeUnique);
-  });
+  data <- lapply(algoDirs, aitoa.load.algo.dir,
+                 keepColumns=keepColumns,
+                 makeTimeUnique=makeTimeUnique);
   stopifnot(length(data) == length(algoDirs));
-
-  o <- order(algoDirs);
-  data <- data[o];
-  algoDirs <- algoDirs[o];
-
-  names(data) <- algoDirs;
 
 ## verify results
   for(a in data) {
@@ -61,6 +59,12 @@ aitoa.load.results.dir <- function(resultsDir,
       }
     }
   }
+
+  algorithms <- vapply(data, function(n) attr(n[[1L]][[1L]], "algorithm"), NA_character_);
+  stopifnot(length(algorithms) == length(data),
+            length(unique(algorithms)) == length(data),
+            all(nchar(algorithms) > 0L));
+  names(data) <- algorithms;
 
   options(old.options);
 

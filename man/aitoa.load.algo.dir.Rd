@@ -4,8 +4,11 @@
 \alias{aitoa.load.algo.dir}
 \title{Load a Directory with all Results for one Algorithm}
 \usage{
-aitoa.load.algo.dir(algoDir, keepColumns = .default.colums,
-  makeTimeUnique = FALSE)
+aitoa.load.algo.dir(
+  algoDir,
+  keepColumns = .default.colums,
+  makeTimeUnique = FALSE
+)
 }
 \arguments{
 \item{algoDir}{the algorithm directory}
@@ -22,8 +25,12 @@ improvements at the same time index due to the resolution of the computer
 clock (while each improvement will definitely have a unique FE).}
 }
 \value{
-a list of list of data frames, where the names are the instance IDs
+a list of list of data frames, each loaded via
+  \link{aitoa.load.inst.dir}, where the names are the instances
 }
 \description{
 Load all the log files in an algorithm directory recursively
+}
+\seealso{
+\link{aitoa.load.inst.dir}
 }

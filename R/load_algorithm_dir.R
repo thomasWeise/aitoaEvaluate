@@ -10,8 +10,10 @@
 #'   away. If \code{makeTimeUnique==FALSE}, then there may be multiple
 #'   improvements at the same time index due to the resolution of the computer
 #'   clock (while each improvement will definitely have a unique FE).
-#' @return a list of list of data frames, where the names are the instance IDs
+#' @return a list of list of data frames, each loaded via
+#'   \link{aitoa.load.inst.dir}, where the names are the instances
 #' @export aitoa.load.algo.dir
+#' @seealso \link{aitoa.load.inst.dir}
 #' @include load_instance_dir.R
 aitoa.load.algo.dir <- function(algoDir,
                                 keepColumns = .default.colums,
@@ -30,22 +32,20 @@ aitoa.load.algo.dir <- function(algoDir,
   algoDir <- force(algoDir);
   stopifnot(dir.exists(algoDir));
 
-  instDirs <- list.dirs(path=algoDir, full.names = FALSE, recursive = FALSE);
-  stopifnot(length(instDirs) > 0L,
-            length(unique(instDirs)) == length(instDirs));
+  instDirs <- list.dirs(path=algoDir,
+                        full.names = TRUE,
+                        recursive = FALSE);
 
-  data <- lapply(instDirs, function(s) {
-    aitoa.load.inst.dir(instDir=file.path(algoDir, s),
-                        keepColumns=keepColumns,
-                        makeTimeUnique=makeTimeUnique);
-  });
+  stopifnot(length(instDirs) > 0L);
+
+  instDirs <- sort(instDirs);
+  stopifnot(length(instDirs) == length(unique(instDirs)));
+
+  data <- lapply(instDirs,
+    aitoa.load.inst.dir,
+    keepColumns=keepColumns,
+    makeTimeUnique=makeTimeUnique);
   stopifnot(length(data) == length(instDirs));
-
-  o <- order(instDirs);
-  data <- data[o];
-  instDirs <- instDirs[o];
-
-  names(data) <- instDirs;
 
 ## verify results
   for(id in data) {
@@ -57,6 +57,12 @@ aitoa.load.algo.dir <- function(algoDir,
                 nrow(r) > 0L);
     }
   }
+
+  instances <- vapply(data, function(n) attr(n[[1L]], "instance"), NA_character_);
+  stopifnot(length(instances) == length(data),
+            length(unique(instances)) == length(data),
+            all(nchar(instances) > 0L));
+  names(data) <- instances;
 
   options(old.options);
 

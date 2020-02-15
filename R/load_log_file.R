@@ -3,21 +3,30 @@
 .int64.0 <- as.integer64(0L);
 .default.colums <- c("fes", "t", "f");
 
+
 #' @title Load a Single Log File
 #' @description Load a log file and return the results as a data frame. The data
-#'   frame will have three columns: \code{t} contains the time in milliseconds
-#'   consumed since the start of the optimization process and is monotonously
-#'   increasing. \code{fes} contains the number of objective function
-#'   evaluations since the start of the optimization process and is strictly
-#'   monotonously increasing. \code{f} contains the objective value and is
-#'   strictly monotonously decreasing, with the except of the last point which
-#'   might have the same objective value as the second-to-last point. Time and
-#'   FEs have a resolution of 1 and a maximum value of \code{2^53 - 1}, as this
-#'   is the highest integer value that can represented precisely with a double.
-#'   If a higher value is encountered in any of the two columns, \code{stop}
-#'   will be invoked, i.e., higher values are not permitted. In order to test
-#'   for this, we use the 64 bit integers from the \code{bit64} package, since
-#'   \code{R} does not support 64 bit integers natively.
+#'   frame will have (at most) three columns: \describe{\item{\code{t}}{contains
+#'   the time in milliseconds consumed since the start of the optimization
+#'   process and is monotonously increasing} \item{\code{fes}}{contains the
+#'   number of objective function evaluations since the start of the
+#'   optimization process and is strictly monotonously increasing}
+#'   \item{\code{f}}{contains the objective value and is strictly monotonously
+#'   decreasing, with the except of the last point which might have the same
+#'   objective value as the second-to-last point.}}
+#'
+#'   The data frame will be enriched with four attributes:
+#'   \describe{\item{file}{the normalized absolute file path to the log file}
+#'   \item{algorithm}{the id of the algorithm used to generate the log file}
+#'   \item{instance}{the problem instance to which the algorithm was applied}
+#'   \item{seed}{the hexadecimal string representation of the random seed}}
+#'
+#'   Time and FEs have a resolution of 1 and a maximum value of \code{2^53 - 1},
+#'   as this is the highest integer value that can represented precisely with a
+#'   double. If a higher value is encountered in any of the two columns,
+#'   \link[base]{stop} will be invoked, i.e., higher values are not permitted.
+#'   In order to test for this, we use the 64 bit integers from the \code{bit64}
+#'   package, since \code{R} does not support 64 bit integers natively.
 #' @param file the log file to load
 #' @param keepColumns the columns to keep, any vector containing elements
 #'   \code{"t"} (for time), \code{"f"} (for the objective value), and
@@ -32,8 +41,10 @@
 #'   (function evaluations), and \code{f} (objective value), all of which are
 #'   numeric or integer valued, with integer type being preferred if it can be
 #'   used without loss of precision
+#' @seealso \link{aitoa.parse.file.name}
 #' @importFrom bit64 as.integer64
 #' @export aitoa.load.log.file
+#' @include parse_file_name.R
 aitoa.load.log.file <- function(file,
                                 keepColumns = .default.colums,
                                 makeTimeUnique=FALSE) {
@@ -212,8 +223,6 @@ aitoa.load.log.file <- function(file,
   }
 
   # finished converting
-
-
   data <- unique(data.frame(t=t, fes=fes, f=f)[keepColumns]);
   rm("f");
   rm("fes");
@@ -226,6 +235,15 @@ aitoa.load.log.file <- function(file,
             nrow(data) > 0L,
             ncol(data) == length(keepColumns),
             names(data) == keepColumns);
+
+  attr(data, "file") <- file;
+  info <- unname(unlist(aitoa.parse.file.name(file)));
+  stopifnot(length(info) == 3L,
+            is.character(info),
+            all(nchar(info) > 0L));
+  attr(data, "algorithm") <- info[[1L]];
+  attr(data, "instance") <- info[[2L]];
+  attr(data, "seed") <- info[[3L]];
   options(old.options);
 
   return(data);

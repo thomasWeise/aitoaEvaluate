@@ -4,8 +4,11 @@
 \alias{aitoa.load.inst.dir}
 \title{Load an Instance Directory}
 \usage{
-aitoa.load.inst.dir(instDir, keepColumns = .default.colums,
-  makeTimeUnique = FALSE)
+aitoa.load.inst.dir(
+  instDir,
+  keepColumns = .default.colums,
+  makeTimeUnique = FALSE
+)
 }
 \arguments{
 \item{instDir}{the instance directory}
@@ -22,7 +25,8 @@ improvements at the same time index due to the resolution of the computer
 clock (while each improvement will definitely have a unique FE).}
 }
 \value{
-a list of data frames, where the names are the random seeds
+a list of data frames, each loaded with \link{aitoa.load.log.file},
+where the "names" are the random seeds
 }
 \description{
 Load all the log files in a directory

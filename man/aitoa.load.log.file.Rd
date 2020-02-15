@@ -4,8 +4,11 @@
 \alias{aitoa.load.log.file}
 \title{Load a Single Log File}
 \usage{
-aitoa.load.log.file(file, keepColumns = .default.colums,
-  makeTimeUnique = FALSE)
+aitoa.load.log.file(
+  file,
+  keepColumns = .default.colums,
+  makeTimeUnique = FALSE
+)
 }
 \arguments{
 \item{file}{the log file to load}
@@ -29,17 +32,28 @@ a data frame with the columns \code{t} (time in ms), \code{fes}
 }
 \description{
 Load a log file and return the results as a data frame. The data
-  frame will have three columns: \code{t} contains the time in milliseconds
-  consumed since the start of the optimization process and is monotonously
-  increasing. \code{fes} contains the number of objective function
-  evaluations since the start of the optimization process and is strictly
-  monotonously increasing. \code{f} contains the objective value and is
-  strictly monotonously decreasing, with the except of the last point which
-  might have the same objective value as the second-to-last point. Time and
-  FEs have a resolution of 1 and a maximum value of \code{2^53 - 1}, as this
-  is the highest integer value that can represented precisely with a double.
-  If a higher value is encountered in any of the two columns, \code{stop}
-  will be invoked, i.e., higher values are not permitted. In order to test
-  for this, we use the 64 bit integers from the \code{bit64} package, since
-  \code{R} does not support 64 bit integers natively.
+  frame will have (at most) three columns: \describe{\item{\code{t}}{contains
+  the time in milliseconds consumed since the start of the optimization
+  process and is monotonously increasing} \item{\code{fes}}{contains the
+  number of objective function evaluations since the start of the
+  optimization process and is strictly monotonously increasing}
+  \item{\code{f}}{contains the objective value and is strictly monotonously
+  decreasing, with the except of the last point which might have the same
+  objective value as the second-to-last point.}}
+
+  The data frame will be enriched with four attributes:
+  \describe{\item{file}{the normalized absolute file path to the log file}
+  \item{algorithm}{the id of the algorithm used to generate the log file}
+  \item{instance}{the problem instance to which the algorithm was applied}
+  \item{seed}{the hexadecimal string representation of the random seed}}
+
+  Time and FEs have a resolution of 1 and a maximum value of \code{2^53 - 1},
+  as this is the highest integer value that can represented precisely with a
+  double. If a higher value is encountered in any of the two columns,
+  \link[base]{stop} will be invoked, i.e., higher values are not permitted.
+  In order to test for this, we use the 64 bit integers from the \code{bit64}
+  package, since \code{R} does not support 64 bit integers natively.
+}
+\seealso{
+\link{aitoa.parse.file.name}
 }

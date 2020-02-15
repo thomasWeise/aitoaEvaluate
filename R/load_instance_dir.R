@@ -10,7 +10,8 @@
 #'   away. If \code{makeTimeUnique==FALSE}, then there may be multiple
 #'   improvements at the same time index due to the resolution of the computer
 #'   clock (while each improvement will definitely have a unique FE).
-#' @return a list of data frames, where the names are the random seeds
+#' @return a list of data frames, each loaded with \link{aitoa.load.log.file},
+#' where the "names" are the random seeds
 #' @export aitoa.load.inst.dir
 #' @include load_log_file.R
 aitoa.load.inst.dir <- function(instDir,
@@ -29,53 +30,48 @@ aitoa.load.inst.dir <- function(instDir,
   instDir <- normalizePath(instDir, mustWork=TRUE);
   instDir <- force(instDir);
   stopifnot(dir.exists(instDir));
+  instName <- basename(instDir);
+  stopifnot(nchar(instName) > 0L);
 
-  files <- list.files(path=instDir, pattern=".txt", all.files = FALSE,
-                      full.names = FALSE, recursive = FALSE, ignore.case = FALSE,
-                      include.dirs = FALSE, no..=TRUE);
-  stopifnot(length(files) > 0L);
-  names <- vapply(files, function(s) {
-    start <- gregexpr("_", s, fixed=TRUE);
-    stopifnot(length(start) > 0L);
-    start <- as.integer(start[[length(start)]]);
-    stopifnot(length(start) > 0L);
-    start <- as.integer(start[[length(start)]]);
-    stopifnot(start > 0L);
-    end <- gregexpr(".", s, fixed=TRUE);
-    stopifnot(length(end) > 0L);
-    end <- as.integer(end[[length(end)]]);
-    stopifnot(length(end) > 0L);
-    end <- as.integer(end[[length(end)]]);
-    stopifnot(end > 0L,
-              end > (start + 1L),
-              end == nchar(s) - 3L);
-    hc <-substr(s, start + 1L, end - 1L);
-    stopifnot(startsWith(hc, "0x"));
-    return(hc);
-  }, NA_character_);
-  stopifnot(length(names) > 0L,
-            length(unique(names)) == length(names));
+  files <- list.files(path=instDir,
+                      pattern=".txt",
+                      all.files = FALSE,
+                      full.names = TRUE,
+                      recursive = FALSE,
+                      ignore.case = FALSE,
+                      include.dirs = FALSE,
+                      no..=TRUE);
+  files <- sort(files);
+  stopifnot(length(files) == length(unique(files)));
 
-  data <- lapply(files, function(s) {
-    aitoa.load.log.file(file=file.path(instDir, s),
-                        keepColumns=keepColumns,
-                        makeTimeUnique=makeTimeUnique);
-  });
-  stopifnot(length(data) == length(names));
-
-  o <- order(names);
-  data <- data[o];
-  names <- names[o];
-
-  names(data) <- names;
-
+  data <- lapply(files,
+                 aitoa.load.log.file,
+                 keepColumns=keepColumns,
+                 makeTimeUnique=makeTimeUnique);
+  stopifnot(length(data) == length(files));
 
   ## verify results
-  for(r in data) {
+  for(i in seq_along(data)) {
+    r <- data[[i]];
     stopifnot(is.data.frame(r),
               colnames(r) == keepColumns,
-              nrow(r) > 0L);
+              nrow(r) > 0L,
+              identical(attr(r, "instance"), instName),
+              is.character(attr(r, "seed")),
+              is.character(attr(r, "algorithm")),
+              identical(attr(r, "file"), files[[i]]));
   }
+
+  stopifnot(all(attr(data[[1L]], "instance") ==
+                vapply(data, function(n) attr(n, "instance"), NA_character_)),
+            all(attr(data[[1L]], "algorithm") ==
+                  vapply(data, function(n) attr(n, "algorithm"), NA_character_)));
+
+  seeds <- vapply(data, function(n) attr(n, "seed"), NA_character_);
+  stopifnot(length(unique(seeds)) == length(data),
+            length(data) == length(seeds));
+
+  names(data) <- seeds;
 
   options(old.options);
 
