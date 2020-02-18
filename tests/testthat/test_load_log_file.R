@@ -6,13 +6,15 @@ dir <- tempfile();
 dir.create(dir);
 
 .make.log.file <- function(values, consumedFEs, consumedTime) {
-  file <- tempfile("algo_inst", tmpdir = dir);
-  file <- paste0(file, "_0x");
+  algo <- paste0("algo", as.integer(runif(n=1,min=0,max=9999)));
+  inst <- paste0("inst", as.integer(runif(n=1,min=0,max=9999)));
+  file <- paste0(algo, "_", inst, "_0x");
   for(i in seq_len(16)) {
     file <- paste0(file, as.integer(runif(n=1L, min=0L, max=9L)));
   }
   file <- paste0(file, ".txt");
-  file <- normalizePath(file, mustWork = FALSE);
+  file <- normalizePath(file.path(dir, algo, inst, file), mustWork = FALSE);
+  dir.create(dirname(file), recursive = TRUE);
   writeLines(text=c(
     "",
     "# ALGORITHM_SETUP",
@@ -75,7 +77,7 @@ test_that("Test aitoa.load.log.file 1", {
   attr(data, "seed") <- NULL;
   algorithm <- attr(data, "algorithm");
   expect_true(nchar(algorithm) > 0L,
-              identical(algorithm, "algo"));
+              startsWith(algorithm, "algo"));
   attr(data, "algorithm") <- NULL;
   instance <- attr(data, "instance");
   expect_true(nchar(instance) > 0L,
@@ -110,7 +112,7 @@ test_that("Test aitoa.load.log.file 2", {
   expect_false(file.exists(file));
   algorithm <- attr(data, "algorithm");
   expect_true(nchar(algorithm) > 0L,
-              identical(algorithm, "algo"));
+              startsWith(algorithm, "algo"));
   attr(data, "algorithm") <- NULL;
   instance <- attr(data, "instance");
   expect_true(nchar(instance) > 0L,
@@ -146,7 +148,7 @@ test_that("Test aitoa.load.log.file 3", {
   attr(data, "seed") <- NULL;
   algorithm <- attr(data, "algorithm");
   expect_true(nchar(algorithm) > 0L,
-              identical(algorithm, "algo"));
+              startsWith(algorithm, "algo"));
   attr(data, "algorithm") <- NULL;
   instance <- attr(data, "instance");
   expect_true(nchar(instance) > 0L,
@@ -183,7 +185,7 @@ test_that("Test aitoa.load.log.file 4", {
   attr(data, "seed") <- NULL;
   algorithm <- attr(data, "algorithm");
   expect_true(nchar(algorithm) > 0L,
-              identical(algorithm, "algo"));
+              startsWith(algorithm, "algo"));
   attr(data, "algorithm") <- NULL;
   instance <- attr(data, "instance");
   expect_true(nchar(instance) > 0L,
@@ -219,7 +221,7 @@ test_that("Test aitoa.load.log.file 5", {
   attr(data, "seed") <- NULL;
   algorithm <- attr(data, "algorithm");
   expect_true(nchar(algorithm) > 0L,
-              identical(algorithm, "algo"));
+              startsWith(algorithm, "algo"));
   attr(data, "algorithm") <- NULL;
   instance <- attr(data, "instance");
   expect_true(nchar(instance) > 0L,

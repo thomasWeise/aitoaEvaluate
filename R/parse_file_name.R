@@ -9,37 +9,73 @@ aitoa.parse.file.name <- function(file) {
   old.options <- options(warn=2);
 
   stopifnot(is.character(file),
+            !is.null(file),
             length(file) == 1L,
             nchar(file) > 6L,
             !is.na(file));
 
-  file <- basename(file);
-
+  file <- normalizePath(file, mustWork = FALSE);
   stopifnot(is.character(file),
+            !is.null(file),
             length(file) == 1L,
             nchar(file) > 10L,
             !is.na(file),
             endsWith(file, ".txt"));
-  file <- substr(file, 1L, nchar(file) - 4L);
-  stopifnot(is.character(file),
-            length(file) == 1L,
-            nchar(file) > 6L,
-            !is.na(file));
 
-  parts = strsplit(file, "_", fixed=TRUE);
+  dir <- dirname(file);
+  stopifnot(is.character(dir),
+            !is.na(dir),
+            !is.null(dir),
+            !identical(dir, "."));
+
+  instance <- trimws(basename(dir));
+  stopifnot(is.character(instance),
+            !is.null(instance),
+            length(instance) == 1L,
+            nchar(instance) > 0L,
+            !is.na(instance));
+
+  dir <- dirname(dir);
+  stopifnot(is.character(dir),
+            !is.na(dir),
+            !is.null(dir),
+            !identical(dir, "."));
+
+  algorithm <- trimws(basename(dir));
+  stopifnot(is.character(algorithm),
+            !is.null(algorithm),
+            length(algorithm) == 1L,
+            nchar(algorithm) > 0L,
+            !is.na(algorithm));
+
+  name <- basename(file);
+  stopifnot(is.character(name),
+            length(name) == 1L,
+            nchar(name) > 10L,
+            !is.na(name),
+            endsWith(name, ".txt"));
+  name <- substr(name, 1L, nchar(name) - 4L);
+  stopifnot(is.character(name),
+            length(name) == 1L,
+            nchar(name) > 6L,
+            !is.na(name));
+
+  stopifnot(startsWith(name,
+                       paste0(algorithm,
+                              "_",
+                              instance,
+                              "_0x")));
+
+  parts = strsplit(name, "_", fixed=TRUE);
+
   stopifnot(length(parts) == 1L);
   parts <- parts[[1L]];
   stopifnot(is.character(parts),
             !any(is.na(parts)),
             length(parts) >= 3L,
             all(nchar(parts) > 0L));
-  parts <- trimws(parts);
-  stopifnot(is.character(parts),
-            !any(is.na(parts)),
-            length(parts) >= 3L,
-            all(nchar(parts) > 0L));
 
-  seed <- parts[[length(parts)]];
+  seed <- trimws(parts[[length(parts)]]);
   stopifnot(!is.na(seed),
             startsWith(seed, "0x"),
             nchar(seed) > 2L,
@@ -50,25 +86,10 @@ aitoa.parse.file.name <- function(file) {
                   c("0", "1", "2", "3", "4", "5", "6", "7",
                     "8", "9", "a", "b", "c", "d", "e", "f")));
 
-  inst <- parts[[length(parts) - 1L]];
-  stopifnot(nchar(inst) > 0L,
-            !is.na(inst));
-
-  parts <- parts[1L:(length(parts)-2L)];
-  stopifnot(length(parts) > 0L,
-            !any(is.na(parts)),
-            all(nchar(parts) > 0L));
-
-  algo <- paste(parts,
-                sep="_", collapse="_");
-  stopifnot(nchar(algo) > 0L,
-            !is.na(algo),
-            nchar(algo) >= length(parts));
-
   options(old.options);
 
-  res <- list(algorithm=algo,
-              instance=inst,
+  res <- list(algorithm=algorithm,
+              instance=instance,
               seed=seed);
   res <- force(res);
 
