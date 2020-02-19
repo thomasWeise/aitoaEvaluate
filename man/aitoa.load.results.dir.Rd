@@ -6,7 +6,7 @@
 \usage{
 aitoa.load.results.dir(
   resultsDir,
-  keepColumns = .default.colums,
+  keepColumns = c("fes", "t", "f"),
   makeTimeUnique = FALSE
 )
 }

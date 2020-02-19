@@ -16,7 +16,7 @@
 #' @include load_algorithm_dir.R
 #' @seealso \link{aitoa.load.algo.dir}
 aitoa.load.results.dir <- function(resultsDir,
-                                  keepColumns = .default.colums,
+                                  keepColumns = c("fes", "t", "f"),
                                   makeTimeUnique=FALSE) {
   old.options <- options(warn=2);
   stopifnot(is.character(resultsDir),
@@ -26,7 +26,7 @@ aitoa.load.results.dir <- function(resultsDir,
 
   keepColumns <- unique(keepColumns);
   stopifnot(length(keepColumns) > 0L,
-            all(keepColumns %in% .default.colums));
+            all(keepColumns %in% c("fes", "t", "f")));
 
   resultsDir <- normalizePath(resultsDir, mustWork=TRUE);
   resultsDir <- force(resultsDir);

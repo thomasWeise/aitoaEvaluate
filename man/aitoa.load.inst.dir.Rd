@@ -6,7 +6,7 @@
 \usage{
 aitoa.load.inst.dir(
   instDir,
-  keepColumns = .default.colums,
+  keepColumns = c("fes", "t", "f"),
   makeTimeUnique = FALSE
 )
 }

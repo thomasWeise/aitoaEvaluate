@@ -20,8 +20,15 @@ ByteCompile: true
 LazyData: true
 RoxygenNote: 7.0.2
 Collate: 
+    'rgb_mix.R'
+    'scale_rgb_luminoscity.R'
+    'rgb_to_gray.R'
+    'distinct_colors.R'
+    'utils.R'
+    'graphic_out.R'
     'parse_file_name.R'
     'load_log_file.R'
     'load_instance_dir.R'
     'load_algorithm_dir.R'
     'load_results_dir.R'
+    'plot_progress.R'

@@ -1,7 +1,6 @@
 #' @importFrom bit64 as.integer64
 .int64.max.dbl.int <- as.integer64((2 ^ 53) - 1);
 .int64.0 <- as.integer64(0L);
-.default.colums <- c("fes", "t", "f");
 
 
 #' @title Load a Single Log File
@@ -46,7 +45,7 @@
 #' @export aitoa.load.log.file
 #' @include parse_file_name.R
 aitoa.load.log.file <- function(file,
-                                keepColumns = .default.colums,
+                                keepColumns = c("fes", "t", "f"),
                                 makeTimeUnique=FALSE) {
   old.options <- options(warn=2);
   stopifnot(is.character(file),
@@ -65,7 +64,7 @@ aitoa.load.log.file <- function(file,
 
   keepColumns <- unique(keepColumns);
   stopifnot(length(keepColumns) > 0L,
-            all(keepColumns %in% .default.colums));
+            all(keepColumns %in% c("fes", "t", "f")));
 
   # detect consumed FEs
   consumedFEs <- grep("# CONSUMED_FES:", data, fixed = TRUE);

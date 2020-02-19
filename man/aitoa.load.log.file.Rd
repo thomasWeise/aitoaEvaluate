@@ -6,7 +6,7 @@
 \usage{
 aitoa.load.log.file(
   file,
-  keepColumns = .default.colums,
+  keepColumns = c("fes", "t", "f"),
   makeTimeUnique = FALSE
 )
 }

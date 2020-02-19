@@ -15,7 +15,7 @@
 #' @export aitoa.load.inst.dir
 #' @include load_log_file.R
 aitoa.load.inst.dir <- function(instDir,
-                                keepColumns = .default.colums,
+                                keepColumns = c("fes", "t", "f"),
                                 makeTimeUnique=FALSE) {
   old.options <- options(warn=2);
   stopifnot(is.character(instDir),
@@ -25,7 +25,7 @@ aitoa.load.inst.dir <- function(instDir,
 
   keepColumns <- unique(keepColumns);
   stopifnot(length(keepColumns) > 0L,
-            all(keepColumns %in% .default.colums));
+            all(keepColumns %in% c("fes", "t", "f")));
 
   instDir <- normalizePath(instDir, mustWork=TRUE);
   instDir <- force(instDir);

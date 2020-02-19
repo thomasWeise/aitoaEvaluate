@@ -16,7 +16,7 @@
 #' @seealso \link{aitoa.load.inst.dir}
 #' @include load_instance_dir.R
 aitoa.load.algo.dir <- function(algoDir,
-                                keepColumns = .default.colums,
+                                keepColumns = c("fes", "t", "f"),
                                 makeTimeUnique=FALSE) {
   old.options <- options(warn=2);
   stopifnot(is.character(algoDir),
@@ -26,7 +26,7 @@ aitoa.load.algo.dir <- function(algoDir,
 
   keepColumns <- unique(keepColumns);
   stopifnot(length(keepColumns) > 0L,
-            all(keepColumns %in% .default.colums));
+            all(keepColumns %in% c("fes", "t", "f")));
 
   algoDir <- normalizePath(algoDir, mustWork=TRUE);
   algoDir <- force(algoDir);
