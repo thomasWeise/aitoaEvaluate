@@ -294,6 +294,7 @@
 #'   solutions for the instances (the \code{names} of the vector will be used in
 #'   the legend)
 #' @param algorithm.colors the colors to be used for the different algorithms
+#' @param ... parameters to be passed to \link[graphics]{par}
 #' @export aitoa.plot.progress
 #' @include utils.R
 aitoa.plot.progress <- function(results.dir,

@@ -34,6 +34,8 @@ solutions for the instances (the \code{names} of the vector will be used in
 the legend)}
 
 \item{algorithm.colors}{the colors to be used for the different algorithms}
+
+\item{...}{parameters to be passed to \link[graphics]{par}}
 }
 \description{
 Plot how a set of algorithms progress over a set of problem
