@@ -74,7 +74,13 @@ aitoa.distinct.colors <- function(n) {
     means <- vapply(seq_len(nrow(adder)),
                     function(r) mean(as.integer(adder[r, ])),
                     NA_real_);
-    keep <- (means >= 30L) & (means <= 225L);
+    gray <- vapply(seq_len(nrow(adder)),
+                           function(r) aitoa.rgb2gray(adder[r, ],
+                                                      limit=255L,
+                                                      make.int = TRUE),
+                   NA_integer_);
+    keep <- (means >= 35L) & (means <= 220L) &
+            (gray >= 35L) & (gray <= 220L);
     if(any(keep)) {
       colors.all <- unique(rbind(colors.all,
                                  adder[keep, ]));
