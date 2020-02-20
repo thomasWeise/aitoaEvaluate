@@ -6,12 +6,10 @@
 \usage{
 aitoa.plot.gantt(
   x,
-  machine.name.prefix = NA_character_,
-  machine.name.start = 0L,
+  machine.name.func = as.character,
   job.colors = NA_character_,
   print.job.names = TRUE,
-  job.name.prefix = NA_character_,
-  job.name.start = NA_integer_,
+  job.name.func = as.character,
   job.name.cex = 0.9,
   xlab = "Time",
   ylab = "Machine",
@@ -24,20 +22,18 @@ aitoa.plot.gantt(
 \arguments{
 \item{x}{the data to be plotted}
 
-\item{machine.name.prefix}{an optional prefix for machine names}
-
-\item{machine.name.start}{the starting index for machine names}
+\item{machine.name.func}{a function converting a machine index into a
+character string with the machine name. The first machine index is
+\code{0L}, the last one \code{length(x) - 1L}.}
 
 \item{job.colors}{an optional vector of job colors}
 
 \item{print.job.names}{should the job names be printed into the job
 rectangles?}
 
-\item{job.name.prefix}{an optional prefix for job names, only considered if
-\code{isTRUE(print.job.names)}}
-
-\item{job.name.start}{the index assigned to the lowest job ID, only
-considered if \code{isTRUE(print.job.names)}}
+\item{job.name.func}{a function converting a job index into a character
+string, only used if \code{isTRUE(print.job.names)}, the job indices passed
+on depend on the indices present in \code{x}.}
 
 \item{job.name.cex}{the scaling for job names, only considered if
 \code{isTRUE(print.job.names)}}

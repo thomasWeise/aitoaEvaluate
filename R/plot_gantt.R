@@ -12,15 +12,15 @@
 #' @param x the data to be plotted
 #' @param xlab the x-axis label
 #' @param ylab the y-axis label
-#' @param machine.name.prefix an optional prefix for machine names
-#' @param machine.name.start the starting index for machine names
+#' @param machine.name.func a function converting a machine index into a
+#'   character string with the machine name. The first machine index is
+#'   \code{0L}, the last one \code{length(x) - 1L}.
 #' @param job.colors an optional vector of job colors
 #' @param print.job.names should the job names be printed into the job
 #'   rectangles?
-#' @param job.name.prefix an optional prefix for job names, only considered if
-#'   \code{isTRUE(print.job.names)}
-#' @param job.name.start the index assigned to the lowest job ID, only
-#'   considered if \code{isTRUE(print.job.names)}
+#' @param job.name.func a function converting a job index into a character
+#'   string, only used if \code{isTRUE(print.job.names)}, the job indices passed
+#'   on depend on the indices present in \code{x}.
 #' @param job.name.cex the scaling for job names, only considered if
 #'   \code{isTRUE(print.job.names)}
 #' @param xlab the label for the x-axis
@@ -33,16 +33,14 @@
 #'   \link[graphics]{plot}, better don't change)
 #' @param ... parameters to be passed to \link[graphics]{plot}
 #' @export aitoa.plot.gantt
-#' @importFrom graphics plot axis rect text
+#' @importFrom graphics axis grconvertX grconvertY plot rect text
 #' @importFrom grDevices col2rgb
 #' @include distinct_colors.R
 aitoa.plot.gantt <- function(x,
-                       machine.name.prefix = NA_character_,
-                       machine.name.start = 0L,
+                       machine.name.func = as.character,
                        job.colors = NA_character_,
                        print.job.names = TRUE,
-                       job.name.prefix = NA_character_,
-                       job.name.start = NA_integer_,
+                       job.name.func = as.character,
                        job.name.cex = 0.9,
                        xlab = "Time",
                        ylab = "Machine",
@@ -60,32 +58,17 @@ aitoa.plot.gantt <- function(x,
             all(vapply(x, function(xx) all(vapply(xx, length, NA_integer_)==3L), FALSE)));
 
 # set up machine data
-  if(is.na(machine.name.prefix)) {
-    machine.name.prefix <- "";
-  } else {
-    stopifnot(is.character(machine.name.prefix),
-              length(machine.name.prefix) == 1L,
-              nchar(machine.name.prefix) > 0L);
-  }
-  if(is.na(machine.name.start)) {
-    machine.name.start <- 0L;
-  }
-  stopifnot(is.integer(machine.name.start),
-            length(machine.name.start) == 1L,
-            is.finite(machine.name.start),
-            machine.name.start >= 0L);
-
-  machines <- as.integer(seq.int(from=0L, to=(length(x)-1L)));
+  machines <- as.integer(seq.int(from=0L, to=(length(x) - 1L)));
   stopifnot(is.integer(machines),
             length(machines) == length(x),
             length(machines) > 0L,
             all(is.finite(machines)),
             all(machines >= 0L));
-  machine.names <- as.character(as.integer(machines + machine.name.start));
-  if((!is.na(machine.name.prefix)) && (nchar(machine.name.prefix) > 0L)) {
-    machine.names <- vapply(machine.names, function(f)
-      paste0(machine.name.prefix, f), NA_character_);
-  }
+  stopifnot(is.function(machine.name.func));
+  machine.names <- vapply(machines, machine.name.func, NA_character_);
+  stopifnot(is.character(machine.names),
+            !any(is.na(machine.names)),
+            all(nchar(machine.names) > 0L));
 
 # set up jobs and job names
   jobs <- sort(unique(as.integer(unname(unlist(lapply(x, function(xx) {
@@ -101,7 +84,7 @@ aitoa.plot.gantt <- function(x,
   }
   stopifnot(is.character(job.colors),
             !any(is.na(job.colors)),
-            length(job.colors) <= (length(jobs)),
+            length(job.colors)>= (length(jobs)),
             all(nchar(job.colors) > 0L));
 
   if(is.na(print.job.names)) {
@@ -112,40 +95,8 @@ aitoa.plot.gantt <- function(x,
             isTRUE(print.job.names) || isFALSE(print.job.names));
 
   if(print.job.names) {
-    if(is.na(job.name.prefix)) {
-      job.name.prefix <- "";
-    } else {
-      stopifnot(is.character(job.name.prefix),
-                length(job.name.prefix) == 1L,
-                nchar(job.name.prefix) > 0L);
-    }
-
-    if(is.na(job.name.start)) {
-      job.names <- as.character(jobs);
-    } else {
-      stopifnot(is.integer(job.name.start),
-                length(job.name.start) == 1L,
-                is.finite(job.name.start),
-                job.name.start >= 0L);
-
-      jobs.start <- as.integer(min(jobs));
-      stopifnot(is.integer(jobs.start),
-                length(jobs.start) == 1L,
-                is.finite(jobs.start),
-                jobs.start >= 0L);
-
-      job.names <- as.character(as.integer(jobs - jobs.start + job.name.start));
-    }
-    stopifnot(is.character(job.names),
-              !any(is.na(job.names)),
-              length(job.names) == length(jobs),
-              all(nchar(job.names) > 0L));
-
-    if((!is.na(job.name.prefix)) && (nchar(job.name.prefix) > 0L)) {
-      job.names <- vapply(job.names, function(f)
-                    paste0(job.name.prefix, f), NA_character_);
-    }
-
+    stopifnot(is.function(job.name.func));
+    job.names <- vapply(jobs, job.name.func, NA_character_);
     stopifnot(is.character(job.names),
               !any(is.na(job.names)),
               length(job.names) == length(jobs),
@@ -165,6 +116,7 @@ aitoa.plot.gantt <- function(x,
                las=1L, xaxs=xaxs, yaxs=yaxs,
                yaxt = "n", type = "n");
 
+
   xlim <- pars$xlim;
   if(is.null(xlim)) {
     xlim <- range(unlist(lapply(x,
@@ -172,6 +124,11 @@ aitoa.plot.gantt <- function(x,
                       range(unname(unlist(lapply(d,
                           function(dd) c(dd$start, dd$end)))))
                     })));
+    ofs.x <- max(c(sum(c(1, -1)*xlim*0.00025),
+                   abs(sum(c(1, -1)*grconvertX(c(1.3, 0),
+                          from="device", to="user")))));
+    xlim[[1L]] <- xlim[[1L]] - ofs.x;
+    xlim[[2L]] <- xlim[[2L]] + ofs.x;
     pars$xlim <- xlim;
   }
   pars$x <- xlim;
@@ -183,7 +140,9 @@ aitoa.plot.gantt <- function(x,
   ylim <- pars$ylim;
   if(is.null(ylim)) {
     ylim <- range(c(.gantt.min, length(machines) - 1L + .gantt.max));
-    ofs.y <- 0.003 * (ylim[[2L]] - ylim[[1L]]);
+    ofs.y <- max(c(sum(c(1, -1)*ylim*0.00025),
+                   abs(sum(c(1, -1)*grconvertY(c(1.3, 0),
+                            from="device", to="user")))));
     ylim[[1L]] <- ylim[[1L]] - ofs.y;
     ylim[[2L]] <- ylim[[2L]] + ofs.y;
     pars$ylim <- ylim;

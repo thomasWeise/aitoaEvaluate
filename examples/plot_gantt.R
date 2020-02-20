@@ -55,5 +55,5 @@ aitoa.plot.gantt(list(
         list(job=9L,start=211L,end=269L),
         list(job=8L,start=269L,end=343L)
   )
-), job.name.start = 1L, machine.name.prefix = "M", machine.name.start = 1L,
+),
 xlab=NA_character_, ylab=NA_character_);
