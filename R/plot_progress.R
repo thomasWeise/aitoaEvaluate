@@ -1,6 +1,6 @@
 #' @include load_instance_dir.R
 #' @include utils.R
-#' @importFrom graphics abline legend lines mtext par plot
+#' @importFrom graphics abline legend lines mtext plot
 .aitoa.plot.progress.inst <- function(results.dir,
                                       algorithms,
                                       instance,
@@ -8,7 +8,8 @@
                                       time.column,
                                       max.time,
                                       algorithm.colors,
-                                      instance.bks,
+                                      instance.limit,
+                                      instance.limit.name,
                                       ...) {
 
   stopifnot(is.character(results.dir),
@@ -31,10 +32,10 @@
             ),
             is.character(algorithm.colors),
             length(algorithm.colors) == length(algorithms),
-            is.na(instance.bks) ||
-            is.null(instance.bks) ||
-              (is.numeric(instance.bks) &&
-              (length(instance.bks) == 1L)));
+            is.na(instance.limit) ||
+            is.null(instance.limit) ||
+              (is.numeric(instance.limit) &&
+              (length(instance.limit) == 1L)));
   results.dir <- normalizePath(results.dir, mustWork = TRUE);
   stopifnot(dir.exists(results.dir));
 
@@ -44,11 +45,18 @@
   stopifnot(is.numeric(max.time),
             is.na(max.time) || (is.finite(max.time) && max.time > 0L));
 
-  if(is.na(instance.bks) || is.null(instance.bks)) {
-    instance.bks <- NA_real_;
+  if(is.na(instance.limit) || is.null(instance.limit)) {
+    instance.limit <- NA_integer_;
+    instance.limit.name <- NA_character_;
+  } else {
+    if((!is.na(instance.limit.name)) &&
+       (is.null(instance.limit.name) ||
+        (nchar(instance.limit.name) <= 0L))) {
+      instance.limit.name <- NA_character_;
+    }
   }
-  stopifnot(is.numeric(instance.bks),
-            is.na(instance.bks) || is.finite(instance.bks));
+  stopifnot(is.numeric(instance.limit),
+            is.na(instance.limit) || is.finite(instance.limit));
 
   if(is.na(instance.name) || is.null(instance.name)) {
     instance.name <- instance;
@@ -124,8 +132,8 @@
       range(dd[c(1L, nrow(dd)), 2L])
     }))))
   }))));
-  if(!is.na(instance.bks)) {
-    f.range <- range(c(instance.bks, f.range));
+  if(!is.na(instance.limit)) {
+    f.range <- range(c(instance.limit, f.range));
   }
 
   # now we can set up the parameters for the plot
@@ -161,14 +169,22 @@
     add.x.axis <- TRUE;
   }
 
+  if(is.null(pars$tck)) {
+    pars$tck <- -0.02;
+  }
+
+  if(is.null(pars$mgp)) {
+    pars$mgp <- c(1, 0.5, 0);
+  }
+
   # make the plot
   do.call(plot, pars);
 
-  if(!is.na(instance.bks)) {
+  if(!is.na(instance.limit)) {
     bks.color <- "darkgray";
     bks.lwd <- 4/3;
     bks.lty <- 2L;
-    abline(h=instance.bks, col=bks.color, lwd=bks.lwd, lty=bks.lty);
+    abline(h=instance.limit, col=bks.color, lwd=bks.lwd, lty=bks.lty);
   }
 
   # if necessary, add an x-axis
@@ -205,13 +221,20 @@
                     algorithm.colors[1L:length(algorithms)]);
   legend.lty <- as.integer(c(NA_integer_, rep_len(1L, length(algorithms))));
   legend.lwd <- as.numeric(c(NA_real_, rep_len(1L, length(algorithms))));
-  if(!is.na(instance.bks)) {
-    legend.text  <- c(legend.text, paste0("bks=", instance.bks));
+  if(!is.na(instance.limit)) {
+    if(is.na(instance.limit.name)) {
+      instance.limit.name <- as.character(instance.limit);
+    } else {
+      instance.limit.name <- paste0(instance.limit.name,
+                                    ": ", instance.limit);
+    }
+    legend.text  <- c(legend.text, instance.limit.name);
     legend.color <- c(legend.color, bks.color);
     legend.lty <- as.integer(c(legend.lty, bks.lty));
     legend.lwd <-c(legend.lwd, bks.lwd);
   }
 
+  legend.bg <- "#FFFFFFAA";
   legend(x="topright",
          cex=1.05,
          legend=legend.text,
@@ -219,31 +242,66 @@
          text.col = legend.color,
          lwd=legend.lwd,
          lty=legend.lty,
-         bty="n",
-         box.lwd=0L);
+         bty="o",
+         bg=legend.bg,
+         box.lwd=0L,
+         inset=0.005);
 
-  mtext("f", side=2L, line=-1.1, adj=0.15, cex=1.05);
-  mtext(if(time.column=="t") "time in ms" else "FEs",
-        side=1L, line=-1.1, adj=0.15, cex=1.05);
+  legend(x="topleft",
+         legend="f",
+         cex=1.05,
+         bty="0",
+         bg=legend.bg,
+         box.lwd=0L,
+         seg.len = -0.6,
+         y.intersp = 0,
+         lwd = 0,
+         pch = NA,
+         lty = NA,
+         pt.lwd = 0,
+         pt.cex = 0,
+         inset = 0.01);
+  legend(x="bottomright",
+         legend=(if(time.column=="t") "time in ms"
+                 else "time in FEs"),
+         cex=1.05,
+         bty="0",
+         bg=legend.bg,
+         box.lwd=0L,
+         seg.len = -0.6,
+         y.intersp = 0,
+         lty = NA,
+         lwd = 0,
+         pch = NA,
+         pt.lwd = 0,
+         pt.cex = 0,
+         inset = 0.01);
 }
 
-#' @title Plot the Progress for a Set of Algorithms on a Set of Problem Instances
-#' @description  Plot how a set of algorithms progress over a set of problem instances. For each instance, one diagram is plotted. The diagrams are arranged one by one from in a vertical row.
+#' @title Plot the Progress for a Set of Algorithms on a Set of Problem
+#'   Instances
+#' @description  Plot how a set of algorithms progress over a set of problem
+#'   instances. For each instance, one diagram is plotted. The diagrams are
+#'   arranged one by one from in a vertical row.
 #' @param results.dir the directory where the results can be loaded from
-#' @param algorithms the list of algorithm IDs. The \code{names} of this list, if set, will be used in the legends.
-#' @param instances the list of instance IDs. The \code{names} of this list, if set, will be used in the legend
+#' @param algorithms the list of algorithm IDs. The \code{names} of this list,
+#'   if set, will be used in the legends.
+#' @param instances the list of instance IDs. The \code{names} of this list, if
+#'   set, will be used in the legend
 #' @param time.column the time dimension, either \code{t} or \code{fes}
 #' @param max.time an optional limit for the time
-#' @param instances.bks an optional vector of best-known solutions for the instances
+#' @param instances.limits an optional vector of lower bounds or best-known
+#'   solutions for the instances (the \code{names} of the vector will be used in
+#'   the legend)
 #' @param algorithm.colors the colors to be used for the different algorithms
 #' @export aitoa.plot.progress
-#' @importFrom graphics par
+#' @include utils.R
 aitoa.plot.progress <- function(results.dir,
                                 algorithms,
                                 instances,
                                 time.column=c("t", "fes"),
                                 max.time=NA_integer_,
-                                instances.bks=NA_integer_,
+                                instances.limits=NA_integer_,
                                 algorithm.colors=aitoa.distinct.colors(length(algorithms)),
                                 ...) {
 
@@ -290,23 +348,35 @@ aitoa.plot.progress <- function(results.dir,
     names(instances) <- unname(unlist(instances));
   }
 
-  if(is.na(instances.bks) || is.null(instances.bks)) {
-    instances.bks <- NA_integer_;
+  if(is.na(instances.limits) || is.null(instances.limits)) {
+    instances.limits <- NA_integer_;
   } else {
-    stopifnot(is.numeric(instances.bks),
-              length(instances.bks) == length(instances));
+    stopifnot(is.numeric(instances.limits),
+              length(instances.limits) == length(instances));
   }
 
-  old.par <- par();
+  old.par <- .safe.par();
   mar <- 0.5*old.par$mar;
 
   mar[[1L]] <- 0.85 * mar[[1L]];
+  mar[[2L]] <- 0.8 * mar[[2L]];
   mar[[3L]] <- 0.25 * mar[[3L]];
   mar[[4L]] <- 0.15 * mar[[4L]];
-  par(cex=0.78, mar=mar,
-      mfrow=c(length(instances), 1L));
+  .safe.par(cex=0.78,
+            mar=mar,
+            mfrow=c(length(instances), 1L));
 
   for(i in seq_along(instances)) {
+    inst.limit.name <- NA_character_;
+    inst.limit <- (if(is.na(instances.limits)) NA_integer_
+                   else instances.limits[[i]]);
+    if(!is.na(inst.limit)) {
+      inst.limit.name <- names(instances.limits)[[i]];
+      if(is.null(inst.limit.name)) {
+        inst.limit.name <- NA_character_;
+      }
+    }
+
     .aitoa.plot.progress.inst(results.dir,
                               algorithms,
                               instances[[i]],
@@ -314,10 +384,11 @@ aitoa.plot.progress <- function(results.dir,
                               time.column,
                               max.time,
                               algorithm.colors,
-                              (if(is.na(instances.bks)) NA_integer_
-                               else instances.bks[[i]]),
+                              inst.limit,
+                              inst.limit.name,
                               ...);
   }
 
-  par(old.par);
+  .safe.par(old.par);
+  invisible(NULL);
 }

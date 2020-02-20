@@ -20,3 +20,22 @@
   cat(as.character(Sys.time()), ": ", paste0(..., sep="", collapse=""), "\n", sep="", collapse="");
   invisible(TRUE);
 }
+
+#' @importFrom graphics par
+.safe.par <- function(...) {
+  args <- list(...);
+  args$cin <- NULL;
+  args$cra <- NULL;
+  args$csi <- NULL;
+  args$cxy <- NULL;
+  args$din <- NULL;
+  args$page <- NULL;
+  args <- suppressMessages(suppressWarnings(do.call(par, args)));
+  args$cin <- NULL;
+  args$cra <- NULL;
+  args$csi <- NULL;
+  args$cxy <- NULL;
+  args$din <- NULL;
+  args$page <- NULL;
+  return(args);
+}

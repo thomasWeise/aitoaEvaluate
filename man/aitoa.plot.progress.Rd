@@ -2,7 +2,8 @@
 % Please edit documentation in R/plot_progress.R
 \name{aitoa.plot.progress}
 \alias{aitoa.plot.progress}
-\title{Plot the Progress for a Set of Algorithms on a Set of Problem Instances}
+\title{Plot the Progress for a Set of Algorithms on a Set of Problem
+  Instances}
 \usage{
 aitoa.plot.progress(
   results.dir,
@@ -10,7 +11,7 @@ aitoa.plot.progress(
   instances,
   time.column = c("t", "fes"),
   max.time = NA_integer_,
-  instances.bks = NA_integer_,
+  instances.limits = NA_integer_,
   algorithm.colors = aitoa.distinct.colors(length(algorithms)),
   ...
 )
@@ -18,18 +19,24 @@ aitoa.plot.progress(
 \arguments{
 \item{results.dir}{the directory where the results can be loaded from}
 
-\item{algorithms}{the list of algorithm IDs. The \code{names} of this list, if set, will be used in the legends.}
+\item{algorithms}{the list of algorithm IDs. The \code{names} of this list,
+if set, will be used in the legends.}
 
-\item{instances}{the list of instance IDs. The \code{names} of this list, if set, will be used in the legend}
+\item{instances}{the list of instance IDs. The \code{names} of this list, if
+set, will be used in the legend}
 
 \item{time.column}{the time dimension, either \code{t} or \code{fes}}
 
 \item{max.time}{an optional limit for the time}
 
-\item{instances.bks}{an optional vector of best-known solutions for the instances}
+\item{instances.limits}{an optional vector of lower bounds or best-known
+solutions for the instances (the \code{names} of the vector will be used in
+the legend)}
 
 \item{algorithm.colors}{the colors to be used for the different algorithms}
 }
 \description{
-Plot how a set of algorithms progress over a set of problem instances. For each instance, one diagram is plotted. The diagrams are arranged one by one from in a vertical row.
+Plot how a set of algorithms progress over a set of problem
+  instances. For each instance, one diagram is plotted. The diagrams are
+  arranged one by one from in a vertical row.
 }

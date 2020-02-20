@@ -33,7 +33,6 @@
 #' @param body the expression to be executed for painting the graphic.
 #' @return the path to the newly created graphic
 #' @importFrom grDevices cairo_pdf cairo_ps dev.off png svg
-#' @importFrom graphics par
 #' @include utils.R
 #' @export aitoa.graphic
 aitoa.graphic <- function(directory=".",
@@ -159,10 +158,9 @@ aitoa.graphic <- function(directory=".",
     }
   }
 
-  old.par <- par(ljoin=0L,
-            lend=0);
+  old.par <- .safe.par(ljoin=0L, lend=0);
   eval(body);
-  par(old.par);
+  .safe.par(old.par);
   dev.off();
 
   if(type == "svg") {
