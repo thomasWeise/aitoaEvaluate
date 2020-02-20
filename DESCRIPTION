@@ -30,6 +30,7 @@ Collate:
     'load_log_file.R'
     'load_instance_dir.R'
     'load_algorithm_dir.R'
+    'load_end_result_stat.R'
     'load_results_dir.R'
     'plot_gantt.R'
     'plot_progress_on_instance.R'

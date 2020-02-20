@@ -3,6 +3,7 @@
 export(aitoa.distinct.colors)
 export(aitoa.graphic)
 export(aitoa.load.algo.dir)
+export(aitoa.load.end.result.stats)
 export(aitoa.load.inst.dir)
 export(aitoa.load.log.file)
 export(aitoa.load.results.dir)
