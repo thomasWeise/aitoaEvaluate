@@ -3,6 +3,8 @@
 #' @param results.dir the directory where the results can be loaded from
 #' @param algorithms a list of algorithsm, the \code{names} of which (if
 #'   provided) are used for the legend
+#' @param instance the instance id to be plotted
+#' @param instance.name the name of the instance to show in the legend
 #' @param time.column the time column
 #' @param max.time an optional maximal time limit
 #' @param algorithm.colors a character vector of the same length as

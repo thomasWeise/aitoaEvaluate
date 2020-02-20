@@ -23,6 +23,10 @@ aitoa.plot.progress.on.instance(
 \item{algorithms}{a list of algorithsm, the \code{names} of which (if
 provided) are used for the legend}
 
+\item{instance}{the instance id to be plotted}
+
+\item{instance.name}{the name of the instance to show in the legend}
+
 \item{time.column}{the time column}
 
 \item{max.time}{an optional maximal time limit}
