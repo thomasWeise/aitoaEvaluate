@@ -31,5 +31,6 @@ Collate:
     'load_instance_dir.R'
     'load_algorithm_dir.R'
     'load_results_dir.R'
+    'plot_gantt.R'
     'plot_progress_on_instance.R'
     'plot_progress_on_multiple_instances.R'
