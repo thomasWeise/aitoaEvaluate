@@ -67,12 +67,6 @@ aitoa.plot.progress.on.multiple.instances <-
                                 ...) {
 
   # validate all the input
-
-  stopifnot(is.character(results.dir),
-            length(results.dir) > 0L);
-  results.dir <- normalizePath(results.dir, mustWork=TRUE);
-  stopifnot(dir.exists(results.dir));
-
   stopifnot(is.character(algorithms) || is.list(algorithms),
             length(algorithms) > 0L,
             !any(is.na(algorithms)),
@@ -83,12 +77,8 @@ aitoa.plot.progress.on.multiple.instances <-
             !any(is.na(instances)),
             all(nchar(instances) > 0L));
 
-  time.column <- match.arg(time.column);
-  stopifnot(is.character(time.column),
-            length(time.column) == 1L,
-            !is.na(time.column),
-            !is.null(time.column),
-            time.column %in% c("t", "fes"));
+  time.column <- .time.column(match.arg(time.column));
+  results.dir <- .dir.exists(results.dir);
 
   if(!(is.null(max.time) || all(is.na(max.time)))) {
     stopifnot(is.numeric(max.time),
@@ -142,7 +132,7 @@ aitoa.plot.progress.on.multiple.instances <-
 
   old.par <- do.call(.safe.par, pars);
 
-  if(!(is.null(mar.single) || is.na(mar.single))) {
+  if(!(is.null(mar.single) || all(is.na(mar.single)))) {
     if(is.list(mar.single)) {
       for(m in mar.single) {
         stopifnot(is.numeric(m));

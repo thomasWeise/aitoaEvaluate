@@ -45,6 +45,10 @@
 #'   \link[graphics]{plot}, better don't change)
 #' @param yaxs the y-axis interval type (this is the default to be passed to
 #'   \link[graphics]{plot}, better don't change)
+#' @param mgp the mgp parameter to be passed to \link[graphics]{plot}
+#' @param tck the tck parameter to be passed to \link[graphics]{plot}
+#' @param cex the default character scaling
+#' @param mar the default margins
 #' @param ... parameters to be passed to \link[graphics]{plot}
 #' @export aitoa.plot.gantt.for.stat
 #' @include common_styles.R
@@ -74,8 +78,8 @@ aitoa.plot.gantt.for.stat <- function(
                           print.job.names = TRUE,
                           job.name.func = as.character,
                           job.name.cex = .gantt.default.job.name.cex,
-                          xlab = .gantt.default.x,
-                          ylab = .gantt.default.y,
+                          xlab = NA_character_,
+                          ylab = NA_character_,
                           time.max = NA_integer_,
                           instance.limit=NA_integer_,
                           instance.limit.name=NA_character_,
@@ -89,6 +93,12 @@ aitoa.plot.gantt.for.stat <- function(
                           las = 1L,
                           xaxs = "i",
                           yaxs = "i",
+                          mgp=.default.mgp,
+                          tck=.default.tck,
+                          cex=.default.cex,
+                          mar = if((is.null(xlab)||is.na(xlab))&&
+                                   (is.null(ylab)||is.na(ylab)))
+                            .default.mar.without.labels else NULL,
                           ...) {
   stopifnot(is.data.frame(end.result.stats),
             is.character(results.dir),
@@ -128,5 +138,9 @@ aitoa.plot.gantt.for.stat <- function(
                    las = las,
                    xaxs = xaxs,
                    yaxs = yaxs,
+                   mgp = mgp,
+                   tck = tck,
+                   cex = cex,
+                   mar = mar,
                    ...);
 }

@@ -59,22 +59,15 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
                                             mar=.default.mar.without.labels,
                                             ...) {
 
-  time.column = match.arg(time.column);
+  time.column <- .time.column(match.arg(time.column));
 
-  stopifnot(is.character(results.dir),
-            !is.na(results.dir),
-            length(results.dir) == 1L,
-            nchar(results.dir) > 0L,
-            is.character(algorithms) || is.list(algorithms),
+  stopifnot(is.character(algorithms) || is.list(algorithms),
             length(algorithms) > 0L,
             !any(is.na(algorithms)),
             all(nchar(algorithms) > 0L),
             is.character(instance),
             !is.na(instance),
             nchar(instance) > 0L,
-            is.character(time.column),
-            length(time.column) == 1L,
-            !is.na(time.column),
             is.numeric(max.time),
             is.na(max.time) || is.null(max.time) || (
               is.finite(max.time) && (max.time > 1L)
@@ -85,10 +78,10 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
             is.null(instance.limit) ||
               (is.numeric(instance.limit) &&
               (length(instance.limit) == 1L)));
-  results.dir <- normalizePath(results.dir, mustWork = TRUE);
-  stopifnot(dir.exists(results.dir));
 
-  if(is.null(max.time) || all(is.na(max.time))) {
+  results.dir <- .dir.exists(results.dir);
+
+  if(is.null(max.time) || is.na(max.time)) {
     max.time <- NA_real_;
   }
   stopifnot(is.numeric(max.time),
@@ -106,59 +99,25 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   }
   stopifnot(is.numeric(instance.limit),
             is.na(instance.limit) || is.finite(instance.limit));
-
-  if(is.null(instance.name) || all(is.na(instance.name))) {
+  if(is.null(instance.name) || all(is.na(instance.name))
+     || (nchar(instance.name) <= 0L)) {
     instance.name <- instance;
   }
   stopifnot(is.character(instance.name),
             length(instance.name) == 1L,
             nchar(instance.name) > 0L);
 
-  if(is.null(mgp) || all(is.na(mgp))) {
-    mgp <- .default.mgp;
-  } else {
-    mgp[is.na(mgp)] <- .default.mgp[is.na(mgp)];
-    if(length(mgp) < 3L) {
-      m <- .default.mgp;
-      m[1L:length(mgp)] <- mgp;
-      mgp <- m;
-    }
-  }
-  stopifnot(is.numeric(mgp),
-            length(mgp) == 3L,
-            all(is.finite(mgp)));
-  if(is.null(tck) || all(is.na(tck))) {
-    tck <- .default.tck;
-  }
-  stopifnot(is.numeric(tck),
-            length(tck) == 1L,
-            is.finite(tck));
-  if(is.null(cex) || all(is.na(cex))) {
-    cex <- .default.cex;
-  }
-  stopifnot(is.numeric(cex),
-            length(cex) == 1L,
-            is.finite(cex),
-            cex > 0);
-  if(is.null(mar) || all(is.na(mar))) {
-    mar <- .default.mar.without.labels;
-  } else {
-    mar[is.na(mar)] <- .default.mar.without.labels[is.na(mar)];
-    if(length(mar) < 4L) {
-      m <- .default.mar.without.labels;
-      m[1L:length(mar)] <- mar;
-    }
-  }
-  stopifnot(is.numeric(mar),
-            length(mar) == 4L,
-            all(is.finite(mar)),
-            all(mar >= 0));
+  mgp <- .mgp(mgp, .default.mgp);
+  tck <- .tck(tck, .default.tck);
+  cex <- .cex(cex, .default.cex);
+  mar <- .mar(mar, .default.mar.without.labels);
 
-  pars <- list(mgp=mgp,
-               tck=tck,
-               cex=cex,
-               mar=mar,
-               ...);
+  old.par <- .safe.par(list(mgp=mgp,
+                           tck=tck,
+                           cex=cex,
+                           mar=mar));
+
+  pars <- list(...);
   log.scale.time <- !is.null(pars$log) &&
     grepl("x", pars$log, fixed=TRUE);
   stopifnot(isTRUE(log.scale.time) || isFALSE(log.scale.time));
@@ -267,32 +226,9 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   do.call(plot, pars);
 
   if(!(is.null(instance.limit) || is.na(instance.limit))) {
-    if(is.null(instance.limit.color) ||
-       all(is.na(instance.limit.color))) {
-      instance.limit.color <- .instance.limit.color;
-    }
-    stopifnot(!is.na(instance.limit.color),
-              is.character(instance.limit.color),
-              length(instance.limit.color) == 1L,
-              nchar(instance.limit.color) > 0L);
-
-    if(is.null(instance.limit.lty) ||
-       all(is.na(instance.limit.lty))) {
-      instance.limit.lty <- .instance.limit.lty;
-    }
-    stopifnot(!is.na(instance.limit.lty),
-              is.character(instance.limit.lty) ||
-                is.numeric(instance.limit.lty),
-              length(instance.limit.lty) == 1L);
-
-    if(is.null(instance.limit.lwd) ||
-       all(is.na(instance.limit.lwd))) {
-      instance.limit.lwd <- .instance.limit.lwd;
-    }
-    stopifnot(!is.na(instance.limit.lwd),
-              is.numeric(instance.limit.lwd),
-              is.finite(instance.limit.lwd),
-              instance.limit.lwd > 0);
+    instance.limit.color <- .color(instance.limit.color, .instance.limit.color);
+    instance.limit.lty <- .lty(instance.limit.lty, .instance.limit.lty);
+    instance.limit.lwd <- .lwd(instance.limit.lwd, .instance.limit.lwd);
 
     abline(h=instance.limit,
            col=instance.limit.color,
@@ -305,30 +241,25 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
     src <- range(pars$x);
     x.ticks <- as.integer(10L ^ seq.int(from=as.integer(ceiling(log10(src[[1L]]))),
                                         to=as.integer(floor(log10(src[[2L]])))));
-    axis(side = 1L, at = x.ticks, labels = as.character(x.ticks));
+    axis(side = 1L,
+         at = x.ticks,
+         labels = as.character(x.ticks));
   }
 
-  if(is.null(algorithm.lty) ||
-     all(is.na(algorithm.lty))) {
-    algorithm.lty <- .default.lty;
-  }
-  algorithm.lty <- rep_len(algorithm.lty, length(algorithms));
-  stopifnot(is.character(algorithm.lty) || is.integer(algorithm.lty),
-            length(algorithm.lty) == length(algorithms));
 
-  if(is.null(algorithm.lwd) ||
-     all(is.na(algorithm.lwd))) {
-    algorithm.lwd <- .default.lwd;
-  }
-  algorithm.lwd <- rep_len(algorithm.lwd, length(algorithms));
-  stopifnot(is.character(algorithm.lwd) || is.integer(algorithm.lwd),
-            length(algorithm.lwd) == length(algorithms));
+  algorithm.lty <- .lty.rep(algorithm.lty,
+                            .default.lty,
+                            length(algorithms));
+  algorithm.lwd <- .lwd.rep(algorithm.lwd,
+                            .default.lwd,
+                            length(algorithms));
 
   # plot the lines
   for(i in seq_along(data)) {
     color <- algorithm.colors[[i]];
     for(d in data[[i]]) {
-      lines(d, lty=algorithm.lty[[i]], lwd=algorithm.lwd[[i]],
+      lines(d, lty=algorithm.lty[[i]],
+            lwd=algorithm.lwd[[i]],
             type="s", col=color);
     }
   }
@@ -338,14 +269,8 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   legend.text <- c(instance.name,
                    vapply(seq_along(algorithms),
                           function(i) {
-                            n <- names(algorithms)[[i]];
-                            if(is.na(n) || is.null(n)) {
-                              n <- algorithms[[i]];
-                            }
-                            stopifnot(is.character(n),
-                                      length(n) == 1L,
-                                      nchar(n) > 0L);
-                            return(n);
+                            .default.char(names(algorithms)[[i]],
+                                          algorithms[[i]]);
                           }, NA_character_));
   legend.color <- c("black",
                     algorithm.colors[1L:length(algorithms)]);
@@ -365,20 +290,8 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
     legend.lwd <-c(legend.lwd, instance.limit.lwd);
   }
 
-  if(is.null(legend.cex) || all(is.na(legend.cex))) {
-    legend.cex <- .legend.cex;
-  }
-  stopifnot(is.numeric(legend.cex),
-            length(legend.cex) == 1L,
-            is.finite(legend.cex),
-            legend.cex > 0);
-
-  if(is.null(legend.bg) || all(is.na(legend.bg))) {
-    legend.bg <- .legend.bg;
-  }
-  stopifnot(is.character(legend.bg),
-            length(legend.bg) == 1L,
-            nchar(legend.bg) > 0L);
+  legend.cex <- .cex(legend.cex, .legend.cex);
+  legend.bg <- .color(legend.bg, .legend.bg);
 
   legend(x="topright",
          cex=legend.cex,
@@ -431,5 +344,6 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
            inset = 0.01);
   }
 
+  .safe.par(old.par);
   invisible(NULL);
 }

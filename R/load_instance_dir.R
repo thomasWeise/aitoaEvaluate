@@ -14,6 +14,7 @@
 #' where the "names" are the random seeds
 #' @export aitoa.load.inst.dir
 #' @include load_log_file.R
+#' @include utils.R
 aitoa.load.inst.dir <- function(inst.dir,
                                 keep.columns = c("fes", "t", "f"),
                                 make.time.unique=FALSE) {
@@ -27,9 +28,8 @@ aitoa.load.inst.dir <- function(inst.dir,
   stopifnot(length(keep.columns) > 0L,
             all(keep.columns %in% c("fes", "t", "f")));
 
-  inst.dir <- normalizePath(inst.dir, mustWork=TRUE);
+  inst.dir <- .dir.exists(inst.dir);
   inst.dir <- force(inst.dir);
-  stopifnot(dir.exists(inst.dir));
   instName <- basename(inst.dir);
   stopifnot(nchar(instName) > 0L);
 

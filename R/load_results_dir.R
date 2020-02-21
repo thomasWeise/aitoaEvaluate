@@ -14,6 +14,7 @@
 #'   \link{aitoa.load.algo.dir}, where the names are the instance IDs
 #' @export aitoa.load.results.dir
 #' @include load_algorithm_dir.R
+#' @include utils.R
 #' @seealso \link{aitoa.load.algo.dir}
 aitoa.load.results.dir <- function(results.dir,
                                    keep.columns = c("fes", "t", "f"),
@@ -28,7 +29,7 @@ aitoa.load.results.dir <- function(results.dir,
   stopifnot(length(keep.columns) > 0L,
             all(keep.columns %in% c("fes", "t", "f")));
 
-  results.dir <- normalizePath(results.dir, mustWork=TRUE);
+  results.dir <- .dir.exists(results.dir);
   results.dir <- force(results.dir);
   stopifnot(dir.exists(results.dir));
 

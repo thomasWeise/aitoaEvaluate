@@ -69,6 +69,10 @@
 #'   \link[graphics]{plot}, better don't change)
 #' @param yaxs the y-axis interval type (this is the default to be passed to
 #'   \link[graphics]{plot}, better don't change)
+#' @param mgp the mgp parameter to be passed to \link[graphics]{plot}
+#' @param tck the tck parameter to be passed to \link[graphics]{plot}
+#' @param cex the default character scaling
+#' @param mar the default margins
 #' @param ... parameters to be passed to \link[graphics]{plot}
 #' @export aitoa.plot.gantt
 #' @importFrom graphics axis grconvertX grconvertY plot rect text
@@ -81,8 +85,8 @@ aitoa.plot.gantt <- function(x,
                        print.job.names = TRUE,
                        job.name.func = as.character,
                        job.name.cex = .gantt.default.job.name.cex,
-                       xlab = .gantt.default.x,
-                       ylab = .gantt.default.y,
+                       xlab = NA_character_,
+                       ylab = NA_character_,
                        time.max = NA_integer_,
                        instance.limit=NA_integer_,
                        instance.limit.name=NA_character_,
@@ -97,6 +101,12 @@ aitoa.plot.gantt <- function(x,
                        las = 1L,
                        xaxs = "i",
                        yaxs = "i",
+                       mgp=.default.mgp,
+                       tck=.default.tck,
+                       cex=.default.cex,
+                       mar = if((is.null(xlab)||is.na(xlab))&&
+                                (is.null(ylab)||is.na(ylab)))
+                         .default.mar.without.labels else NULL,
                        ...) {
 
 # validate input data
@@ -147,21 +157,37 @@ aitoa.plot.gantt <- function(x,
               length(job.names) == length(jobs),
               all(nchar(job.names) > 0L));
 
-    if(is.null(job.name.cex) || is.na(job.name.cex)) {
-      job.name.cex <- .gantt.default.job.name.cex;
-    }
-    stopifnot(is.numeric(job.name.cex),
-              length(job.name.cex) == 1L,
-              is.finite(job.name.cex),
-              job.name.cex > 0);
+    job.name.cex <- .cex(job.name.cex, .gantt.default.job.name.cex);
   }
 
 # set up the graph
+  mgp <- .mgp(mgp, .default.mgp);
+  tck <- .tck(tck, .default.tck);
+  cex <- .cex(cex, .default.cex);
+  xlab <- force(xlab);
+  ylab <- force(ylab);
+  las <- force(las);
+  xaxs <- force(xaxs);
+  yaxs <- force(yaxs);
+
   pars <- list(..., xlab=xlab, ylab=ylab,
-               las=1L, xaxs=xaxs, yaxs=yaxs,
+               xaxs=xaxs, yaxs=yaxs,
                yaxt = "n", type = "n");
 
+  par2 <- list(mgp=mgp, las=las, tck=tck, cex=cex);
 
+  if(is.null(mar) || all(is.na(mar))) {
+    if((is.null(xlab)||is.na(xlab)) &&
+       (is.null(ylab)||is.na(ylab))) {
+      par2$mar <- .default.mar.without.labels;
+    }
+  } else {
+    stopifnot(is.numeric(mar),
+              length(mar) > 0L);
+    par2$mar <- .mar(mar, .default.mar.without.labels);
+  }
+
+  old.par <- .safe.par(par2);
 
   xlim <- pars$xlim;
   if(is.null(xlim)) {
@@ -224,8 +250,7 @@ aitoa.plot.gantt <- function(x,
   do.call(plot, pars);
 
   axis(2L, at = machines,
-       labels = machine.names,
-       las = pars$las);
+       labels = machine.names);
 
   # now paint the chart
   for(i in seq_along(x)) {
@@ -277,38 +302,14 @@ aitoa.plot.gantt <- function(x,
               is.finite(instance.limit),
               instance.limit >= 0);
 
-    if(is.na(instance.limit.cex)) {
-      instance.limit.cex = .instance.limit.cex;
-    }
-    stopifnot(!is.na(instance.limit.cex),
-              is.numeric(instance.limit.cex),
-              length(instance.limit.cex) == 1L,
-              is.finite(instance.limit.cex),
-              instance.limit.cex > 0);
-
-    if(is.na(instance.limit.color)) {
-      instance.limit.color <- .instance.limit.color;
-    }
-    stopifnot(!is.na(.instance.limit.color),
-              is.character(.instance.limit.color),
-              length(.instance.limit.color) == 1L,
-              nchar(.instance.limit.color) > 0L);
-
-    if(is.na(instance.limit.lty)) {
-      instance.limit.lty <- .instance.limit.lty;
-    }
-    stopifnot(!is.na(instance.limit.lty),
-              is.character(instance.limit.lty) ||
-                is.numeric(instance.limit.lty),
-              length(instance.limit.lty) == 1L);
-
-    if(is.na(instance.limit.lwd)) {
-      instance.limit.lwd <- .instance.limit.lwd;
-    }
-    stopifnot(!is.na(instance.limit.lwd),
-              is.numeric(instance.limit.lwd),
-              is.finite(instance.limit.lwd),
-              instance.limit.lwd > 0);
+    instance.limit.cex <- .cex(instance.limit.cex,
+                               .instance.limit.cex);
+    instance.limit.color <- .color(instance.limit.color,
+                                   .instance.limit.color);
+    instance.limit.lty <- .lty(instance.limit.lty,
+                               .instance.limit.lty);
+    instance.limit.lwd <- .lwd(instance.limit.lwd,
+                               .instance.limit.lwd);
 
     abline(v=instance.limit,
            col=instance.limit.color,
@@ -325,13 +326,8 @@ aitoa.plot.gantt <- function(x,
         instance.limit.name <- as.character(instance.limit);
       }
 
-      if(is.null(instance.limit.adj) || all(is.na(instance.limit.adj))) {
-        instance.limit.adj <- c(-0.1, -0.1);
-      }
-      stopifnot(is.numeric(instance.limit.adj),
-                length(instance.limit.adj) > 0L,
-                length(instance.limit.adj) <= 2L,
-                all(is.finite(instance.limit.adj)));
+      instance.limit.adj <- .adj(instance.limit.adj,
+                                 .gantt.default.instance.limit.adj);
 
       text(x= instance.limit,
            y= .gantt.min,
@@ -345,26 +341,9 @@ aitoa.plot.gantt <- function(x,
 
   if(!(is.null(center.label) || any(is.na(center.label)))) {
     stopifnot(is.character(center.label),
-              length(center.label) == 1L,
-              !is.na(center.label.bg),
-              nchar(center.label.bg) > 0L);
-
-    if(is.null(center.label.bg) || any(is.na(center.label.bg))) {
-      center.label.bg <- .gantt.label.bg;
-    }
-    stopifnot(is.character(center.label.bg),
-              length(center.label.bg) == 1L,
-              !is.na(center.label.bg),
-              nchar(center.label.bg) > 0L);
-
-    if(is.null(center.label.cex) || any(is.na(center.label.cex))) {
-      center.label.cex <- .gantt.label.cex;
-    }
-    stopifnot(is.numeric(center.label.cex),
-              length(center.label.cex) == 1L,
-              !is.na(center.label.cex),
-              is.finite(center.label.cex),
-              center.label.cex > 0);
+              length(center.label) == 1L);
+    center.label.bg <- .color(center.label.bg, .gantt.label.bg);
+    center.label.cex <- .cex(center.label.cex, .gantt.label.cex);
 
     legend(x=mean(xlim),
            y=0.3*length(machines)/10,
@@ -383,5 +362,6 @@ aitoa.plot.gantt <- function(x,
            bg=center.label.bg);
   }
 
+  .safe.par(old.par);
   invisible(NULL);
 }

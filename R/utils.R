@@ -39,3 +39,20 @@
   args$page <- NULL;
   return(args);
 }
+
+
+.dir.exists <- function(dir) {
+  stopifnot(!is.null(dir),
+            is.character(dir),
+            length(dir) == 1L,
+            !is.na(dir),
+            nchar(dir) > 0L);
+  dir <- normalizePath(dir, mustWork = TRUE);
+  stopifnot(!is.null(dir),
+            is.character(dir),
+            length(dir) == 1L,
+            !is.na(dir),
+            nchar(dir) > 0L,
+            dir.exists(dir));
+  return(dir);
+}

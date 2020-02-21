@@ -15,6 +15,7 @@
 #' @export aitoa.load.algo.dir
 #' @seealso \link{aitoa.load.inst.dir}
 #' @include load_instance_dir.R
+#' @include utils.R
 aitoa.load.algo.dir <- function(algo.dir,
                                 keep.columns = c("fes", "t", "f"),
                                 make.time.unique=FALSE) {
@@ -28,9 +29,8 @@ aitoa.load.algo.dir <- function(algo.dir,
   stopifnot(length(keep.columns) > 0L,
             all(keep.columns %in% c("fes", "t", "f")));
 
-  algo.dir <- normalizePath(algo.dir, mustWork=TRUE);
+  algo.dir <- .dir.exists(algo.dir);
   algo.dir <- force(algo.dir);
-  stopifnot(dir.exists(algo.dir));
 
   instDirs <- list.dirs(path=algo.dir,
                         full.names = TRUE,
