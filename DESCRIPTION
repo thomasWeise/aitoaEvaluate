@@ -20,6 +20,7 @@ ByteCompile: true
 LazyData: true
 RoxygenNote: 7.0.2
 Collate: 
+    'common_styles.R'
     'rgb_mix.R'
     'scale_rgb_luminoscity.R'
     'rgb_to_gray.R'
@@ -36,5 +37,6 @@ Collate:
     'load_stat_result.R'
     'plot_gantt.R'
     'parse_jssp_result.R'
+    'plot_gant_for_stat.R'
     'plot_progress_on_instance.R'
     'plot_progress_on_multiple_instances.R'

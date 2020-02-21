@@ -5,22 +5,22 @@
 \title{Load an Instance Directory}
 \usage{
 aitoa.load.inst.dir(
-  instDir,
-  keepColumns = c("fes", "t", "f"),
-  makeTimeUnique = FALSE
+  inst.dir,
+  keep.columns = c("fes", "t", "f"),
+  make.time.unique = FALSE
 )
 }
 \arguments{
-\item{instDir}{the instance directory}
+\item{inst.dir}{the instance directory}
 
-\item{keepColumns}{the columns to keep, any vector containing elements
+\item{keep.columns}{the columns to keep, any vector containing elements
 \code{"t"} (for time), \code{"f"} (for the objective value), and
 \code{"fes"} (for the consumed FEs)}
 
-\item{makeTimeUnique}{should we make the time indices unique (except maybe
+\item{make.time.unique}{should we make the time indices unique (except maybe
 for the first and last point)? This makes sense when we want to plot
 diagrams over a time axis, as we then have removed redundant points right
-away. If \code{makeTimeUnique==FALSE}, then there may be multiple
+away. If \code{make.time.unique==FALSE}, then there may be multiple
 improvements at the same time index due to the resolution of the computer
 clock (while each improvement will definitely have a unique FE).}
 }

@@ -1,13 +1,13 @@
 #' @title Load a Directory with all Results
 #' @description Load all the log files in an results directory recursively
-#' @param resultsDir the results directory
-#' @param keepColumns the columns to keep, any vector containing elements
+#' @param results.dir the results directory
+#' @param keep.columns the columns to keep, any vector containing elements
 #'   \code{"t"} (for time), \code{"f"} (for the objective value), and
 #'   \code{"fes"} (for the consumed FEs)
-#' @param makeTimeUnique should we make the time indices unique (except maybe
+#' @param make.time.unique should we make the time indices unique (except maybe
 #'   for the first and last point)? This makes sense when we want to plot
 #'   diagrams over a time axis, as we then have removed redundant points right
-#'   away. If \code{makeTimeUnique==FALSE}, then there may be multiple
+#'   away. If \code{make.time.unique==FALSE}, then there may be multiple
 #'   improvements at the same time index due to the resolution of the computer
 #'   clock (while each improvement will definitely have a unique FE).
 #' @return a list of list of list of data frames, each loaded via
@@ -15,24 +15,24 @@
 #' @export aitoa.load.results.dir
 #' @include load_algorithm_dir.R
 #' @seealso \link{aitoa.load.algo.dir}
-aitoa.load.results.dir <- function(resultsDir,
-                                  keepColumns = c("fes", "t", "f"),
-                                  makeTimeUnique=FALSE) {
+aitoa.load.results.dir <- function(results.dir,
+                                   keep.columns = c("fes", "t", "f"),
+                                   make.time.unique=FALSE) {
   old.options <- options(warn=2);
-  stopifnot(is.character(resultsDir),
-            is.character(keepColumns),
-            length(keepColumns) > 0L,
-            is.logical(makeTimeUnique));
+  stopifnot(is.character(results.dir),
+            is.character(keep.columns),
+            length(keep.columns) > 0L,
+            is.logical(make.time.unique));
 
-  keepColumns <- unique(keepColumns);
-  stopifnot(length(keepColumns) > 0L,
-            all(keepColumns %in% c("fes", "t", "f")));
+  keep.columns <- unique(keep.columns);
+  stopifnot(length(keep.columns) > 0L,
+            all(keep.columns %in% c("fes", "t", "f")));
 
-  resultsDir <- normalizePath(resultsDir, mustWork=TRUE);
-  resultsDir <- force(resultsDir);
-  stopifnot(dir.exists(resultsDir));
+  results.dir <- normalizePath(results.dir, mustWork=TRUE);
+  results.dir <- force(results.dir);
+  stopifnot(dir.exists(results.dir));
 
-  algoDirs <- list.dirs(path=resultsDir,
+  algoDirs <- list.dirs(path=results.dir,
                         full.names = TRUE,
                         recursive = FALSE);
   algoDirs <- sort(algoDirs);
@@ -41,8 +41,8 @@ aitoa.load.results.dir <- function(resultsDir,
             length(unique(algoDirs)) == length(algoDirs));
 
   data <- lapply(algoDirs, aitoa.load.algo.dir,
-                 keepColumns=keepColumns,
-                 makeTimeUnique=makeTimeUnique);
+                 keep.columns=keep.columns,
+                 make.time.unique=make.time.unique);
   stopifnot(length(data) == length(algoDirs));
 
 ## verify results
@@ -54,7 +54,7 @@ aitoa.load.results.dir <- function(resultsDir,
                 length(id) > 0L);
       for(r in id) {
         stopifnot(is.data.frame(r),
-                  colnames(r) == keepColumns,
+                  colnames(r) == keep.columns,
                   nrow(r) > 0L);
       }
     }

@@ -48,6 +48,21 @@
 #'   \code{isTRUE(print.job.names)}
 #' @param xlab the label for the x-axis
 #' @param ylab the label for the y-axis
+#' @param time.max an optional maximal time value
+#' @param instance.limit an opional quality limit to be plotted as horizontal
+#'   line
+#' @param instance.limit.name the optional name of the quality limit, \code{NA}
+#'   for omit
+#' @param instance.limit.cex the font scaling for the instance limit annotation
+#'   (only if \code{!is.na(instance.limit.name)})
+#' @param instance.limit.color the color for the instance limit line
+#' @param instance.limit.lty the line type for the instance limit line
+#' @param instance.limit.lwd the line width for the instance limit line
+#' @param instance.limit.adj the adjustment for the instance limit  annotation
+#'   (only if \code{!is.na(instance.limit.name)})
+#' @param center.label an optional label to be plotted in the lower center
+#' @param center.label.cex the font size multiplier for the label
+#' @param center.label.bg the background for the label
 #' @param las the axis label oriantation (this is the default to be passed to
 #'   \link[graphics]{plot}, better don't change)
 #' @param xaxs the x-axis interval type (this is the default to be passed to
@@ -59,14 +74,26 @@
 #' @importFrom graphics axis grconvertX grconvertY plot rect text
 #' @importFrom grDevices col2rgb
 #' @include distinct_colors.R
+#' @include common_styles.R
 aitoa.plot.gantt <- function(x,
                        machine.name.func = as.character,
                        job.colors = NA_character_,
                        print.job.names = TRUE,
                        job.name.func = as.character,
-                       job.name.cex = 0.9,
-                       xlab = "Time",
-                       ylab = "Machine",
+                       job.name.cex = .gantt.default.job.name.cex,
+                       xlab = .gantt.default.x,
+                       ylab = .gantt.default.y,
+                       time.max = NA_integer_,
+                       instance.limit=NA_integer_,
+                       instance.limit.name=NA_character_,
+                       instance.limit.cex=.instance.limit.cex,
+                       instance.limit.color=.instance.limit.color,
+                       instance.limit.lty=.instance.limit.lty,
+                       instance.limit.lwd=.instance.limit.lwd,
+                       instance.limit.adj=.gantt.default.instance.limit.adj,
+                       center.label=NA_character_,
+                       center.label.cex=.gantt.label.cex,
+                       center.label.bg=.gantt.label.bg,
                        las = 1L,
                        xaxs = "i",
                        yaxs = "i",
@@ -97,7 +124,7 @@ aitoa.plot.gantt <- function(x,
             all(is.finite(jobs)),
             all(jobs >= 0L));
 
-  if(is.na(job.colors)) {
+  if(is.null(job.colors) || is.na(job.colors)) {
     job.colors <- aitoa.distinct.colors(length(jobs));
   }
   stopifnot(is.character(job.colors),
@@ -105,7 +132,7 @@ aitoa.plot.gantt <- function(x,
             length(job.colors)>= (length(jobs)),
             all(nchar(job.colors) > 0L));
 
-  if(is.na(print.job.names)) {
+  if(is.null(print.job.names) || is.na(print.job.names)) {
     print.job.names <- FALSE;
   }
   stopifnot(is.logical(print.job.names),
@@ -120,8 +147,8 @@ aitoa.plot.gantt <- function(x,
               length(job.names) == length(jobs),
               all(nchar(job.names) > 0L));
 
-    if(is.na(job.name.cex)) {
-      job.name.cex <- 0.9;
+    if(is.null(job.name.cex) || is.na(job.name.cex)) {
+      job.name.cex <- .gantt.default.job.name.cex;
     }
     stopifnot(is.numeric(job.name.cex),
               length(job.name.cex) == 1L,
@@ -135,13 +162,29 @@ aitoa.plot.gantt <- function(x,
                yaxt = "n", type = "n");
 
 
+
   xlim <- pars$xlim;
   if(is.null(xlim)) {
-    xlim <- range(unlist(lapply(x,
+    if(!(is.na(instance.limit) ||
+         is.null(instance.limit))) {
+      stopifnot(is.numeric(instance.limit),
+                is.finite(instance.limit),
+                instance.limit >= 0);
+      xlim <- range(c(xlim, instance.limit));
+    }
+    if(!(is.na(time.max) ||
+         is.null(time.max))) {
+      stopifnot(is.numeric(time.max),
+                is.finite(time.max),
+                time.max >= 0);
+      xlim <- range(c(xlim, time.max));
+    }
+
+    xlim <- range(c(xlim, unlist(lapply(x,
                     function(d) {
                       range(unname(unlist(lapply(d,
                           function(dd) c(dd$start, dd$end)))))
-                    })));
+                    }))));
     ofs.x <- max(c(sum(c(1, -1)*xlim*0.00025),
                    abs(sum(c(1, -1)*grconvertX(c(1.3, 0),
                           from="device", to="user")))));
@@ -149,8 +192,8 @@ aitoa.plot.gantt <- function(x,
       xlim[[1L]] <- xlim[[1L]] - ofs.x;
       xlim[[2L]] <- xlim[[2L]] + ofs.x;
     }
-    pars$xlim <- xlim;
   }
+  pars$xlim <- xlim;
   pars$x <- xlim;
   stopifnot(is.numeric(xlim),
             length(xlim) == 2L,
@@ -226,6 +269,118 @@ aitoa.plot.gantt <- function(x,
         }
       }
     }
+  }
+
+  if(!(is.na(instance.limit) ||
+       is.null(instance.limit))) {
+    stopifnot(is.numeric(instance.limit),
+              is.finite(instance.limit),
+              instance.limit >= 0);
+
+    if(is.na(instance.limit.cex)) {
+      instance.limit.cex = .instance.limit.cex;
+    }
+    stopifnot(!is.na(instance.limit.cex),
+              is.numeric(instance.limit.cex),
+              length(instance.limit.cex) == 1L,
+              is.finite(instance.limit.cex),
+              instance.limit.cex > 0);
+
+    if(is.na(instance.limit.color)) {
+      instance.limit.color <- .instance.limit.color;
+    }
+    stopifnot(!is.na(.instance.limit.color),
+              is.character(.instance.limit.color),
+              length(.instance.limit.color) == 1L,
+              nchar(.instance.limit.color) > 0L);
+
+    if(is.na(instance.limit.lty)) {
+      instance.limit.lty <- .instance.limit.lty;
+    }
+    stopifnot(!is.na(instance.limit.lty),
+              is.character(instance.limit.lty) ||
+                is.numeric(instance.limit.lty),
+              length(instance.limit.lty) == 1L);
+
+    if(is.na(instance.limit.lwd)) {
+      instance.limit.lwd <- .instance.limit.lwd;
+    }
+    stopifnot(!is.na(instance.limit.lwd),
+              is.numeric(instance.limit.lwd),
+              is.finite(instance.limit.lwd),
+              instance.limit.lwd > 0);
+
+    abline(v=instance.limit,
+           col=instance.limit.color,
+           lty=instance.limit.lty,
+           lwd=instance.limit.lwd);
+
+    if(!is.na(instance.limit.name)) {
+      stopifnot(is.character(instance.limit.name),
+                length(instance.limit.name) == 1L);
+      if(nchar(instance.limit.name) > 0L) {
+        instance.limit.name <- paste0(instance.limit.name,
+                                      "=", instance.limit);
+      } else {
+        instance.limit.name <- as.character(instance.limit);
+      }
+
+      if(is.null(instance.limit.adj) || all(is.na(instance.limit.adj))) {
+        instance.limit.adj <- c(-0.1, -0.1);
+      }
+      stopifnot(is.numeric(instance.limit.adj),
+                length(instance.limit.adj) > 0L,
+                length(instance.limit.adj) <= 2L,
+                all(is.finite(instance.limit.adj)));
+
+      text(x= instance.limit,
+           y= .gantt.min,
+           labels = instance.limit.name,
+           adj = instance.limit.adj,
+           col = instance.limit.color,
+           cex = instance.limit.cex,
+           srt = 90);
+    }
+  }
+
+  if(!(is.null(center.label) || any(is.na(center.label)))) {
+    stopifnot(is.character(center.label),
+              length(center.label) == 1L,
+              !is.na(center.label.bg),
+              nchar(center.label.bg) > 0L);
+
+    if(is.null(center.label.bg) || any(is.na(center.label.bg))) {
+      center.label.bg <- .gantt.label.bg;
+    }
+    stopifnot(is.character(center.label.bg),
+              length(center.label.bg) == 1L,
+              !is.na(center.label.bg),
+              nchar(center.label.bg) > 0L);
+
+    if(is.null(center.label.cex) || any(is.na(center.label.cex))) {
+      center.label.cex <- .gantt.label.cex;
+    }
+    stopifnot(is.numeric(center.label.cex),
+              length(center.label.cex) == 1L,
+              !is.na(center.label.cex),
+              is.finite(center.label.cex),
+              center.label.cex > 0);
+
+    legend(x=mean(xlim),
+           y=0.3*length(machines)/10,
+           legend=center.label,
+           xjust=0.5,
+           yjust=0.5,
+           box.lwd=0L,
+           seg.len = -0.7,
+           y.intersp = 0,
+           lwd = 0,
+           pch = NA,
+           lty = NA,
+           pt.lwd = 0,
+           pt.cex = 0,
+           cex=center.label.cex,
+           bg=center.label.bg);
   }
 
   invisible(NULL);

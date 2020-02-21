@@ -11,8 +11,24 @@ aitoa.plot.progress.on.multiple.instances(
   instances,
   time.column = c("t", "fes"),
   max.time = NA_integer_,
-  instances.limits = NA_integer_,
   algorithm.colors = aitoa.distinct.colors(length(algorithms)),
+  algorithm.lty = .default.lty,
+  algorithm.lwd = .default.lwd,
+  instances.limit = NA_integer_,
+  instances.limit.name = NULL,
+  instance.limit.color = .instance.limit.color,
+  instance.limit.lty = .instance.limit.lty,
+  instance.limit.lwd = .instance.limit.lwd,
+  legend.cex = .legend.cex,
+  legend.bg = .legend.bg,
+  time.axis.text = if (time.column == "t") .time.ms.text else .time.fes.text,
+  quality.axis.text = .quality.text,
+  mgp = .default.mgp,
+  tck = .default.tck,
+  cex = .default.cex,
+  cex.single = 1,
+  mar = .default.mar.without.labels,
+  mar.single = .default.mar.without.labels,
   ...
 )
 }
@@ -27,13 +43,50 @@ set, will be used in the legend}
 
 \item{time.column}{the time dimension, either \code{t} or \code{fes}}
 
-\item{max.time}{an optional limit for the time}
+\item{max.time}{an optional limit for the time, can be a vector}
 
-\item{instances.limits}{an optional vector of lower bounds or best-known
-solutions for the instances (the \code{names} of the vector will be used in
-the legend)}
+\item{algorithm.colors}{a character vector of the same length as
+\code{algorithms} providing the colors to be used for the algorithms}
 
-\item{algorithm.colors}{the colors to be used for the different algorithms}
+\item{algorithm.lty}{the line type to be used for the algorithms, can be
+vector}
+
+\item{algorithm.lwd}{the line width to be used for the algorithms, can be
+vector}
+
+\item{instances.limit}{an optional vector of lower bounds or best-known
+solutions for the instances}
+
+\item{instances.limit.name}{an optional name or name vector for the instances
+limits}
+
+\item{instance.limit.color}{the color for the instance limit line}
+
+\item{instance.limit.lty}{the line type for the instance limit line}
+
+\item{instance.limit.lwd}{the line width for the instance limit line}
+
+\item{legend.cex}{the character scaling for the legend}
+
+\item{legend.bg}{the background color for the legend}
+
+\item{time.axis.text}{the text to be used for labeling the time axis,
+\code{NA} for omit label}
+
+\item{quality.axis.text}{the text to be used for labeling the quality axis,
+\code{NA} for omit label}
+
+\item{mgp}{the mgp parameter to be passed to \link[graphics]{plot}}
+
+\item{tck}{the tck parameter to be passed to \link[graphics]{plot}}
+
+\item{cex}{the default character scaling}
+
+\item{cex.single}{the cex parameter(s) to be passed to the single diagrams}
+
+\item{mar}{the default margins, can be a list of vectors, one for each plot}
+
+\item{mar.single}{the margin parameter(s) to be passed to the single diagrams}
 
 \item{...}{parameters to be passed to \link[graphics]{par}}
 }

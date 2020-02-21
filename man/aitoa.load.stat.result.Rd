@@ -7,7 +7,7 @@
 \usage{
 aitoa.load.stat.result(
   end.result.stats,
-  resultsDir,
+  results.dir,
   algorithm,
   instance,
   statistic = c("best.f.median", "best.f.min", "best.f.q050", "best.f.q159",
@@ -20,7 +20,7 @@ aitoa.load.stat.result(
 \item{end.result.stats}{the data frame with the end result statistics,
 obtained via \link{aitoa.load.end.result.stats}}
 
-\item{resultsDir}{the directory with the end results}
+\item{results.dir}{the directory with the end results}
 
 \item{algorithm}{the algorithm id}
 

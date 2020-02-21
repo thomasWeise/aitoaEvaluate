@@ -12,8 +12,21 @@ aitoa.plot.progress.on.instance(
   time.column = c("t", "fes"),
   max.time = NA_integer_,
   algorithm.colors = aitoa.distinct.colors(length(algorithms)),
+  algorithm.lty = .default.lty,
+  algorithm.lwd = .default.lwd,
   instance.limit = NA_integer_,
   instance.limit.name = NA_character_,
+  instance.limit.color = .instance.limit.color,
+  instance.limit.lty = .instance.limit.lty,
+  instance.limit.lwd = .instance.limit.lwd,
+  legend.cex = .legend.cex,
+  legend.bg = .legend.bg,
+  time.axis.text = if (time.column == "t") .time.ms.text else .time.fes.text,
+  quality.axis.text = .quality.text,
+  mgp = .default.mgp,
+  tck = .default.tck,
+  cex = .default.cex,
+  mar = .default.mar.without.labels,
   ...
 )
 }
@@ -34,10 +47,40 @@ provided) are used for the legend}
 \item{algorithm.colors}{a character vector of the same length as
 \code{algorithms} providing the colors to be used for the algorithms}
 
+\item{algorithm.lty}{the line type to be used for the algorithms, can be
+vector}
+
+\item{algorithm.lwd}{the line width to be used for the algorithms, can be
+vector}
+
 \item{instance.limit}{an opional quality limit to be plotted as horizontal
 line}
 
 \item{instance.limit.name}{the optional name of the quality limit}
+
+\item{instance.limit.color}{the color for the instance limit line}
+
+\item{instance.limit.lty}{the line type for the instance limit line}
+
+\item{instance.limit.lwd}{the line width for the instance limit line}
+
+\item{legend.cex}{the character scaling for the legend}
+
+\item{legend.bg}{the background color for the legend}
+
+\item{time.axis.text}{the text to be used for labeling the time axis,
+\code{NA} for omit label}
+
+\item{quality.axis.text}{the text to be used for labeling the quality axis,
+\code{NA} for omit label}
+
+\item{mgp}{the mgp parameter to be passed to \link[graphics]{plot}}
+
+\item{tck}{the tck parameter to be passed to \link[graphics]{plot}}
+
+\item{cex}{the default character scaling}
+
+\item{mar}{the default margins}
 
 \item{...}{parameters to be passed to \link[graphics]{par}}
 }

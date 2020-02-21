@@ -27,13 +27,13 @@
 #'   In order to test for this, we use the 64 bit integers from the \code{bit64}
 #'   package, since \code{R} does not support 64 bit integers natively.
 #' @param file the log file to load
-#' @param keepColumns the columns to keep, any vector containing elements
+#' @param keep.columns the columns to keep, any vector containing elements
 #'   \code{"t"} (for time), \code{"f"} (for the objective value), and
 #'   \code{"fes"} (for the consumed FEs)
-#' @param makeTimeUnique should we make the time indices unique (except maybe
+#' @param make.time.unique should we make the time indices unique (except maybe
 #'   for the first and last point)? This makes sense when we want to plot
 #'   diagrams over a time axis, as we then have removed redundant points right
-#'   away. If \code{makeTimeUnique==FALSE}, then there may be multiple
+#'   away. If \code{make.time.unique==FALSE}, then there may be multiple
 #'   improvements at the same time index due to the resolution of the computer
 #'   clock (while each improvement will definitely have a unique FE).
 #' @return a data frame with the columns \code{t} (time in ms), \code{fes}
@@ -45,13 +45,13 @@
 #' @export aitoa.load.log.file
 #' @include parse_file_name.R
 aitoa.load.log.file <- function(file,
-                                keepColumns = c("fes", "t", "f"),
-                                makeTimeUnique=FALSE) {
+                                keep.columns = c("fes", "t", "f"),
+                                make.time.unique=FALSE) {
   old.options <- options(warn=2);
   stopifnot(is.character(file),
-            is.character(keepColumns),
-            length(keepColumns) > 0L,
-            is.logical(makeTimeUnique));
+            is.character(keep.columns),
+            length(keep.columns) > 0L,
+            is.logical(make.time.unique));
 
   file <- normalizePath(file, mustWork=TRUE);
   file <- force(file);
@@ -62,9 +62,9 @@ aitoa.load.log.file <- function(file,
   data <- readLines(con=file, warn=FALSE);
   data <- force(data);
 
-  keepColumns <- unique(keepColumns);
-  stopifnot(length(keepColumns) > 0L,
-            all(keepColumns %in% c("fes", "t", "f")));
+  keep.columns <- unique(keep.columns);
+  stopifnot(length(keep.columns) > 0L,
+            all(keep.columns %in% c("fes", "t", "f")));
 
   # detect consumed FEs
   consumedFEs <- grep("# CONSUMED_FES:", data, fixed = TRUE);
@@ -135,7 +135,7 @@ aitoa.load.log.file <- function(file,
   stopifnot(length(unique(fes)) == length(fes));
 
   startPointAdded <- FALSE;
-  if(isTRUE(makeTimeUnique)) {
+  if(isTRUE(make.time.unique)) {
     # take care of re-occuring time values
     t.unique.indexes <- findInterval(unique(t), t);
     if(t.unique.indexes[1L] != 1L) {
@@ -222,7 +222,7 @@ aitoa.load.log.file <- function(file,
   }
 
   # finished converting
-  data <- unique(data.frame(t=t, fes=fes, f=f)[keepColumns]);
+  data <- unique(data.frame(t=t, fes=fes, f=f)[keep.columns]);
   rm("f");
   rm("fes");
   rm("t");
@@ -232,8 +232,8 @@ aitoa.load.log.file <- function(file,
   data <- do.call(force, list(x=data));
   stopifnot(is.data.frame(data),
             nrow(data) > 0L,
-            ncol(data) == length(keepColumns),
-            names(data) == keepColumns);
+            ncol(data) == length(keep.columns),
+            names(data) == keep.columns);
 
   attr(data, "file") <- file;
   info <- unname(unlist(aitoa.parse.file.name(file)));

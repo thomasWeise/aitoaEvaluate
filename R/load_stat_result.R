@@ -10,7 +10,7 @@
 #'   \code{aitoa.load.result.from.log.file}.
 #' @param end.result.stats the data frame with the end result statistics,
 #'   obtained via \link{aitoa.load.end.result.stats}
-#' @param resultsDir the directory with the end results
+#' @param results.dir the directory with the end results
 #' @param algorithm the algorithm id
 #' @param instance the instance if
 #' @param statistic the statistic for which the matching run is sought
@@ -33,7 +33,7 @@
 #' @include load_result_from_log_file.R
 #' @export aitoa.load.stat.result
 aitoa.load.stat.result <- function(end.result.stats,
-                                   resultsDir,
+                                   results.dir,
                                    algorithm,
                                    instance,
                                    statistic=c("best.f.median",
@@ -51,10 +51,10 @@ aitoa.load.stat.result <- function(end.result.stats,
                                                "success.fes.min",
                                                "success.fes.max")) {
   .check.end.result.stats(end.result.stats);
-  stopifnot(is.character(resultsDir),
-            !is.na(resultsDir),
-            length(resultsDir) == 1L,
-            nchar(resultsDir) > 0L,
+  stopifnot(is.character(results.dir),
+            !is.na(results.dir),
+            length(results.dir) == 1L,
+            nchar(results.dir) > 0L,
             is.character(instance),
             !is.na(instance),
             length(instance) == 1L,
@@ -66,12 +66,12 @@ aitoa.load.stat.result <- function(end.result.stats,
   statistic <- match.arg(statistic);
   stopifnot(is.character(statistic),
             nchar(statistic) > 0L);
-  resultsDir <- normalizePath(resultsDir, mustWork = TRUE);
-  stopifnot(is.character(resultsDir),
-            length(resultsDir) == 1L,
-            !is.na(resultsDir),
-            nchar(resultsDir) > 0L,
-            dir.exists(resultsDir));
+  results.dir <- normalizePath(results.dir, mustWork = TRUE);
+  stopifnot(is.character(results.dir),
+            length(results.dir) == 1L,
+            !is.na(results.dir),
+            nchar(results.dir) > 0L,
+            dir.exists(results.dir));
 
   found <- (end.result.stats$algorithm == algorithm) &
            (end.result.stats$instance == instance);
@@ -111,7 +111,7 @@ aitoa.load.stat.result <- function(end.result.stats,
             !any(is.na(file)),
             all(nchar(file) > 0L));
 
-  file <- file.path(resultsDir,
+  file <- file.path(results.dir,
                     file[[1L]],
                     file[[2L]],
                     paste0(file[[1L]], "_",
