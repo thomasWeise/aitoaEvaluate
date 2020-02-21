@@ -170,7 +170,7 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
                                    instance),
                          mustWork = TRUE);
     res <- aitoa.load.inst.dir(dir, c(time.column, "f"),
-                               makeTimeUnique = TRUE);
+                               make.time.unique = TRUE);
     stopifnot(length(res) > 0L);
 
     return(lapply(res, function(frame) {

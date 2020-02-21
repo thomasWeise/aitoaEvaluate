@@ -9,7 +9,7 @@
 #' @param algorithm the algorithm id
 #' @param instance the instance id
 #' @param instance.name the name of the instance, as it should be printed
-#' @param statistics the statistics for which a matching run should be sought
+#' @param statistic the statistics for which a matching run should be sought
 #' @param xlab the x-axis label
 #' @param ylab the y-axis label
 #' @param machine.name.func a function converting a machine index into a
