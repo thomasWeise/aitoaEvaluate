@@ -2,6 +2,29 @@
 .gantt.max <- 1/3;
 
 
+.check.gantt.data <- function(data) {
+  stopifnot(is.list(data),
+  length(data) > 0L,
+  all(vapply(data, is.list, FALSE)),
+  all(vapply(data, length, NA_integer_) >= 0L),
+  all(vapply(data, function(xx) all(vapply(xx, is.list, FALSE)), FALSE)),
+  all(vapply(data, function(xx) all(vapply(xx, length, NA_integer_)==3L), FALSE)));
+
+  dev.names <- c("job", "start", "end");
+  for(machine in data) {
+    stopifnot(is.list(machine),
+              length(machine) >= 0L);
+    for(task in machine) {
+      stopifnot(is.list(task),
+                length(task) >= 3L,
+                all(names(task)[1L:3L] == dev.names));
+      ii <- as.integer(unlist(task[1L:3L]));
+      stopifnot(all(is.finite(ii)),
+                all(ii >= 0L));
+    }
+  }
+}
+
 
 #' @title Plot a Gantt Chart
 #' @description Plot a Gantt chart based on a list \code{x} of lists of data.
@@ -50,12 +73,7 @@ aitoa.plot.gantt <- function(x,
                        ...) {
 
 # validate input data
-  stopifnot(is.list(x),
-            length(x) > 0L,
-            all(vapply(x, is.list, FALSE)),
-            all(vapply(x, length, NA_integer_) > 0L),
-            all(vapply(x, function(xx) all(vapply(xx, is.list, FALSE)), FALSE)),
-            all(vapply(x, function(xx) all(vapply(xx, length, NA_integer_)==3L), FALSE)));
+  .check.gantt.data(x);
 
 # set up machine data
   machines <- as.integer(seq.int(from=0L, to=(length(x) - 1L)));
@@ -127,8 +145,10 @@ aitoa.plot.gantt <- function(x,
     ofs.x <- max(c(sum(c(1, -1)*xlim*0.00025),
                    abs(sum(c(1, -1)*grconvertX(c(1.3, 0),
                           from="device", to="user")))));
-    xlim[[1L]] <- xlim[[1L]] - ofs.x;
-    xlim[[2L]] <- xlim[[2L]] + ofs.x;
+    if(is.finite(ofs.x)) {
+      xlim[[1L]] <- xlim[[1L]] - ofs.x;
+      xlim[[2L]] <- xlim[[2L]] + ofs.x;
+    }
     pars$xlim <- xlim;
   }
   pars$x <- xlim;
@@ -143,8 +163,10 @@ aitoa.plot.gantt <- function(x,
     ofs.y <- max(c(sum(c(1, -1)*ylim*0.00025),
                    abs(sum(c(1, -1)*grconvertY(c(1.3, 0),
                             from="device", to="user")))));
-    ylim[[1L]] <- ylim[[1L]] - ofs.y;
-    ylim[[2L]] <- ylim[[2L]] + ofs.y;
+    if(is.finite(ofs.y)) {
+      ylim[[1L]] <- ylim[[1L]] - ofs.y;
+      ylim[[2L]] <- ylim[[2L]] + ofs.y;
+    }
     pars$ylim <- ylim;
   }
   pars$y <- ylim;

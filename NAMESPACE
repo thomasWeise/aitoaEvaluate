@@ -2,6 +2,7 @@
 
 export(aitoa.distinct.colors)
 export(aitoa.graphic)
+export(aitoa.jssp.parse.result)
 export(aitoa.load.algo.dir)
 export(aitoa.load.end.result.stats)
 export(aitoa.load.inst.dir)

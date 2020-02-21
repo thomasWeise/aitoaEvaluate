@@ -35,5 +35,6 @@ Collate:
     'load_results_dir.R'
     'load_stat_result.R'
     'plot_gantt.R'
+    'parse_jssp_result.R'
     'plot_progress_on_instance.R'
     'plot_progress_on_multiple_instances.R'
