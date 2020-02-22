@@ -1,5 +1,3 @@
-
-
 #' @title Plot a Gantt Chart based on End Result Statistics
 #' @description Plot a Gantt chart extract from a log file matching a given end
 #'   result statistic.
@@ -107,6 +105,7 @@ aitoa.plot.gantt.for.stat <- function(
             length(algorithm) == 1L,
             is.character(instance),
             length(instance) == 1L);
+  statistic <- match.arg(statistic);
   result <- aitoa.load.stat.result(
               end.result.stats = end.result.stats,
               results.dir = results.dir,
@@ -116,6 +115,15 @@ aitoa.plot.gantt.for.stat <- function(
   stopifnot(is.list(result));
   data <- aitoa.jssp.parse.result(result$best.y);
   stopifnot(is.list(data));
+
+  if(is.null(instance.name) || all(is.na(instance.name))) {
+    instance.name <- instance;
+  }
+  stopifnot(is.character(instance.name),
+            length(instance.name) == 1L,
+            !is.na(instance.name),
+            nchar(instance.name) > 0L);
+
   aitoa.plot.gantt(x=data,
                    machine.name.func = machine.name.func,
                    job.colors = job.colors,

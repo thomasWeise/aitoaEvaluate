@@ -26,7 +26,6 @@ aitoa.plot.progress.on.multiple.instances(
   mgp = .default.mgp,
   tck = .default.tck,
   cex = .default.cex,
-  cex.single = 1,
   mar = .default.mar.without.labels,
   mar.single = .default.mar.without.labels,
   ...
@@ -81,8 +80,6 @@ limits}
 \item{tck}{the tck parameter to be passed to \link[graphics]{plot}}
 
 \item{cex}{the default character scaling}
-
-\item{cex.single}{the cex parameter(s) to be passed to the single diagrams}
 
 \item{mar}{the default margins, can be a list of vectors, one for each plot}
 

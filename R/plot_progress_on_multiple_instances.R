@@ -34,7 +34,6 @@
 #' @param tck the tck parameter to be passed to \link[graphics]{plot}
 #' @param cex the default character scaling
 #' @param mar the default margins, can be a list of vectors, one for each plot
-#' @param cex.single the cex parameter(s) to be passed to the single diagrams
 #' @param mar.single the margin parameter(s) to be passed to the single diagrams
 #' @param ... parameters to be passed to \link[graphics]{par}
 #' @export aitoa.plot.progress.on.multiple.instances
@@ -61,7 +60,6 @@ aitoa.plot.progress.on.multiple.instances <-
                                 mgp=.default.mgp,
                                 tck=.default.tck,
                                 cex=.default.cex,
-                                cex.single=1,
                                 mar=.default.mar.without.labels,
                                 mar.single=.default.mar.without.labels,
                                 ...) {
@@ -180,7 +178,7 @@ aitoa.plot.progress.on.multiple.instances <-
                                     quality.axis.text=quality.axis.text,
                                     mgp=mgp,
                                     tck=tck,
-                                    cex=cex.single,
+                                    cex=cex,
                                     mar=if(is.null(mar.single)) NULL else mar.single[[i]],
                                     ...);
   }

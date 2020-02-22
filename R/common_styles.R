@@ -23,7 +23,7 @@
 .gantt.default.instance.limit.adj <- c(-0.1, -0.1)
 .gantt.default.job.name.cex <- 0.9;
 
-.gantt.label.bg <- "#FFFFFFCC";
+.gantt.label.bg <- "#FFFFFFD5";
 .gantt.label.cex <- .legend.cex;
 
 .default.time.column <- "t";

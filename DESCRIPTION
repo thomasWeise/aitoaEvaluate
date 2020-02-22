@@ -38,5 +38,6 @@ Collate:
     'plot_gantt.R'
     'parse_jssp_result.R'
     'plot_gantt_for_stat.R'
+    'plot_gantt_for_stat_on_multiple_instances.R'
     'plot_progress_on_instance.R'
     'plot_progress_on_multiple_instances.R'
