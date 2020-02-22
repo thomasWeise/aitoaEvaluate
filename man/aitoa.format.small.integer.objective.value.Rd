@@ -7,7 +7,7 @@
 aitoa.format.small.integer.objective.value(t)
 }
 \arguments{
-\item{f}{the objective value}
+\item{t}{the objective value}
 }
 \value{
 the formatted string

@@ -15,6 +15,8 @@ aitoa.statistics.cols.to.formats(
 )
 }
 \arguments{
+\item{cols}{the column types}
+
 \item{format.time}{the time formatting function}
 
 \item{format.fes}{the FEs formatting function}
@@ -26,8 +28,6 @@ aitoa.statistics.cols.to.formats(
 \item{format.counter}{the counter formatting function}
 
 \item{format.setup}{the setup formatting function}
-
-\item{col}{the column type}
 }
 \value{
 the formatter function

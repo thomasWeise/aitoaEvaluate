@@ -167,7 +167,7 @@ aitoa.format.time <- function(t) {
 
 #' @title Format an Integer-based Objective Value
 #' @description format an integer objective value
-#' @param f the objective value
+#' @param t the objective value
 #' @return the formatted string
 #' @export aitoa.format.integer.objective.value
 aitoa.format.integer.objective.value <- function(t) {
@@ -178,7 +178,7 @@ aitoa.format.integer.objective.value <- function(t) {
 
 #' @title Format a Small Integer-based Objective Value
 #' @description format a small integer objective value
-#' @param f the objective value
+#' @param t the objective value
 #' @return the formatted string
 #' @export aitoa.format.small.integer.objective.value
 aitoa.format.small.integer.objective.value <- function(t) {
@@ -275,7 +275,7 @@ aitoa.statistics.col.to.format <- function(col,
 }
 
 #' @title Convert a Column Type to a Formatter Function
-#' @param col the column type
+#' @param cols the column types
 #' @param format.time the time formatting function
 #' @param format.fes the FEs formatting function
 #' @param format.improvements the improvements formatting function
