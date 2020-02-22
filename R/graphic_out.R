@@ -30,6 +30,9 @@
 #'   on \code{width}, if available)
 #' @param font.size the default font size
 #' @param dpi the dots per inch to use if pixel-based rendering is required
+#' @param skip.if.exists do not create files that already do exist and skip the
+#'   diagram creation if so
+#' @param bg the background color
 #' @param body the expression to be executed for painting the graphic.
 #' @return the path to the newly created graphic
 #' @importFrom grDevices cairo_pdf cairo_ps dev.off png svg
@@ -42,16 +45,29 @@ aitoa.graphic <- function(directory=".",
                           height=width/.goldenRatio,
                           font.size=10L,
                           dpi=900L,
+                          skip.if.exists = TRUE,
+                          bg = "transparent",
                           body={ }) {
 
-  stopifnot(is.character(name),
-            length(name) == 1L,
-            nchar(name) > 0L);
+  name <- .file.name(name);
+  directory <- .dir.ensure(directory);
 
-  name <- .internal.gsub(" ", "_", name, fixed=TRUE);
-  name <- .internal.gsub(".", "_", name, fixed=TRUE);
-  name <- .internal.gsub("%", "_", name, fixed=TRUE);
-  name <- .internal.gsub("__", "_", name, fixed=TRUE);
+  type <- match.arg(type);
+  stopifnot(is.character(type),
+            nchar(type) == 3L);
+
+  file <- normalizePath(file.path(directory,
+                        paste0(name, ".", type)),
+                        mustWork = FALSE);
+  stopifnot(is.character(file),
+            length(file) == 1L);
+  if(file.exists(file) && (file.size(file) > 10L)) {
+    if(skip.if.exists) {
+      file <- normalizePath(file, mustWork = TRUE);
+      return(file);
+    }
+    file.remove(file);
+  }
 
   if(is.na(width)) {
     if(is.na(height)) {
@@ -95,24 +111,14 @@ aitoa.graphic <- function(directory=".",
             dpi > 10L,
             dpi < 100000L);
 
-  stopifnot(is.character(directory),
-            length(directory) == 1L,
-            nchar(directory) > 0L);
-  directory <- normalizePath(directory, mustWork = FALSE);
-  stopifnot(is.character(directory),
-            nchar(directory) > 0L);
-  dir.create(directory, showWarnings=FALSE, recursive = FALSE);
-  directory <- normalizePath(directory, mustWork = TRUE);
-  stopifnot(is.character(directory),
-            nchar(directory) > 0L);
-
-  type <- match.arg(type);
-  stopifnot(is.character(type),
-            nchar(type) == 3L);
-
-  file <- normalizePath(file.path(directory,
-                                  paste0(name, ".", type)),
-                        mustWork = FALSE);
+  if(is.null(bg) || all(is.na(bg))) {
+    bg <- "transparent";
+  }
+  stopifnot(!is.null(bg),
+            is.character(bg),
+            length(bg) == 1L,
+            !any(is.na(bg)),
+            nchar(bg) > 0L);
 
   .logger("Now creating file '", file, "'.");
 
@@ -122,7 +128,8 @@ aitoa.graphic <- function(directory=".",
         height = height,
         pointsize = font.size,
         onefile = TRUE,
-        antialias = "subpixel");
+        antialias = "subpixel",
+        bg = bg);
   } else {
     if(identical(type, "eps")) {
       cairo_ps(filename = file,
@@ -131,7 +138,8 @@ aitoa.graphic <- function(directory=".",
                pointsize = font.size,
                onefile = TRUE,
                antialias = "subpixel",
-               fallback_resolution = dpi)
+               fallback_resolution = dpi,
+               bg = bg)
     }  else {
       if(identical(type, "pdf")) {
         cairo_pdf(filename = file,
@@ -140,7 +148,8 @@ aitoa.graphic <- function(directory=".",
                   pointsize = font.size,
                   onefile = TRUE,
                   antialias = "subpixel",
-                  fallback_resolution = dpi);
+                  fallback_resolution = dpi,
+                  bg = bg);
       } else {
         if(identical(type, "png")) {;
           png(filename = file,
@@ -150,7 +159,8 @@ aitoa.graphic <- function(directory=".",
               pointsize = font.size,
               res = dpi,
               type = "cairo-png",
-              antialias = "subpixel");
+              antialias = "subpixel",
+              bg = bg);
         } else {
           stop(paste0("illegal graphics extension: ", type));
         }

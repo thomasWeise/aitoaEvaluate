@@ -226,9 +226,12 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   do.call(plot, pars);
 
   if(!(is.null(instance.limit) || is.na(instance.limit))) {
-    instance.limit.color <- .color(instance.limit.color, .instance.limit.color);
-    instance.limit.lty <- .lty(instance.limit.lty, .instance.limit.lty);
-    instance.limit.lwd <- .lwd(instance.limit.lwd, .instance.limit.lwd);
+    instance.limit.color <- .color(instance.limit.color,
+                                   .instance.limit.color);
+    instance.limit.lty <- .lty(instance.limit.lty,
+                               .instance.limit.lty);
+    instance.limit.lwd <- .lwd(instance.limit.lwd,
+                               .instance.limit.lwd);
 
     abline(h=instance.limit,
            col=instance.limit.color,
@@ -287,7 +290,7 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
     legend.text  <- c(legend.text, instance.limit.name);
     legend.color <- c(legend.color, instance.limit.color);
     legend.lty <- c(legend.lty, instance.limit.lty);
-    legend.lwd <-c(legend.lwd, instance.limit.lwd);
+    legend.lwd <- c(legend.lwd, instance.limit.lwd);
   }
 
   legend.cex <- .cex(legend.cex, .legend.cex);

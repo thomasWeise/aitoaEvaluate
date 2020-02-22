@@ -56,3 +56,40 @@
             dir.exists(dir));
   return(dir);
 }
+
+
+.dir.ensure <- function(dir) {
+  stopifnot(!is.null(dir),
+            is.character(dir),
+            length(dir) == 1L,
+            !is.na(dir),
+            nchar(dir) > 0L);
+  dir <- normalizePath(dir, mustWork = FALSE);
+  stopifnot(is.character(dir),
+            nchar(dir) > 0L);
+  dir.create(dir, showWarnings=FALSE, recursive=TRUE);
+  dir <- normalizePath(dir, mustWork = TRUE);
+  stopifnot(!is.null(dir),
+            is.character(dir),
+            length(dir) == 1L,
+            !is.na(dir),
+            nchar(dir) > 0L,
+            dir.exists(dir));
+  return(dir);
+}
+
+.file.name <- function(name) {
+  stopifnot(is.character(name),
+            length(name) == 1L,
+            !is.na(name),
+            nchar(name) > 0L);
+  name <- .internal.gsub(" ", "_", name, fixed=TRUE);
+  name <- .internal.gsub(".", "_", name, fixed=TRUE);
+  name <- .internal.gsub("%", "_", name, fixed=TRUE);
+  name <- .internal.gsub("__", "_", name, fixed=TRUE);
+  stopifnot(is.character(name),
+            length(name) == 1L,
+            !is.na(name),
+            nchar(name) > 0L);
+  return(name);
+}

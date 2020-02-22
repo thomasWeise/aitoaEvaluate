@@ -7,6 +7,7 @@
 aitoa.evaluate.jssp.experiment(
   results.dir = ".",
   evaluation.dir = file.path(results.dir, "..", "evaluation"),
+  skip.if.exists = TRUE,
   graphics.type = c("svg", "pdf", "eps", "png")
 )
 }
@@ -14,6 +15,8 @@ aitoa.evaluate.jssp.experiment(
 \item{results.dir}{the results directory}
 
 \item{evaluation.dir}{the evaluation directory}
+
+\item{skip.if.exists}{skip all existing evaluation diagrams and files}
 
 \item{graphics.type}{the type of graphics to generate}
 }

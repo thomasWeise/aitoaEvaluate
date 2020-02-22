@@ -2,6 +2,7 @@
 #' @description Process the results of the JSSP experiment.
 #' @param results.dir the results directory
 #' @param evaluation.dir the evaluation directory
+#' @param skip.if.exists skip all existing evaluation diagrams and files
 #' @param graphics.type the type of graphics to generate
 #' @include utils.R
 #' @include load_end_result_stats.R
@@ -10,6 +11,7 @@
 #' @export aitoa.evaluate.jssp.experiment
 aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                                            evaluation.dir=file.path(results.dir, "..", "evaluation"),
+                                           skip.if.exists = TRUE,
                                            graphics.type=c("svg", "pdf", "eps", "png")) {
   results.dir <- .dir.exists(results.dir);
   evaluation.dir <- .dir.exists(evaluation.dir);
@@ -29,13 +31,14 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
   height <- 8.6;
 
   larger.mar <- .default.mar.without.labels;
-  larger.mar[[4L]] = 1;
+  larger.mar[[4L]] = 0.87;
 
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_1rs_med",
                 type = graphics.type,
                 width = width,
                 height = height,
+                skip.if.exists = skip.if.exists,
                 body = {
     aitoa.plot.gantt.for.stat.on.multiple.instances(
       end.result.stats = end.result.stats,
@@ -51,6 +54,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 type = graphics.type,
                 width = width,
                 height = height,
+                skip.if.exists = skip.if.exists,
                 body = {
                   aitoa.plot.gantt.for.stat.on.multiple.instances(
                     end.result.stats = end.result.stats,
@@ -66,6 +70,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 type = graphics.type,
                 width = width,
                 height = height,
+                skip.if.exists = skip.if.exists,
                 body = {
                 aitoa.plot.progress.on.multiple.instances(
                   results.dir=results.dir,
@@ -79,20 +84,67 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 )
               });
 
-  writeLines(aitoa.make.stat.table.md(
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_1rs_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+    aitoa.make.stat.table.md(
     end.result.stats,
     algorithms="1rs",
     instances=instances,
     instances.limit=instances.limit,
     mark.smallest.stat = FALSE
-  ), file.path(evaluation.dir, "1rs_results.md"));
+  ) } );
 
-  writeLines(aitoa.make.stat.table.md(
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_rs_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+  aitoa.make.stat.table.md(
     end.result.stats,
     algorithms=c("1rs", "rs"),
     instances=instances,
     instances.limit=instances.limit
-  ), file.path(evaluation.dir, "rs_results.md"));
+  ) } );
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_hc_1swap_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=c("rs", "hc_1swap"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_hc_1swap_med",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.gantt.for.stat.on.multiple.instances(
+                    end.result.stats = end.result.stats,
+                    results.dir = results.dir,
+                    algorithm = "hc_1swap",
+                    instances = instances,
+                    print.job.names = FALSE#,
+#                   mar.single = list(NA, larger.mar, NA, NA))
+                  )
+                });
+
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);

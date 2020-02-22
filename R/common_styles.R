@@ -83,6 +83,7 @@
             all(is.finite(v)),
             all(v >= min),
             all(v <= max));
+  return(v);
 }
 
 .default.char <- function(v, default) {

@@ -12,6 +12,8 @@ aitoa.graphic(
   height = width/.goldenRatio,
   font.size = 10L,
   dpi = 900L,
+  skip.if.exists = TRUE,
+  bg = "transparent",
   body = { }
 )
 }
@@ -32,6 +34,11 @@ on \code{width}, if available)}
 \item{font.size}{the default font size}
 
 \item{dpi}{the dots per inch to use if pixel-based rendering is required}
+
+\item{skip.if.exists}{do not create files that already do exist and skip the
+diagram creation if so}
+
+\item{bg}{the background color}
 
 \item{body}{the expression to be executed for painting the graphic.}
 }

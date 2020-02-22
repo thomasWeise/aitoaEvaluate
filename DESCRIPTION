@@ -44,3 +44,4 @@ Collate:
     'parse_jssp_result.R'
     'plot_progress_on_instance.R'
     'plot_progress_on_multiple_instances.R'
+    'text_out.R'
