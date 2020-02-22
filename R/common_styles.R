@@ -18,7 +18,7 @@
 .default.mgp <- c(1, 0.43, 0);
 .default.tck <- -0.02;
 
-.default.mar.without.labels <- c(2.16, 1.6, 0.51, 0.15);
+.default.mar.without.labels <- c(1.6, 1.6, 0.51, 0.15);
 
 .gantt.default.instance.limit.adj <- c(-0.1, -0.1)
 .gantt.default.job.name.cex <- 0.9;
