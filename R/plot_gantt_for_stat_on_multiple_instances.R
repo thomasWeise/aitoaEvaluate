@@ -158,8 +158,8 @@ aitoa.plot.gantt.for.stat.on.multiple.instances <- function(
 
   if(!(is.null(mar.single) || all(is.na(mar.single)))) {
     if(is.list(mar.single)) {
-      for(m in mar.single) {
-        stopifnot(is.numeric(m));
+      for(i in seq_along(mar.single)) {
+        mar.single[[i]] <- .mar(mar.single[[i]], mar);
       }
       mar.single <- rep_len(mar.single, length(instances));
     } else {

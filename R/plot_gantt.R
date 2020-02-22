@@ -351,7 +351,8 @@ aitoa.plot.gantt <- function(x,
     center.label.cex <- .cex(center.label.cex, .gantt.label.cex);
 
     legend(x=mean(xlim),
-           y=.gantt.min+ofs.y,
+           y=.gantt.min+max(c(ofs.y,
+              length(x)*0.01)),
            legend=center.label,
            xjust=0.5,
            yjust=0,
@@ -365,7 +366,9 @@ aitoa.plot.gantt <- function(x,
            pt.cex = 0,
            bty="o",
            cex=center.label.cex,
-           bg=center.label.bg);
+           bg=center.label.bg,
+           border=NA,
+           box.lty=0);
   }
 
   .safe.par(old.par);

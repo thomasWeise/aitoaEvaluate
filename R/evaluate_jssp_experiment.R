@@ -26,6 +26,9 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
   width <- 6;
   height <- 8.6;
 
+  larger.mar <- .default.mar.without.labels;
+  larger.mar[[4L]] = 1;
+
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_1rs_med",
                 type = graphics.type,
@@ -38,6 +41,22 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
       algorithm = "1rs",
       instances = instances,
       print.job.names = FALSE);
+                });
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_rs_med",
+                type = graphics.type,
+                width = width,
+                height = height,
+                body = {
+                  aitoa.plot.gantt.for.stat.on.multiple.instances(
+                    end.result.stats = end.result.stats,
+                    results.dir = results.dir,
+                    algorithm = "rs",
+                    instances = instances,
+                    print.job.names = FALSE,
+                    mar.single = list(NA, larger.mar, NA, NA));
                 });
 
 
