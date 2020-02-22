@@ -85,18 +85,18 @@ aitoa.format.fractional.number <- function(v) {
 #' @return a string representation of the number
 #' @export aitoa.format.number.markdown
 aitoa.format.number.markdown <- function(n,
-                                         finite.preprocessor=identity,
-                                         real.preprocessor=identity,
-                                         integer.preprocessor=real.preprocessor,
-                                         format.large=aitoa.format.large.number,
-                                         format.small=aitoa.format.small.number,
-                                         format.fraction=aitoa.format.fractional.number,
-                                         const.na="N/A",
-                                         const.p.inf="$\\infty$",
-                                         const.n.inf="$-\\infty$",
-                                         const.0="0",
-                                         const.1="1",
-                                         const.m1="-1") {
+               finite.preprocessor=identity,
+               real.preprocessor=identity,
+               integer.preprocessor=real.preprocessor,
+               format.large=aitoa.format.large.number,
+               format.small=aitoa.format.small.number,
+               format.fraction=aitoa.format.fractional.number,
+               const.na="N/A",
+               const.p.inf="$\\infty$",
+               const.n.inf="$-\\infty$",
+               const.0="0",
+               const.1="1",
+               const.m1="-1") {
   stopifnot(is.numeric(n),
             length(n) == 1L);
   if(is.na(n)) {
@@ -160,10 +160,24 @@ aitoa.format.number.markdown <- function(n,
 #' @return the formatted time string
 #' @export aitoa.format.time
 aitoa.format.time <- function(t) {
-  return(aitoa.format.number.markdown(t,
-          finite.preprocessor=function(tt) round(tt, 0)));
+  t <- t/1000L;
+  r <- aitoa.format.number.markdown(t,
+          finite.preprocessor=function(tt) round(tt, 0));
+  if(is.finite(t)) {
+    return(paste0(r, "s"));
+  }
+  return(r);
 }
 
+#' @title Format a Function Evaluation Counter
+#' @description format an FE value
+#' @param t the FE number
+#' @return the formatted FE string
+#' @export aitoa.format.fes
+aitoa.format.fes <- function(t) {
+  aitoa.format.number.markdown(t,
+     finite.preprocessor=function(tt) round(tt, 0))
+}
 
 #' @title Format an Integer-based Objective Value
 #' @description format an integer objective value
@@ -208,7 +222,7 @@ aitoa.format.counter <- function(t) {
 #' @param x the setup
 #' @return the formatted string
 #' @export aitoa.format.setup
-aitoa.format.setup <- function(x) paste0("`", trim(as.character(x)), "`")
+aitoa.format.setup <- function(x) paste0("`", trimws(as.character(x)), "`")
 
 #' @title Convert a Column Type to a Formatter Function
 #' @param col the column type

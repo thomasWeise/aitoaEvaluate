@@ -78,6 +78,22 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   log = "x"
                 )
               });
+
+  writeLines(aitoa.make.stat.table.md(
+    end.result.stats,
+    algorithms="1rs",
+    instances=instances,
+    instances.limit=instances.limit,
+    mark.smallest.stat = FALSE
+  ), file.path(evaluation.dir, "1rs_results.md"));
+
+  writeLines(aitoa.make.stat.table.md(
+    end.result.stats,
+    algorithms=c("1rs", "rs"),
+    instances=instances,
+    instances.limit=instances.limit
+  ), file.path(evaluation.dir, "rs_results.md"));
+
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
 }
