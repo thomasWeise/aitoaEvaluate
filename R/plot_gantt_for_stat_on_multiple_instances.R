@@ -27,9 +27,9 @@
 #' @param xlab the label for the x-axis
 #' @param ylab the label for the y-axis
 #' @param time.max an optional maximal time value
-#' @param instance.limit an opional quality limit to be plotted as horizontal
+#' @param instances.limit an opional quality limit to be plotted as horizontal
 #'   line
-#' @param instance.limit.name the optional name of the quality limit, \code{NA}
+#' @param instances.limit.name the optional name of the quality limit, \code{NA}
 #'   for omit
 #' @param instance.limit.cex the font scaling for the instance limit annotation
 #'   (only if \code{!is.na(instance.limit.name)})

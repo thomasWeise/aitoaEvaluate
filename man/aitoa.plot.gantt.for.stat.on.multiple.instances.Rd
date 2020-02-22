@@ -77,6 +77,12 @@ on depend on the indices present in \code{x}.}
 
 \item{time.max}{an optional maximal time value}
 
+\item{instances.limit}{an opional quality limit to be plotted as horizontal
+line}
+
+\item{instances.limit.name}{the optional name of the quality limit, \code{NA}
+for omit}
+
 \item{instance.limit.cex}{the font scaling for the instance limit annotation
 (only if \code{!is.na(instance.limit.name)})}
 
@@ -114,12 +120,6 @@ on depend on the indices present in \code{x}.}
 diagrams}
 
 \item{...}{parameters to be passed to \link[graphics]{plot}}
-
-\item{instance.limit}{an opional quality limit to be plotted as horizontal
-line}
-
-\item{instance.limit.name}{the optional name of the quality limit, \code{NA}
-for omit}
 }
 \description{
 Multiple Gantt charts fitting to one statistic are plotted into
