@@ -227,14 +227,19 @@ aitoa.plot.gantt <- function(x,
             xlim[[2L]] > xlim[[1L]]);
 
   ylim <- pars$ylim;
-  if(is.null(ylim)) {
+  no.ylim <- is.null(ylim);
+  if(no.ylim) {
     ylim <- range(c(.gantt.min, length(machines) - 1L + .gantt.max));
+  }
     ofs.y <- max(c(sum(c(1, -1)*ylim*0.00025),
                    abs(sum(c(1, -1)*grconvertY(c(1.3, 0),
                             from="device", to="user")))));
+  if(no.ylim) {
     if(is.finite(ofs.y)) {
       ylim[[1L]] <- ylim[[1L]] - ofs.y;
       ylim[[2L]] <- ylim[[2L]] + ofs.y;
+    } else {
+      ofs.y <- 0.01*.gantt.min;
     }
     pars$ylim <- ylim;
   }
@@ -346,10 +351,10 @@ aitoa.plot.gantt <- function(x,
     center.label.cex <- .cex(center.label.cex, .gantt.label.cex);
 
     legend(x=mean(xlim),
-           y=0.3*length(machines)/10,
+           y=.gantt.min+ofs.y,
            legend=center.label,
            xjust=0.5,
-           yjust=0.5,
+           yjust=0,
            box.lwd=0L,
            seg.len = -0.7,
            y.intersp = 0,
@@ -358,6 +363,7 @@ aitoa.plot.gantt <- function(x,
            lty = NA,
            pt.lwd = 0,
            pt.cex = 0,
+           bty="o",
            cex=center.label.cex,
            bg=center.label.bg);
   }

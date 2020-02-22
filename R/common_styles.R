@@ -24,7 +24,7 @@
 .gantt.default.job.name.cex <- 0.9;
 
 .gantt.label.bg <- "#FFFFFFD5";
-.gantt.label.cex <- .legend.cex;
+.gantt.label.cex <- 1.17*.legend.cex;
 
 .default.time.column <- "t";
 
