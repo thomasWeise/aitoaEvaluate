@@ -20,9 +20,11 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
   end.result.stats <- aitoa.load.end.result.stats(file.path(evaluation.dir, "endResultStatistics.txt"));
   .check.end.result.stats(end.result.stats);
 
+  max.time <- as.integer(1000L * 3L * 60L);
+
   instances <- c("abz7", "la24", "swv15", "yn4");
   instances.limit <- c(656L, 935L, 2885L, 929L);
-  instances.limit.name <- "LB\u066D"
+  instances.limit.name <- "LB*"
   width <- 6;
   height <- 8.6;
 
@@ -59,7 +61,23 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     mar.single = list(NA, larger.mar, NA, NA));
                 });
 
-
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_rs_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                body = {
+                aitoa.plot.progress.on.multiple.instances(
+                  results.dir=results.dir,
+                  algorithms="rs",
+                  instances=instances,
+                  time.column = "t",
+                  max.time = max.time,
+#                 instances.limit = instances.limit,
+#                 instances.limit.name = instances.limit.name,
+                  log = "x"
+                )
+              });
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
 }
