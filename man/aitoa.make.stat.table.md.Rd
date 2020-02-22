@@ -12,11 +12,13 @@ aitoa.make.stat.table.md(
     = "best.f.sd", `med(t)` = "last.improvement.time.median", `med(FEs)` =
     "last.improvement.fe.median"),
   instance.col = if (length(instances) > 1L) "$\\\\inst.id$" else NULL,
+  instance.format = aitoa.format.setup,
   instances.limit = NULL,
   instances.limit.col = if (is.null(instances.limit)) NULL else
     "$\\\\lowerBound{\\\\objf}$",
   instances.limit.format = aitoa.format.small.integer.objective.value,
   algorithms.col = if (length(algorithms) > 1L) "setup" else NULL,
+  algorithm.format = aitoa.format.setup,
   stat.cols.format = aitoa.statistics.cols.to.formats(stat.cols),
   mark.smallest.stat = rep_len(TRUE, length(stat.cols)),
   smallest.stat.start = "**",
@@ -34,6 +36,8 @@ aitoa.make.stat.table.md(
 
 \item{instance.col}{the print name of the instance column}
 
+\item{instance.format}{the format for the instance name}
+
 \item{instances.limit}{an optional vector of instance limits}
 
 \item{instances.limit.col}{an optional title for the instances limit column}
@@ -41,6 +45,8 @@ aitoa.make.stat.table.md(
 \item{instances.limit.format}{the formatter for the instances limits}
 
 \item{algorithms.col}{the print name of the algorithms column}
+
+\item{algorithm.format}{the algorithm format}
 
 \item{stat.cols.format}{the formats for the statistics columns}
 

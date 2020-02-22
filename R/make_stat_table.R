@@ -5,10 +5,12 @@
 #' @param instances the instances, using \code{names} as their names
 #' @param stat.cols the statistics columns to plot
 #' @param instance.col the print name of the instance column
+#' @param instance.format the format for the instance name
 #' @param instances.limit an optional vector of instance limits
 #' @param instances.limit.col an optional title for the instances limit column
 #' @param instances.limit.format the formatter for the instances limits
 #' @param algorithms.col the print name of the algorithms column
+#' @param algorithm.format the algorithm format
 #' @param stat.cols.format the formats for the statistics columns
 #' @param mark.smallest.stat should the smallest statistic be marked (per
 #'   column)
@@ -27,10 +29,12 @@ aitoa.make.stat.table.md <- function(end.result.stats,
                                                  `med(t)`="last.improvement.time.median",
                                                  `med(FEs)`="last.improvement.fe.median"),
                                   instance.col=if(length(instances) > 1L) "$\\inst.id$" else NULL,
+                                  instance.format=aitoa.format.setup,
                                   instances.limit=NULL,
                                   instances.limit.col=if(is.null(instances.limit)) NULL else "$\\lowerBound{\\objf}$",
                                   instances.limit.format=aitoa.format.small.integer.objective.value,
                                   algorithms.col=if(length(algorithms) > 1L) "setup" else NULL,
+                                  algorithm.format=aitoa.format.setup,
                                   stat.cols.format=aitoa.statistics.cols.to.formats(stat.cols),
                                   mark.smallest.stat=rep_len(TRUE, length(stat.cols)),
                                   smallest.stat.start="**",
@@ -79,6 +83,13 @@ aitoa.make.stat.table.md <- function(end.result.stats,
             !is.character(instances.names),
             length(instances.names) > 0L,
             all(nchar(instances.names) > 0L));
+  instances.names <- vapply(instances.names,
+                            instance.format,
+                            NA_character_);
+  stopifnot(is.null(instances.names),
+            !is.character(instances.names),
+            length(instances.names) > 0L,
+            all(nchar(instances.names) > 0L));
 
 # prepare algorithms
   algorithms.names <- names(algorithms);
@@ -91,6 +102,13 @@ aitoa.make.stat.table.md <- function(end.result.stats,
     algorithms.names <- algorithms;
   }
   algorithms.names[is.na(algorithms.names)] <- algorithms[is.na(algorithms.names)];
+  stopifnot(is.null(algorithms.names),
+            !is.character(algorithms.names),
+            length(algorithms.names) > 0L,
+            all(nchar(algorithms.names) > 0L));
+  algorithms.names <- vapply(algorithms.names,
+                             algorithm.format,
+                             NA_character_);
   stopifnot(is.null(algorithms.names),
             !is.character(algorithms.names),
             length(algorithms.names) > 0L,
@@ -124,7 +142,8 @@ aitoa.make.stat.table.md <- function(end.result.stats,
             length(algorithms.col) == 1L,
             nchar(algorithms.col) > 0L);
 
-  for(i in seq_along(instances)) {
+  text <- lapply(seq_along(instances),
+                 function(i) {
     instance <- instances[[i]];
     stopifnot(is.character(instance),
               length(instance) == 1L,
@@ -145,24 +164,61 @@ aitoa.make.stat.table.md <- function(end.result.stats,
               nrow(data) == length(algorithms));
 
     stat.col.min <- vapply(stat.cols, function(f) {
-      min(unname(unlist(data[, f])))
+      if(mark.smallest.stat[[k]]) {
+        return(min(unname(unlist(data[, f]))));
+      } else {
+        -Inf;
+      }
     }, NA_real_);
 
     rows <- vapply(seq_along(data), function(j) {
       stopifnot(identical(data$algorithm[[j]], algorithms[j]));
       if(print.algorithms) {
-        row <- paste0(algorithms.names[[j]], "|");
+        row <- paste0(algorithm.format(algorithms.names[[j]]), "|");
       } else {
         row <- "";
       }
 
-      paste0(row,
+      return(paste0(row,
       paste(vapply(seq_along(stat.cols), function(k) {
         val <- data[j, k + 2L];
         stopifnot(is.numeric(val),
                   !is.na(val),
                   is.finite(val) || (val >= +Inf));
-      }, sep="|", collapse="|")))
+        ttt <- stat.cols.format[[k]](val);
+        stopifnot(is.character(ttt));
+        if(mark.smallest.stat[[k]]) {
+          if(val <= stat.col.min[[k]]) {
+            ttt <- paste0(smallest.stat.start, ttt, smallest.stat.end);
+          }
+        }
+        return(ttt);
+      }, sep="|", collapse="|"))));
     }, NA_character_);
-  }
+
+    stopifnot(length(rows) == length(algorithms));
+
+    if(print.algorithms) {
+      rows <- paste0(algorithms.names, "|", rows);
+    }
+    stopifnot(length(rows) == length(algorithms));
+
+    if(print.instances.limit) {
+      rows <- paste0("|", rows);
+      row[[1L]] <- paste0(instances.limit.format(instances.limit[[i]]),
+                          rows[[1L]]);
+    }
+    stopifnot(length(rows) == length(algorithms));
+    if(print.instances) {
+      rows <- paste0("|", rows);
+      row[[1L]] <- paste0(instances.names[[i]],
+                          rows[[1L]]);
+    }
+    stopifnot(length(rows) == length(algorithms));
+    return(rows);
+  });
+
+  stopifnot(length(text) == length(instances));
+
+  return(text);
 }
