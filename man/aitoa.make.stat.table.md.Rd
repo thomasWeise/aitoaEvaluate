@@ -11,7 +11,7 @@ aitoa.make.stat.table.md(
   stat.cols = list(best = "best.f.min", mean = "best.f.mean", med = "best.f.median", sd
     = "best.f.sd", `med(t)` = "last.improvement.time.median", `med(FEs)` =
     "last.improvement.fes.median"),
-  instance.col = if (length(instances) > 1L) "$\\\\inst.id$" else NULL,
+  instance.col = if (length(instances) > 1L) "$\\\\instance$" else NULL,
   instance.format = aitoa.format.setup,
   instances.limit = NULL,
   instances.limit.col = if (is.null(instances.limit)) NULL else
