@@ -26,12 +26,15 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
   instances <- c("abz7", "la24", "swv15", "yn4");
   instances.limit <- c(656L, 935L, 2885L, 929L);
-  instances.limit.name <- "LB*"
+  instances.limit.name <- "lb*"
+  instances.symbols <- c(1L, 2L, 5L, 6L);
   width <- 6;
   height <- 8.6;
 
-  larger.mar <- .default.mar.without.labels;
-  larger.mar[[4L]] = 0.87;
+  larger.mar.1 <- .default.mar.without.labels;
+  larger.mar.1[[4L]] = 0.87;
+  larger.mar.2 <- .default.mar.without.labels;
+  larger.mar.2[[4L]] = 1.38;
 
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_1rs_med",
@@ -62,7 +65,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     algorithm = "rs",
                     instances = instances,
                     print.job.names = FALSE,
-                    mar.single = list(NA, larger.mar, NA, NA));
+                    mar.single = list(NA, larger.mar.1, NA, NA));
                 });
 
   aitoa.graphic(evaluation.dir,
@@ -141,8 +144,33 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     algorithm = "hc_1swap",
                     instances = instances,
                     print.job.names = FALSE#,
-#                   mar.single = list(NA, larger.mar, NA, NA))
                   )
+                });
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_hc_rs_med_over_par",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- as.integer(2^(7L:18L));
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "hc_rs_$arg_1swap",
+                    algorithm.args=x,
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.2);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     "R");
                 });
 
 

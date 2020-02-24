@@ -35,6 +35,7 @@
 #' @importFrom graphics abline legend lines mtext plot
 #' @export aitoa.plot.progress.on.instance
 #' @include common_styles.R
+#' @include legends.R
 aitoa.plot.progress.on.instance <- function(results.dir=".",
                                             algorithms,
                                             instance,
@@ -296,55 +297,29 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   legend.cex <- .cex(legend.cex, .legend.cex);
   legend.bg <- .color(legend.bg, .legend.bg);
 
-  legend(x="topright",
-         cex=legend.cex,
-         legend=legend.text,
-         col = legend.color,
-         text.col = legend.color,
-         lwd=legend.lwd,
-         lty=legend.lty,
-         bty="o",
-         bg=legend.bg,
-         box.lwd=0L,
-         inset=0.005);
+  aitoa.legend.main(x="topright",
+                    cex=legend.cex,
+                    legend=legend.text,
+                    col = legend.color,
+                    lwd=legend.lwd,
+                    lty=legend.lty,
+                    bg=legend.bg);
 
   if(!(is.null(quality.axis.text) || all(is.na(quality.axis.text)))) {
     stopifnot(is.character(quality.axis.text),
               length(quality.axis.text) == 1L,
               nchar(quality.axis.text) > 0L);
-    legend(x="topleft",
-           legend=quality.axis.text,
-           cex=legend.cex,
-           bty="0",
-           bg=legend.bg,
-           box.lwd=0L,
-           seg.len = -0.6,
-           y.intersp = 0,
-           lwd = 0,
-           pch = NA,
-           lty = NA,
-           pt.lwd = 0,
-           pt.cex = 0,
-           inset = 0.01);
+    aitoa.legend.label(x="topleft",
+                       legend=quality.axis.text,
+                       cex=legend.cex);
   }
   if(!(is.null(time.axis.text) || all(is.na(time.axis.text)))) {
     stopifnot(is.character(time.axis.text),
               length(time.axis.text) == 1L,
               nchar(time.axis.text) > 0L);
-    legend(x="bottomright",
-           legend=time.axis.text,
-           cex=legend.cex,
-           bty="0",
-           bg=legend.bg,
-           box.lwd=0L,
-           seg.len = -0.6,
-           y.intersp = 0,
-           lty = NA,
-           lwd = 0,
-           pch = NA,
-           pt.lwd = 0,
-           pt.cex = 0,
-           inset = 0.01);
+    aitoa.legend.label(x="bottomright",
+                       legend=time.axis.text,
+                       cex=legend.cex);
   }
 
   .safe.par(old.par);

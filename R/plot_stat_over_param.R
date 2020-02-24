@@ -1,3 +1,24 @@
+.default.mark.min <- function(min.x,
+                              min.y,
+                              color,
+                              pch,
+                              lty,
+                              lwd) {
+  stopifnot(is.numeric(min.x),
+            length(min.x) > 0L,
+            all(is.finite(min.x)),
+            is.numeric(min.y),
+            length(min.y) > 0L,
+            all(is.finite(min.y)));
+  if(!(is.null(pch) || is.na(pch))) {
+    points(min.x,
+           min.y,
+           col=color,
+           pch=pch,
+           cex=1.75);
+  }
+}
+
 #' @title Plot a Statistic over the Values of a Given Parameter
 #' @description Plot an end statistic over the values of a given parameter.
 #' @param end.result.stats the end result statistics frame
@@ -20,10 +41,20 @@
 #' @param cex the base character scaling
 #' @param mar the margin value
 #' @param divide.by optionally, a per-instance value to divide the statistic by
+#' @param mark.min.fun the function for marking the minima. If not \code{NULL}, this must be a function with six arguments, namely\describe{
+#' \item{min.x}{the vector with the x-coordinates minal values}
+#' \item{min.y}{the vector with the y-coordinates minal values}
+#' \item{color}{the color for these points}
+#' \item{pch}{the pch value for these points, or \code{NULL} if none}
+#' \item{lty}{the line type for these points}
+#' \item{lwd}{the line width for these points}}
+#' This function, if not \code{NULL}, is called once for each instance
+#' @param x.axis.at the location of the x-axis ticks: optional
 #' @param ... parameters to be passed to \link[graphics]{plot}
 #' @include utils.R
 #' @include common_styles.R
 #' @include load_stat_result.R
+#' @include legends.R
 #' @importFrom graphics legend lines plot points
 #' @export aitoa.plot.stat.over.param
 aitoa.plot.stat.over.param <- function(end.result.stats,
@@ -43,6 +74,8 @@ aitoa.plot.stat.over.param <- function(end.result.stats,
                                        cex=.default.cex,
                                        mar=.default.mar.without.labels,
                                        divide.by=NULL,
+                                       mark.min.fun=.default.mark.min,
+                                       x.axis.at=NULL,
                                        ...) {
   .check.end.result.stats(end.result.stats);
 
@@ -80,7 +113,7 @@ aitoa.plot.stat.over.param <- function(end.result.stats,
   cex <- .cex(cex, .default.cex);
   mar <- .mar(mar, .default.mar.without.labels);
 
-  old.par <- .safe.par(list(mgp=mgp,
+  old.par <- .safe.par (list(mgp=mgp,
                             tck=tck,
                             cex=cex,
                             mar=mar));
@@ -159,6 +192,12 @@ aitoa.plot.stat.over.param <- function(end.result.stats,
   if(is.null(pars$ylab) || all(is.na(pars$ylab))) {
     pars$ylab <- NA_character_;
   }
+  if(!is.null(x.axis.at)) {
+    stopifnot(is.numeric(x.axis.at),
+              length(x.axis.at) > 0L,
+              all(is.finite(x.axis.at)));
+    pars$xaxt <- "n";
+  }
 
   do.call(plot, pars);
 
@@ -198,36 +237,59 @@ aitoa.plot.stat.over.param <- function(end.result.stats,
   # plot
 
   for(i in seq_along(instances)) {
-    lines(x=algorithm.args,
-          y=data[[i]],
-          col=instance.colors[[i]],
-          lty=instance.lty[[i]],
-          lwd=instance.lwd[[i]]);
-    if(!is.null(instance.pch)) {
-      points(x=algorithm.args,
-             y=data[[i]],
-             col=instance.colors[[i]],
-             pch=instance.pch[[i]]);
+    x <- algorithm.args;
+    y <- unname(unlist(data[[i]]));
+    col <- instance.colors[[i]];
+    lty <- instance.lty[[i]];
+    lwd <- instance.lwd[[i]];
+    pch <- if(is.null(instance.pch)) NULL else instance.pch[[i]];
+    lines(x=x,
+          y=y,
+          col=col,
+          lty=lty,
+          lwd=lwd);
+    if(!is.null(pch)) {
+      points(x=x,
+             y=y,
+             col=col,
+             pch=pch);
     }
+    if(!is.null(mark.min.fun)) {
+      mn <- min(y);
+      stopifnot(is.numeric(mn),
+                length(mn) == 1L,
+                is.finite(mn));
+      sel <- (y <= mn);
+      stopifnot(is.logical(sel),
+                length(sel) == length(y),
+                sum(sel) > 0L);
+      mark.min.fun(x[sel],
+                   y[sel],
+                   col,
+                   pch,
+                   lty,
+                   lwd);
+    }
+  }
+
+  # add x-axis?
+  if(!is.null(x.axis.at)) {
+    axis(1, x.axis.at);
   }
 
   # add legend
   legend.args <- list(x=legend.pos,
                       legend=instance.name,
                       col=instance.colors,
-                      text.col=instance.colors,
                       lwd=instance.lwd,
                       lty=instance.lty,
                       cex=.cex(legend.cex, .legend.cex),
-                      bg=.color(legend.bg, .legend.bg),
-                      bty="o",
-                      box.lwd=0L,
-                      inset=0.005);
+                      bg=.color(legend.bg, .legend.bg));
   if(!is.null(instance.pch)) {
     legend.args$pch <- instance.pch;
   }
 
-  do.call(legend, legend.args);
+  do.call(aitoa.legend.main, legend.args);
 
   .safe.par(old.par);
   invisible(NULL);

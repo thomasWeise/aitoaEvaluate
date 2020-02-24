@@ -33,6 +33,7 @@ Collate:
     'load_end_result_stats.R'
     'evaluate_jssp_experiment.R'
     'format_numbers.R'
+    'legends.R'
     'parse_file_name.R'
     'load_log_file.R'
     'load_instance_dir.R'

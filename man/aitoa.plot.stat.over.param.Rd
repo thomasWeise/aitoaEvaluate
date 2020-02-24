@@ -22,6 +22,8 @@ aitoa.plot.stat.over.param(
   cex = .default.cex,
   mar = .default.mar.without.labels,
   divide.by = NULL,
+  mark.min.fun = .default.mark.min,
+  x.axis.at = NULL,
   ...
 )
 }
@@ -62,6 +64,17 @@ the names are diplayed in the legend, otherwise the instance strings}
 \item{mar}{the margin value}
 
 \item{divide.by}{optionally, a per-instance value to divide the statistic by}
+
+\item{mark.min.fun}{the function for marking the minima. If not \code{NULL}, this must be a function with six arguments, namely\describe{
+\item{min.x}{the vector with the x-coordinates minal values}
+\item{min.y}{the vector with the y-coordinates minal values}
+\item{color}{the color for these points}
+\item{pch}{the pch value for these points, or \code{NULL} if none}
+\item{lty}{the line type for these points}
+\item{lwd}{the line width for these points}}
+This function, if not \code{NULL}, is called once for each instance}
+
+\item{x.axis.at}{the location of the x-axis ticks: optional}
 
 \item{...}{parameters to be passed to \link[graphics]{plot}}
 }
