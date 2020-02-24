@@ -20,9 +20,11 @@
 #' @param cex the base character scaling
 #' @param mar the margin value
 #' @param divide.by optionally, a per-instance value to divide the statistic by
+#' @param ... parameters to be passed to \link[graphics]{plot}
 #' @include utils.R
 #' @include common_styles.R
 #' @include load_stat_result.R
+#' @importFrom graphics legend lines plot points
 #' @export aitoa.plot.stat.over.param
 aitoa.plot.stat.over.param <- function(end.result.stats,
                                        algorithm.template,
@@ -186,7 +188,7 @@ aitoa.plot.stat.over.param <- function(end.result.stats,
   stopifnot(length(instance.name) == length(instances));
   if(any(is.na(instance.name))) {
     instance.name[is.na(instance)] <-
-      unname(unlist(instance))[is.na(instance)];
+      unname(unlist(instances))[is.na(instance)];
   }
   stopifnot(is.character(instance.name),
             length(instance.name) == length(instances),

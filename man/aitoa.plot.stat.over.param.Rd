@@ -62,6 +62,8 @@ the names are diplayed in the legend, otherwise the instance strings}
 \item{mar}{the margin value}
 
 \item{divide.by}{optionally, a per-instance value to divide the statistic by}
+
+\item{...}{parameters to be passed to \link[graphics]{plot}}
 }
 \description{
 Plot an end statistic over the values of a given parameter.
