@@ -154,6 +154,54 @@
   return(lty);
 }
 
+
+.pch <- function(pch, default) {
+  if(is.null(pch) || is.na(pch)) {
+    pch <- default;
+  }
+  stopifnot(!is.null(pch),
+            is.vector(pch),
+            is.integer(pch) || is.character(pch),
+            length(pch) == 1L);
+  if(is.integer(pch)) {
+    stopifnot(!is.na(pch),
+              is.finite(pch),
+              pch >= 0L,
+              pch <= 18L);
+  } else {
+    stopifnot(!is.na(pch),
+              nchar(pch) > 0L);
+  }
+  return(pch);
+}
+
+
+.pch.rep <- function(pch, default, len) {
+  stopifnot(len > 0L);
+  if(is.null(pch) || is.na(pch)) {
+    pch <- default;
+  }
+  stopifnot(!is.null(pch),
+            is.list(pch) || (is.vector(pch) &&
+                               (is.integer(pch) || is.character(pch))),
+            length(pch) > 0L,
+            length(pch) <= len);
+  pch <- rep_len(pch, len);
+  stopifnot(!is.null(pch),
+            is.list(pch) || (is.vector(pch) &&
+                               (is.integer(pch) || is.character(pch))),
+            length(pch) > 0L,
+            length(pch) <= len);
+  if(any(is.na(pch))) {
+    default <- rep_len(default, len);
+    for(i in seq_along(pch)) {
+      pch[[i]] <- .pch(pch[[i]], default[[i]]);
+    }
+  }
+  return(pch);
+}
+
+
 .time.column <- function(time.column) {
   if(is.null(time.column) || all(is.na(time.column))) {
     time.column <- .default.time.column;
