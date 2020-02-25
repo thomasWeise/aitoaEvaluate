@@ -149,7 +149,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
 
   aitoa.graphic(evaluation.dir,
-                name = "jssp_hc_rs_med_over_par",
+                name = "jssp_hc_rs_med_over_l",
                 type = graphics.type,
                 width = width,
                 skip.if.exists = skip.if.exists,
@@ -170,7 +170,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                                      paste0("best f / ",
                                             instances.limit.name));
                   aitoa.legend.label("bottomright",
-                                     "R");
+                                     "restart limit L");
                 });
 
 

@@ -13,6 +13,7 @@ aitoa.legend.main(
   bg = .legend.bg,
   bty = "o",
   box.lwd = 0L,
+  box.col = bg,
   inset = 0.005,
   ...
 )
@@ -33,6 +34,8 @@ aitoa.legend.main(
 \item{bty}{the box type}
 
 \item{box.lwd}{the box line width}
+
+\item{box.col}{the box color}
 
 \item{inset}{the insets}
 }

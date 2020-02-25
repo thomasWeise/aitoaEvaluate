@@ -6,6 +6,7 @@
 #' @param bty the box type
 #' @param bg the background
 #' @param box.lwd the box line width
+#' @param box.col the box color
 #' @param seg.len the segment length
 #' @param y.intersp the y interspacing
 #' @param lwd the line width
@@ -24,6 +25,7 @@ aitoa.legend.label <- function(x,
                                bty="0",
                                bg=.legend.bg,
                                box.lwd=0L,
+                               box.col=bg,
                                seg.len = -0.6,
                                y.intersp = 0,
                                lwd = 0,
@@ -39,6 +41,7 @@ aitoa.legend.label <- function(x,
                  bty=bty,
                  bg=bg,
                  box.lwd=box.lwd,
+                 box.col=box.col,
                  seg.len=seg.len,
                  y.intersp=y.intersp,
                  lwd=lwd,
@@ -61,6 +64,7 @@ aitoa.legend.label <- function(x,
 #' @param bg the back ground
 #' @param bty the box type
 #' @param box.lwd the box line width
+#' @param box.col the box color
 #' @param inset the insets
 #' @export aitoa.legend.main
 aitoa.legend.main <- function(x,
@@ -71,6 +75,7 @@ aitoa.legend.main <- function(x,
                               bg=.legend.bg,
                               bty="o",
                               box.lwd=0L,
+                              box.col=bg,
                               inset=0.005,
                               ...) {
   params <- list(x=x,
@@ -81,6 +86,7 @@ aitoa.legend.main <- function(x,
                  bg=bg,
                  bty=bty,
                  box.lwd=box.lwd,
+                 box.col=box.col,
                  inset=inset,
                  ...);
   do.call(graphics::legend, params);

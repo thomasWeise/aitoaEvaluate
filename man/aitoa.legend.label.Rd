@@ -11,6 +11,7 @@ aitoa.legend.label(
   bty = "0",
   bg = .legend.bg,
   box.lwd = 0L,
+  box.col = bg,
   seg.len = -0.6,
   y.intersp = 0,
   lwd = 0,
@@ -34,6 +35,8 @@ aitoa.legend.label(
 \item{bg}{the background}
 
 \item{box.lwd}{the box line width}
+
+\item{box.col}{the box color}
 
 \item{seg.len}{the segment length}
 
