@@ -214,7 +214,7 @@ aitoa.make.stat.table.md <- function(end.result.stats,
     rows <- vapply(seq_along(algorithms), function(j) {
       stopifnot(identical(data$algorithm[[j]], algorithms[[j]]));
       if(print.algorithms) {
-        row <- paste0(algorithm.format(algorithms.names[[j]]), "|");
+        row <- paste0(algorithms.names[[j]], "|");
       } else {
         row <- "";
       }
@@ -236,11 +236,6 @@ aitoa.make.stat.table.md <- function(end.result.stats,
       }, NA_character_), sep="|", collapse="|")));
     }, NA_character_);
 
-    stopifnot(length(rows) == length(algorithms));
-
-    if(print.algorithms) {
-      rows <- paste0(algorithms.names, "|", rows);
-    }
     stopifnot(length(rows) == length(algorithms));
 
     if(print.instances.limit) {
