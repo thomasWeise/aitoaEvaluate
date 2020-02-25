@@ -66,6 +66,9 @@ aitoa.legend.label <- function(x,
 #' @param box.lwd the box line width
 #' @param box.col the box color
 #' @param inset the insets
+#' @param ... other parameters to be passed to \link[graphics]{legend}
+#' @include common_styles.R
+#' @importFrom graphics legend
 #' @export aitoa.legend.main
 aitoa.legend.main <- function(x,
                               legend,

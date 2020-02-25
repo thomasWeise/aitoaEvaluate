@@ -226,8 +226,8 @@ aitoa.plot.stat.over.param <- function(end.result.stats,
   }
   stopifnot(length(instance.name) == length(instances));
   if(any(is.na(instance.name))) {
-    instance.name[is.na(instance)] <-
-      unname(unlist(instances))[is.na(instance)];
+    instance.name[is.na(instance.name)] <-
+      unname(unlist(instances))[is.na(instance.name)];
   }
   stopifnot(is.character(instance.name),
             length(instance.name) == length(instances),

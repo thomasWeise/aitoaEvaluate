@@ -38,6 +38,8 @@ aitoa.legend.main(
 \item{box.col}{the box color}
 
 \item{inset}{the insets}
+
+\item{...}{other parameters to be passed to \link[graphics]{legend}}
 }
 \description{
 A shorthand with defaults for main legends.
