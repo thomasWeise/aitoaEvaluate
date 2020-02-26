@@ -9,6 +9,7 @@ aitoa.plot.gantt(
   machine.name.func = as.character,
   job.colors = NA_character_,
   print.job.names = TRUE,
+  force.job.names = FALSE,
   job.name.func = as.character,
   job.name.cex = .gantt.default.job.name.cex,
   xlab = NA_character_,
@@ -46,6 +47,8 @@ character string with the machine name. The first machine index is
 
 \item{print.job.names}{should the job names be printed into the job
 rectangles?}
+
+\item{force.job.names}{if \code{FALSE}, then job names for sub-jobs which are simply to small to properly fit the string into are omitted, if \code{TRUE} they are printed anyway. This is only considered if \code{print.job.names}}
 
 \item{job.name.func}{a function converting a job index into a character
 string, only used if \code{isTRUE(print.job.names)}, the job indices passed

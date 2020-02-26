@@ -179,6 +179,12 @@ aitoa.plot.gantt.for.stat.on.multiple.instances <- function(
               all(is.finite(time.max)));
   }
 
+  if(print.job.names) {
+    job.name.cex <- .cex.rep(job.name.cex,
+                             .gantt.default.job.name.cex,
+                             length(instances));
+  }
+
   for(i in seq_along(instances)) {
     inst.limit.name <- NA_character_;
 
@@ -203,7 +209,7 @@ aitoa.plot.gantt.for.stat.on.multiple.instances <- function(
       job.colors = job.colors,
       print.job.names = print.job.names,
       job.name.func = job.name.func,
-      job.name.cex = job.name.cex,
+      job.name.cex = job.name.cex[[i]],
       xlab = xlab,
       ylab = ylab,
       time.max = if(is.null(time.max)) NA_integer_ else time.max[[i]],

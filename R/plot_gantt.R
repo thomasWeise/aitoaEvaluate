@@ -41,6 +41,7 @@
 #' @param job.colors an optional vector of job colors
 #' @param print.job.names should the job names be printed into the job
 #'   rectangles?
+#' @param force.job.names if \code{FALSE}, then job names for sub-jobs which are simply to small to properly fit the string into are omitted, if \code{TRUE} they are printed anyway. This is only considered if \code{print.job.names}
 #' @param job.name.func a function converting a job index into a character
 #'   string, only used if \code{isTRUE(print.job.names)}, the job indices passed
 #'   on depend on the indices present in \code{x}.
@@ -83,6 +84,7 @@ aitoa.plot.gantt <- function(x,
                        machine.name.func = as.character,
                        job.colors = NA_character_,
                        print.job.names = TRUE,
+                       force.job.names = FALSE,
                        job.name.func = as.character,
                        job.name.cex = .gantt.default.job.name.cex,
                        xlab = NA_character_,
@@ -283,19 +285,30 @@ aitoa.plot.gantt <- function(x,
         rect(start, y.min, end, y.max, col=col, border=NA);
 
         if(print.job.names) {
-          # try to choose a good text color
-          if(aitoa.rgb2gray(col2rgb(col), limit=255L) < 100) {
-            text.col = "white";
-          } else {
-            text.col = "black";
-          }
+          job.name <- job.names[[job.index]];
 
-          # add label
-          text(x=(0.5*(end + start)),
-               y=(i-1), adj=c(0.5, 0.5),
-               cex=job.name.cex,
-               labels=job.names[[job.index]],
-               col=text.col);
+          width <- strwidth(job.name, cex=job.name.cex);
+          stopifnot(is.numeric(width),
+                    length(width) == 1L,
+                    is.finite(width),
+                    width >= 0);
+
+          if(force.job.names || (width <= (1.05 * (end - start)))) {
+
+            # try to choose a good text color
+            if(aitoa.rgb2gray(col2rgb(col), limit=255L) < 100) {
+              text.col = "white";
+            } else {
+              text.col = "black";
+            }
+
+            # add label
+            text(x=(0.5*(end + start)),
+                 y=(i-1), adj=c(0.5, 0.5),
+                 cex=job.name.cex,
+                 labels=job.name,
+                 col=text.col);
+          }
         }
       }
     }

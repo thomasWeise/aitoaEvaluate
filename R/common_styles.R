@@ -102,6 +102,7 @@
 .mgp <- function(mgp, default) .default.num.vec(mgp, default, 3L, -10, 10);
 .tck <- function(tck, default) .default.num(tck, default, -2, 2);
 .cex <- function(cex, default) .default.num(cex, default, 1e-2, 10);
+.cex.rep <- function(cex, default, len) .default.num.rep(cex, default, len, 1e-2, 10);
 .mar <- function(mar, default) .default.num.vec(mar, default, 4L, -10, 10);
 .adj <- function(adj, default) .default.num.vec(adj, default, 2L, -10, 10);
 
