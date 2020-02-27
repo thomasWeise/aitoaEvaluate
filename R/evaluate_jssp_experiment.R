@@ -19,8 +19,13 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
   .logger("Now processing the Results of the JSSP Experiment.");
 
-  end.result.stats <- aitoa.load.end.result.stats(file.path(evaluation.dir, "endResultStatistics.txt"));
+  end.result.stats <- aitoa.load.end.result.stats(
+    file.path(evaluation.dir, "endResultStatistics.txt"));
   .check.end.result.stats(end.result.stats);
+
+  end.results <- aitoa.load.end.results(
+    file.path(evaluation.dir, "endResults.txt"));
+  .check.end.results(end.results);
 
   max.time <- as.integer(1000L * 3L * 60L);
 
@@ -317,7 +322,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  end.result.stats,
                  algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
                                  hc_nswap="hc_nswap",
-                                 hcr_16384_nswap="hc_rs_16384_nswap",
                                  hcr_32768_nswap="hc_rs_32768_nswap",
                                  hcr_65536_nswap="hc_rs_65536_nswap"),
                  instances=instances,
@@ -359,6 +363,20 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     job.name.cex = instance.gantt.job.name.cex
                   )
                 });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_hcr_comparison",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.end.result.test.table.md(
+                 end.results,
+                 algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
+                                 hcr_32768_1swap="hc_rs_32768_1swap",
+                                 hcr_65536_nswap="hc_rs_65536_nswap"),
+                 instances=instances
+               ) } );
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);

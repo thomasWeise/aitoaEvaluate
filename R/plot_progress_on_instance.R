@@ -62,11 +62,11 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
 
   time.column <- .time.column(match.arg(time.column));
 
-  stopifnot(is.character(algorithms) || is.list(algorithms),
-            length(algorithms) > 0L,
-            !any(is.na(algorithms)),
-            all(nchar(algorithms) > 0L),
-            is.character(instance),
+  algorithms <- .split.names(algorithms);
+  algorithm.names <- algorithms$names;
+  algorithms <- algorithms$data;
+
+  stopifnot(is.character(instance),
             !is.na(instance),
             nchar(instance) > 0L,
             is.numeric(max.time),
@@ -270,12 +270,7 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
 
   # adding legend
 
-  legend.text <- c(instance.name,
-                   vapply(seq_along(algorithms),
-                          function(i) {
-                            .default.char(names(algorithms)[[i]],
-                                          algorithms[[i]]);
-                          }, NA_character_));
+  legend.text <- c(instance.name, algorithm.names);
   legend.color <- c("black",
                     algorithm.colors[1L:length(algorithms)]);
   legend.lty <- c(NA, algorithm.lty);

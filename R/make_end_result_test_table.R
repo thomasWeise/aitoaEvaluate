@@ -50,43 +50,14 @@ aitoa.make.end.result.test.table.md <- function(
             !is.na(correction),
             nchar(correction) > 0L);
 
-# fix instances and their names
-  stopifnot(!is.null(instances),
-            is.list(instances) || is.character(instances),
-            length(instances) > 0L);
-  instance.names <- unname(unlist(names(instances)));
-  instances <- unname(unlist(instances));
-  stopifnot(is.character(instances),
-            length(instances) > 0L,
-            !any(is.na(instances)),
-            all(nchar(instances) > 0L));
-  if(is.null(instance.names)) {
-    instance.names <- instances;
-  }
-  instance.names[is.na(instance.names)] <- instances[is.na(instance.names)];
-  stopifnot(is.character(instance.names),
-            length(instance.names) > 0L,
-            !any(is.na(instance.names)),
-            all(nchar(instance.names) > 0L));
+# fix instances and algorithms and their names
+  instances <- .split.names(instances);
+  instance.names <- instances$names;
+  instances <- instances$data;
 
-# fix algorithms and their names
-  stopifnot(!is.null(algorithms),
-            is.list(algorithms) || is.character(algorithms),
-            length(algorithms) > 0L);
-  algorithm.names <- unname(unlist(names(algorithms)));
-  algorithms <- unname(unlist(algorithms));
-  stopifnot(is.character(algorithms),
-            length(algorithms) > 0L,
-            !any(is.na(algorithms)),
-            all(nchar(algorithms) > 0L));
-  if(is.null(algorithm.names)) {
-    algorithm.names <- algorithms;
-  }
-  algorithm.names[is.na(algorithm.names)] <- algorithms[is.na(algorithm.names)];
-  stopifnot(is.character(algorithm.names),
-            length(algorithm.names) > 0L,
-            !any(is.na(algorithm.names)),
-            all(nchar(algorithm.names) > 0L));
+  algorithms <- .split.names(algorithms);
+  algorithm.names <- algorithms$names;
+  algorithms <- algorithms$data;
 
   # check end results
   .check.end.results(end.results);

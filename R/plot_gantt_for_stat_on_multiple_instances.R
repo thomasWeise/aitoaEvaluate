@@ -108,9 +108,11 @@ aitoa.plot.gantt.for.stat.on.multiple.instances <- function(
             is.character(results.dir),
             length(results.dir) == 1L,
             is.character(algorithm),
-            length(algorithm) == 1L,
-            is.character(instances) || is.list(instances),
-            length(instances) >= 1L);
+            length(algorithm) == 1L);
+
+  instances <- .split.names(instances);
+  instance.names <- instances$names;
+  instances <- instances$data;
 
   # validate all the input
   stopifnot(is.character(algorithm),
@@ -120,10 +122,6 @@ aitoa.plot.gantt.for.stat.on.multiple.instances <- function(
 
   statistic <- match.arg(statistic);
 
-  stopifnot(is.character(instances) || is.list(instances),
-            length(instances) > 0L,
-            !any(is.na(instances)),
-            all(nchar(instances) > 0L));
   results.dir <- .dir.exists(results.dir);
 
   if(is.null(instances.limit) || all(is.na(instances.limit))) {
@@ -203,7 +201,7 @@ aitoa.plot.gantt.for.stat.on.multiple.instances <- function(
       results.dir=results.dir,
       algorithm=algorithm,
       instance=instances[[i]],
-      instance.name=names(instances)[[i]],
+      instance.name=instance.names[[i]],
       statistic=statistic,
       machine.name.func = machine.name.func,
       job.colors = job.colors,

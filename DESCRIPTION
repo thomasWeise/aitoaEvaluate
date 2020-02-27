@@ -10,6 +10,7 @@ Encoding: UTF-8
 Imports: bit64 (>= 0.9.7),
          graphics (>= 3.5.2),
          grDevices (>= 3.5.2),
+         stats (>= 3.5.2),
          utils (>= 3.5.2)
 Suggests: devtools (>= 2.0.2),
           roxygen2 (>= 6.1.1),

@@ -118,3 +118,31 @@
             nchar(name) > 0L);
   return(name);
 }
+
+# split a named list into a data and a names vector
+.split.names <- function(lst) {
+  stopifnot(is.list(lst) || is.character(lst),
+            length(lst) > 0L);
+  names <- names(lst);
+  lst <- unname(unlist(lst));
+  stopifnot(is.character(lst),
+            length(lst) > 0L,
+            !any(is.na(lst)),
+            all(nchar(lst) > 0L));
+  if(is.null(names)) { names <- lst; }
+  stopifnot(!is.null(names),
+            is.character(names),
+            length(names) == length(lst));
+  s <- vapply(names, function(z)
+                       is.null(z) ||
+                       is.na(z) ||
+                       (nchar(z) <= 0L), FALSE);
+  if(any(s)) {
+    names[s] <- lst[s];
+  }
+  stopifnot(is.character(names),
+            length(names) == length(lst),
+            !any(is.na(names)),
+            all(nchar(names) > 0L));
+  return(list(data=lst, names=names));
+}

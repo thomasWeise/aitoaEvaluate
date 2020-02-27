@@ -70,10 +70,9 @@ aitoa.plot.progress.on.multiple.instances <-
             !any(is.na(algorithms)),
             all(nchar(algorithms) > 0L));
 
-  stopifnot(is.character(instances) || is.list(instances),
-            length(instances) > 0L,
-            !any(is.na(instances)),
-            all(nchar(instances) > 0L));
+  instances <- .split.names(instances);
+  instance.names <- instances$names;
+  instances <- instances$data;
 
   time.column <- .time.column(match.arg(time.column));
   results.dir <- .dir.exists(results.dir);
@@ -161,7 +160,7 @@ aitoa.plot.progress.on.multiple.instances <-
     aitoa.plot.progress.on.instance(results.dir=results.dir,
                                     algorithms=algorithms,
                                     instance=instances[[i]],
-                                    instance.name=names(instances)[[i]],
+                                    instance.name=instance.names[[i]],
                                     time.column=time.column,
                                     max.time=max.time[[i]],
                                     algorithm.colors=algorithm.colors,
