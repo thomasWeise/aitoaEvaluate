@@ -21,6 +21,7 @@ LazyData: true
 RoxygenNote: 7.0.2
 Collate: 
     'common_styles.R'
+    'compare_vectors_statistically.R'
     'rgb_mix.R'
     'scale_rgb_luminoscity.R'
     'rgb_to_gray.R'
@@ -38,9 +39,11 @@ Collate:
     'load_log_file.R'
     'load_instance_dir.R'
     'load_algorithm_dir.R'
+    'load_end_results.R'
     'load_result_from_log_file.R'
     'load_results_dir.R'
     'load_stat_result.R'
+    'make_end_result_test_table.R'
     'make_stat_table.R'
     'parse_jssp_result.R'
     'plot_progress_on_instance.R'

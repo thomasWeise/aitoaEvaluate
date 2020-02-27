@@ -44,19 +44,13 @@
 #' @importFrom bit64 as.integer64
 #' @export aitoa.load.log.file
 #' @include parse_file_name.R
+#' @include utils.R
 aitoa.load.log.file <- function(file,
                                 keep.columns = c("fes", "t", "f"),
                                 make.time.unique=FALSE) {
   old.options <- options(warn=2);
-  stopifnot(is.character(file),
-            is.character(keep.columns),
-            length(keep.columns) > 0L,
-            is.logical(make.time.unique));
 
-  file <- normalizePath(file, mustWork=TRUE);
-  file <- force(file);
-  stopifnot(file.exists(file),
-            file.size(file) > 100L);
+  file <- .file.exists(file);
 
   # read file as text file, one line = one element
   data <- readLines(con=file, warn=FALSE);

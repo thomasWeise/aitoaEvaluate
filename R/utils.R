@@ -61,6 +61,25 @@
   return(dir);
 }
 
+# canonicalize a file name and throw an error if the
+# file does not exist
+.file.exists <- function(file) {
+  stopifnot(!is.null(file),
+            is.character(file),
+            length(file) == 1L,
+            !is.na(file),
+            nchar(file) > 0L);
+  file <- normalizePath(file, mustWork = TRUE);
+  stopifnot(!is.null(file),
+            is.character(file),
+            length(file) == 1L,
+            !is.na(file),
+            nchar(file) > 0L,
+            file.exists(file),
+            file.size(file) > 0L);
+  return(file);
+}
+
 # canonicalize a directory path and make sure that
 # the directory exist - create it if necessary
 .dir.ensure <- function(dir) {

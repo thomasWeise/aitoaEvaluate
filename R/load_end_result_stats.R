@@ -1,4 +1,4 @@
-.base.col.types <- c("character",
+.end.result.stats.base.col.types <- c("character",
                      "character",
                      "integer",
                      "numeric",
@@ -105,7 +105,7 @@
                      "numeric",
                      "numeric");
 
-.base.col.names <- c("algorithm",
+.end.result.stats.base.col.names <- c("algorithm",
                      "instance",
                      "n.runs",
                      "best.f.min",
@@ -215,7 +215,7 @@
 .check.end.result.stats <- function(data) {
   stopifnot(is.data.frame(data),
             nrow(data) > 0L,
-            all(colnames(data) == .base.col.names),
+            all(colnames(data) == .end.result.stats.base.col.names),
 
             all(is.finite(data$n.runs)),
             all(data$n.runs > 0L),
@@ -419,20 +419,9 @@
 #' @return the data frame with the end results
 #' @export aitoa.load.end.result.stats
 #' @importFrom utils read.csv
+#' @include utils.R
 aitoa.load.end.result.stats <- function(file) {
-  stopifnot(is.character(file),
-            length(file) == 1L,
-            !is.na(file),
-            !is.null(file),
-            nchar(file) > 0L);
-  file <- normalizePath(file, mustWork = TRUE);
-  stopifnot(is.character(file),
-            length(file) == 1L,
-            !is.na(file),
-            !is.null(file),
-            nchar(file) > 0L,
-            file.exists(file),
-            file.size(file) > 100L);
+  file <- .file.exists(file);
 
   data <- read.csv(file,
                    header=TRUE,
@@ -441,8 +430,8 @@ aitoa.load.end.result.stats <- function(file) {
                    check.names = TRUE,
                    blank.lines.skip = TRUE,
                    comment.char = '#',
-                   col.names = .base.col.names,
-                   colClasses = .base.col.types);
+                   col.names = .end.result.stats.base.col.names,
+                   colClasses = .end.result.stats.base.col.types);
 
   .check.end.result.stats(data);
 
