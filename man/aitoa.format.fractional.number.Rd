@@ -4,10 +4,13 @@
 \alias{aitoa.format.fractional.number}
 \title{Format a Fractional Number to a Text}
 \usage{
-aitoa.format.fractional.number(v)
+aitoa.format.fractional.number(v, put.dollars = TRUE)
 }
 \arguments{
 \item{v}{the number}
+
+\item{put.dollars}{if it contains maths, should the number be surrounded in
+\code{$} signs?}
 }
 \value{
 the string representation

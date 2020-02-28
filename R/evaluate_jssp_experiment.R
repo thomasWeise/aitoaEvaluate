@@ -373,7 +373,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                aitoa.make.end.result.test.table.md(
                  end.results,
                  algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
-                                 hcr_32768_1swap="hc_rs_32768_1swap",
                                  hcr_65536_nswap="hc_rs_65536_nswap"),
                  instances=instances
                ) } );

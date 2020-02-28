@@ -14,6 +14,7 @@
 #' @include load_end_results.R
 #' @include common_styles.R
 #' @include compare_vectors_statistically.R
+#' @include format_numbers.R
 #' @export aitoa.make.end.result.test.table.md
 aitoa.make.end.result.test.table.md <- function(
                                            end.results,
@@ -82,8 +83,10 @@ aitoa.make.end.result.test.table.md <- function(
 
   if(startsWith(correction, "b")) {
     alpha.use <- alpha / N;
+    alpha.string <- "\\alpha'";
   } else {
     alpha.use <- alpha;
+    alpha.string <- "\\alpha";
   }
   stopifnot(is.numeric(alpha.use),
             length(alpha.use) == 1L,
@@ -92,7 +95,9 @@ aitoa.make.end.result.test.table.md <- function(
             alpha.use < 0.5);
 
 # make the header
-  header.1 <- paste0("|test|", paste(
+  header.1 <- paste0("|Mann-Whitney U $", alpha.string, "=",
+                     aitoa.format.fractional.number(alpha.use, FALSE),
+                     "$|", paste(
                     vapply(instance.names, instance.format, NA_character_),
                     sep="|", collapse="|"), "|");
   header.2 <- paste0("|:--", strrep("|--:", times=length(instances)), "|");

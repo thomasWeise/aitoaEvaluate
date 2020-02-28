@@ -1,8 +1,13 @@
 
-.transform.log <- function(v, prep) {
+.transform.log <- function(v,
+                           prep,
+                           put.dollars) {
   stopifnot(is.numeric(v),
             length(v) == 1L,
-            is.finite(v));
+            is.finite(v),
+            is.logical(put.dollars),
+            length(put.dollars) == 1L,
+            isTRUE(put.dollars) || isFALSE(put.dollars));
   y <- as.integer(prep(log10(v)));
   p <- 10L ^ y;
   x <- as.character(signif(v/p, 3L));
@@ -14,7 +19,10 @@
       x <- paste0(x, "0");
     }
   }
-  r <- paste0("$", x , "\\!\\cdot\\!10^{", y, "}$");
+  r <- paste0(x , "\\!\\cdot\\!10^{", y, "}");
+  if(put.dollars) {
+    r <- paste0("$", r, "$");
+  }
   stopifnot(is.character(r),
             length(r) == 1L,
             nchar(r) > 0L);
@@ -50,12 +58,18 @@ aitoa.format.small.number <- function(v) {
 #' @title Format a Fractional Number to a Text
 #' @description Transform a finite number from (-1, 1) to a pleasant string.
 #' @param v the number
+#' @param put.dollars if it contains maths, should the number be surrounded in
+#'   \code{$} signs?
 #' @return the string representation
 #' @export aitoa.format.fractional.number
-aitoa.format.fractional.number <- function(v) {
+aitoa.format.fractional.number <- function(v,
+                                           put.dollars=TRUE) {
   stopifnot(is.numeric(v),
             length(v) == 1L,
-            is.finite(v));
+            is.finite(v),
+            is.logical(put.dollars),
+            length(put.dollars) == 1L,
+            isTRUE(put.dollars) || isFALSE(put.dollars));
   r <- as.character(v);
   stopifnot(is.character(r),
             length(r) == 1L,
@@ -64,7 +78,7 @@ aitoa.format.fractional.number <- function(v) {
      (!grepl("e", tolower(r), fixed=TRUE))) {
     return(r);
   }
-  return(.transform.log(v, floor));
+  return(.transform.log(v, floor, put.dollars=put.dollars));
 }
 
 #' @title Format a Number for Presentation in Markdown
