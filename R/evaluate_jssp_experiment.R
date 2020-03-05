@@ -8,6 +8,7 @@
 #' @include load_end_result_stats.R
 #' @include graphic_out.R
 #' @include plot_gantt_for_stat_on_multiple_instances.R
+#' @include distinct_styles.R
 #' @export aitoa.evaluate.jssp.experiment
 aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                                            evaluation.dir=file.path(results.dir, "..", "evaluation"),
@@ -32,7 +33,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
   instances <- c("abz7", "la24", "swv15", "yn4");
   instances.limit <- c(656L, 935L, 2885L, 929L);
   instances.limit.name <- "lb*"
-  instances.symbols <- c(1L, 2L, 5L, 6L);
+  instances.symbols <- aitoa.distinct.pch(4L);
   instance.gantt.job.name.cex <- c(0.7, 0.8, 0.4, 0.6);
   width <- 6;
   height <- 8.6;

@@ -26,6 +26,8 @@
 .gantt.label.bg <- "#FFFFFFD5";
 .gantt.label.cex <- 1.17*.legend.cex;
 
+.default.transparency <- (1 - (66L/255L));
+
 .default.time.column <- "t";
 
 .default.num.vec <- function(vec, default, len, min, max) {
