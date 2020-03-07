@@ -38,7 +38,7 @@
 #' @include common_styles.R
 #' @include make_color_transparent.R
 #' @include legends.R
-#' @importFrom graphics lines plot points
+#' @importFrom graphics lines plot points polygon strwidth
 #' @export aitoa.plot.stats.over.instance
 aitoa.plot.stats.over.instance <- function(end.result.stats,
                                             algorithms,
@@ -51,7 +51,7 @@ aitoa.plot.stats.over.instance <- function(end.result.stats,
                                             algorithms.lty=aitoa.distinct.lty(length(algorithms)),
                                             algorithms.pch=aitoa.distinct.pch(length(algorithms)),
                                             algorithms.lwd=.default.lwd,
-                                            statistics.bg.transparenty=.default.transparency,
+                                            statistics.bg.transparency=.default.transparency,
                                             legend.pos="topleft",
                                             legend.cex=.legend.cex,
                                             legend.bg=.legend.bg,
@@ -186,16 +186,16 @@ aitoa.plot.stats.over.instance <- function(end.result.stats,
   do.call(plot, pars);
 
   if(!is.null(statistic.top)) {
-    stopifnot(!is.null(statistics.bg.transparenty),
-              is.numeric(statistics.bg.transparenty),
-              length(statistics.bg.transparenty) == 1L,
-              is.finite(statistics.bg.transparenty),
-              statistics.bg.transparenty >= 0,
-              statistics.bg.transparenty <= 1);
+    stopifnot(!is.null(statistics.bg.transparency),
+              is.numeric(statistics.bg.transparency),
+              length(statistics.bg.transparency) == 1L,
+              is.finite(statistics.bg.transparency),
+              statistics.bg.transparency >= 0,
+              statistics.bg.transparency <= 1);
     statistics.bg <- vapply(algorithms.color,
                             aitoa.make.color.transparent,
                             NA_character_,
-                            transparency=statistics.bg.transparenty);
+                            transparency=statistics.bg.transparency);
     stopifnot(length(statistics.bg) ==
                 length(algorithms));
     for(i in seq_along(algorithms)) {

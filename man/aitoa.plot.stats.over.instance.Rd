@@ -16,7 +16,7 @@ aitoa.plot.stats.over.instance(
   algorithms.lty = aitoa.distinct.lty(length(algorithms)),
   algorithms.pch = aitoa.distinct.pch(length(algorithms)),
   algorithms.lwd = .default.lwd,
-  statistics.bg.transparenty = .default.transparency,
+  statistics.bg.transparency = .default.transparency,
   legend.pos = "topleft",
   legend.cex = .legend.cex,
   legend.bg = .legend.bg,
@@ -58,6 +58,10 @@ region behind the \code{statistic}}
 
 \item{algorithms.lwd}{the line-widths to be used for the algorithms}
 
+\item{statistics.bg.transparency}{the transparency value (0 for transparent,
+1 for normal color) used for making the region behind the statistics
+transparent}
+
 \item{legend.pos}{the position for the legend}
 
 \item{legend.cex}{the font size for the legend}
@@ -76,10 +80,6 @@ into the legend?}
 \item{mar}{the default margins}
 
 \item{...}{parameters to be passed to \link[graphics]{par}}
-
-\item{statistics.bg.transparency}{the transparency value (0 for transparent,
-1 for normal color) used for making the region behind the statistics
-transparent}
 }
 \description{
 For each instance, we can compute one x-coordinate. We than plot
