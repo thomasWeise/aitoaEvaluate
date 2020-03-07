@@ -10,7 +10,8 @@
 #' @export aitoa.distinct.colors
 #' @importFrom grDevices col2rgb rgb rgb2hsv
 aitoa.distinct.colors <- function(n) {
-  stopifnot(is.integer(n),
+  stopifnot(!is.null(n),
+            is.integer(n),
             length(n) == 1L,
             is.finite(n),
             n > 0L);
@@ -41,7 +42,8 @@ aitoa.distinct.colors <- function(n) {
             all(nchar(colors) > 0L));
     colors <- colors[1L:n];
   } else {
-    colors.start <- unname(unlist(colors.distinct.list));
+    colors.start <- unique(unname(unlist(colors.distinct.list)));
+    stopifnot(length(colors.start) > 10L);
     preserve.colors <- 1L:10L;
 
     # OK, we need first need to generate colors
