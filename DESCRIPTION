@@ -23,6 +23,7 @@ RoxygenNote: 7.0.2
 Collate: 
     'common_styles.R'
     'compare_vectors_statistically.R'
+    'create_stat_run.R'
     'rgb_mix.R'
     'scale_rgb_luminoscity.R'
     'rgb_to_gray.R'
