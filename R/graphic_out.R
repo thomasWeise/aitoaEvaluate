@@ -6,8 +6,8 @@
   text <- readLines(con=file);
   stopifnot(length(text) > 0L);
   text <- paste(trimws(text), sep="", collapse="");
-  text <- .internal.gsub('g clip-path=\\".*?\\" clip-rule=\\"nonzero\\"', "g", text);
-  text <- .internal.gsub('<clipPath.*?</clipPath>', "", text);
+  #text <- .internal.gsub('g clip-path=\\".*?\\" clip-rule=\\"nonzero\\"', "g", text);
+  #text <- .internal.gsub('<clipPath.*?</clipPath>', "", text);
   text <- .internal.gsub('</g>\\s*<g>', "", text);
   writeLines(text, con=file);
   return(file);

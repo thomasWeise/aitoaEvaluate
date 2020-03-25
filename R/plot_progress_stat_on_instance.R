@@ -1,3 +1,7 @@
+
+#' @importFrom stats pnorm
+.stat.plot.default.quantiles <- sort(unique(c(0, 1-pnorm(2), 1-pnorm(1), 0.25)));
+
 #' @title Plot the Progress of a Set of Algorithms on One Instance
 #' @description Plot the progress of a set of algorithms on one instance.
 #' @param results.dir the directory where the results can be loaded from
@@ -9,10 +13,15 @@
 #' @param max.time an optional maximal time limit
 #' @param algorithm.colors a character vector of the same length as
 #'   \code{algorithms} providing the colors to be used for the algorithms
-#' @param algorithm.lty the line type to be used for the algorithms, can be
-#'   vector
-#' @param algorithm.lwd the line width to be used for the algorithms, can be
-#'   vector
+#' @param quantiles the quantiles to be plotted in a shaded fashion: all values
+#'   must be >= 0 and < 0.5 and are mirrored. I.e., if you specify 0.2, then the
+#'   region between the 0.2 and 0.8 quantile will be plotted semi-transparent.
+#' @param center.stat the central statistic to plot, usually the \link{median}
+#'   or \link{mean}
+#' @param center.lty the line type to be used for the median lines
+#' @param center.lwd the line width to be used for median lines
+#' @param quantile.transparency the transparency to be applied to each quantile
+#'   polygon
 #' @param instance.limit an opional quality limit to be plotted as horizontal
 #'   line
 #' @param instance.limit.name the optional name of the quality limit
@@ -36,8 +45,6 @@
 #'   However, you can also create a log where every single sampled solution is
 #'   logged, so then you must set \code{f.must.be.improving=FALSE} to load the
 #'   data.
-#' @param max.runs.to.plot an optional number giving the maximum number of runs
-#'   to be plotted per algorithm
 #' @param mgp the mgp parameter to be passed to \link[graphics]{plot}
 #' @param tck the tck parameter to be passed to \link[graphics]{plot}
 #' @param cex the default character scaling
@@ -45,38 +52,42 @@
 #' @param ... parameters to be passed to \link[graphics]{par}
 #' @include load_instance_dir.R
 #' @include utils.R
-#' @importFrom graphics abline lines plot
-#' @export aitoa.plot.progress.on.instance
+#' @importFrom graphics abline lines plot polygon
+#' @importFrom stats median quantile
+#' @export aitoa.plot.progress.stat.on.instance
 #' @include common_styles.R
-#' @include legends.R
 #' @include distinct_colors.R
 #' @include make_color_transparent.R
-aitoa.plot.progress.on.instance <- function(results.dir=".",
-                                            algorithms,
-                                            instance,
-                                            instance.name=instance,
-                                            time.column=c("t", "fes"),
-                                            max.time=NA_integer_,
-                                            algorithm.colors=aitoa.distinct.colors(length(algorithms)),
-                                            algorithm.lty=.default.lty,
-                                            algorithm.lwd=.default.lwd,
-                                            instance.limit=NA_integer_,
-                                            instance.limit.name=NA_character_,
-                                            instance.limit.color=.instance.limit.color,
-                                            instance.limit.lty=.instance.limit.lty,
-                                            instance.limit.lwd=.instance.limit.lwd,
-                                            legend.cex=.legend.cex,
-                                            legend.bg=.legend.bg,
-                                            time.axis.text=if(time.column[[1L]]=="t") .time.ms.text else .time.fes.text,
-                                            quality.axis.text=.quality.text,
-                                            make.time.unique=FALSE,
-                                            f.must.be.improving=TRUE,
-                                            max.runs.to.plot=NA_integer_,
-                                            mgp=.default.mgp,
-                                            tck=.default.tck,
-                                            cex=.default.cex,
-                                            mar=.default.mar.without.labels,
-                                            ...) {
+#' @include legends.R
+aitoa.plot.progress.stat.on.instance <-
+     function(results.dir=".",
+              algorithms,
+              instance,
+              instance.name=instance,
+              time.column=c("t", "fes"),
+              max.time=NA_integer_,
+              algorithm.colors=aitoa.distinct.colors(length(algorithms)),
+              quantiles=.stat.plot.default.quantiles,
+              center.stat=median,
+              center.lty=.default.lty,
+              center.lwd=.thick.lwd,
+              quantile.transparency=0.8,
+              instance.limit=NA_integer_,
+              instance.limit.name=NA_character_,
+              instance.limit.color=.instance.limit.color,
+              instance.limit.lty=.instance.limit.lty,
+              instance.limit.lwd=.instance.limit.lwd,
+              legend.cex=.legend.cex,
+              legend.bg=.legend.bg,
+              time.axis.text=if(time.column[[1L]]=="t") .time.ms.text else .time.fes.text,
+              quality.axis.text=.quality.text,
+              make.time.unique=(time.column[[1L]]=="t"),
+              f.must.be.improving=TRUE,
+              mgp=.default.mgp,
+              tck=.default.tck,
+              cex=.default.cex,
+              mar=.default.mar.without.labels,
+              ...) {
 
   stopifnot(!is.null(results.dir),
             is.character(results.dir),
@@ -89,7 +100,9 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
             !is.null(f.must.be.improving),
             is.logical(f.must.be.improving),
             length(f.must.be.improving) == 1L,
-            isTRUE(f.must.be.improving) || isFALSE(f.must.be.improving));
+            isTRUE(f.must.be.improving) || isFALSE(f.must.be.improving),
+            !is.null(center.stat),
+            is.function(center.stat));
 
   time.column <- .time.column(match.arg(time.column));
 
@@ -109,12 +122,22 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
             is.na(instance.limit) ||
             is.null(instance.limit) ||
               (is.numeric(instance.limit) &&
-              (length(instance.limit) == 1L)));
-
-  if(is.null(max.runs.to.plot)) { max.runs.to.plot <- NA_integer_; }
-  stopifnot(is.integer(max.runs.to.plot),
-            length(max.runs.to.plot) == 1L,
-            is.na(max.runs.to.plot) || (is.finite(max.runs.to.plot) && (max.runs.to.plot>=1L)));
+              (length(instance.limit) == 1L)),
+            is.character(algorithm.colors),
+            length(algorithm.colors) == length(algorithms),
+            !is.null(quantiles),
+            is.numeric(quantiles),
+            length(quantiles) > 0L,
+            all(is.finite(quantiles)),
+            all(quantiles >= 0),
+            all(quantiles < 0.5));
+  quantiles <- sort(unique(quantiles));
+  stopifnot(!is.null(quantiles),
+            is.numeric(quantiles),
+            length(quantiles) > 0L,
+            all(is.finite(quantiles)),
+            all(quantiles >= 0),
+            all(quantiles < 0.5));
 
   results.dir <- .dir.exists(results.dir);
 
@@ -150,9 +173,9 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   mar <- .mar(mar, .default.mar.without.labels);
 
   old.par <- .safe.par(list(mgp=mgp,
-                           tck=tck,
-                           cex=cex,
-                           mar=mar));
+                            tck=tck,
+                            cex=cex,
+                            mar=mar));
 
   pars <- list(...);
   log.scale.time <- !is.null(pars$log) &&
@@ -160,6 +183,10 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   stopifnot(isTRUE(log.scale.time) || isFALSE(log.scale.time));
 
   .logger("Now processing instance '", instance, "'.");
+
+  x.min <- 1L;
+  if((time.column == "t") && (!log.scale.time)) x.min <- 0L;
+
   data <- lapply(algorithms, function(algo) {
     dir <- normalizePath(file.path(results.dir,
                                    algo,
@@ -167,38 +194,44 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
                          mustWork = TRUE);
     res <- aitoa.load.inst.dir(dir, c(time.column, "f"),
                                make.time.unique = make.time.unique,
-                               f.must.be.improving=f.must.be.improving,
-                               max.runs.to.load=max.runs.to.plot);
+                               f.must.be.improving=f.must.be.improving);
     stopifnot(length(res) > 0L);
 
-    return(lapply(res, function(frame) {
-      stopifnot(nrow(frame) > 1L);
-      frame <- as.matrix(frame);
-      if(!is.na(max.time)) {
-        stopifnot(is.finite(max.time),
-                  max.time > 0L);
-        frame <- frame[frame[, 1L] <= max.time, ];
-        stopifnot(nrow(frame) >= 1L);
-        if(frame[nrow(frame), 1L] < max.time) {
-          frame <- rbind(frame,
-                         c(max.time, frame[nrow(frame), 2L]));
-        }
-      }
-      if(isTRUE(log.scale.time)) {
-        frame[frame[, 1L] < 1L, 1L] <- 1L;
-        del <- frame[, 1L] <= 1L;
-        if(sum(del) > 2) {
-          del <- which(del);
-          stopifnot(length(del) >= 3L);
-          del <- del[-1L];
-          stopifnot(length(del) >= 2L);
-          del <- del[-length(del)];
-          stopifnot(length(del) >= 1L);
-          frame <- frame[-del, ];
-        }
-      }
-      return(frame);
-    }));
+    .q.func <- function(q) {
+      if(q <= 0) { return(min); }
+      if(q >= 1) { return(max); }
+      if(q == 0.5) { return(median); }
+      return(function(x) quantile(x, q));
+    }
+
+    s <- lapply(quantiles,
+                  function(q) {
+                    list(aitoa.create.stat.run(
+                           res,
+                           x.column = time.column,
+                           y.column = "f",
+                           stat.func = .q.func(q),
+                           x.min = x.min,
+                           x.max = max.time,
+                           make.stairs = TRUE),
+                         aitoa.create.stat.run(
+                           res,
+                           x.column = time.column,
+                           y.column = "f",
+                           stat.func = .q.func(1-q),
+                           x.min = x.min,
+                           x.max = max.time,
+                           make.stairs = TRUE));
+                  });
+    s[[length(s) + 1L]] <- list(aitoa.create.stat.run(
+                            res,
+                            x.column = time.column,
+                            y.column = "f",
+                            stat.func = center.stat,
+                            x.min = x.min,
+                            x.max = max.time,
+                            make.stairs = TRUE));
+    return(s);
   });
 
   # done loading the data, now gathering ranges
@@ -206,7 +239,10 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   if(is.na(max.time)) {
     time.range <- max(vapply(data, function(d) {
       max(vapply(d, function(dd) {
-        dd[nrow(dd), 1L]
+        max(vapply(dd, function(ddd) {
+          x <- ddd[, 1L];
+          max(x[is.finite(x)])
+        }, NA_real_))
       }, NA_real_))
     }, NA_real_))
   } else{
@@ -214,13 +250,16 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   }
   stopifnot(is.finite(time.range),
             time.range > 1L);
-  time.range <- range(c(time.range, if(isTRUE(log.scale.time)) 1L else 0L));
+  time.range <- range(c(time.range, x.min));
 
 
   # 2. the function range is more complex
   f.range <- range(unname(unlist(lapply(data, function(d) {
     range(unname(unlist(lapply(d, function(dd) {
-      range(dd[, 2L])
+      range(unname(unlist(lapply(dd, function(ddd) {
+       x <- ddd[, 2L];
+       range(x[is.finite(x)])
+      }))))
     }))))
   }))));
   if(!is.na(instance.limit)) {
@@ -288,22 +327,66 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
          labels = as.character(x.ticks));
   }
 
+  # prepare a replacement for infinite, since infinite doesn't register
+  infinte.rep <- max(f.range);
+  for(i in 1L:2L) {
+    infinte.rep.2 <- infinte.rep + 1L;
+    if(is.finite(infinte.rep.2)) { infinte.rep <- infinte.rep.2; }
+    infinte.rep.2 <- infinte.rep * 2L;
+    if(is.finite(infinte.rep.2)) { infinte.rep <- infinte.rep.2; }
+  }
 
-  algorithm.lty <- .lty.rep(algorithm.lty,
-                            .default.lty,
-                            length(algorithms));
-  algorithm.lwd <- .lwd.rep(algorithm.lwd,
-                            .default.lwd,
-                            length(algorithms));
+  # prepare styles
+  algorithm.colors.t <- vapply(algorithm.colors,
+                               aitoa.make.color.transparent,
+                               NA_character_,
+                               transparency=quantile.transparency);
+  center.lty <- .lty.rep(center.lty, .thick.lwd, length(algorithms));
+  center.lwd <- .lwd.rep(center.lwd, .default.lty, length(algorithms));
 
-  # plot the lines
-  for(i in seq_along(data)) {
-    color <- algorithm.colors[[i]];
-    for(d in data[[i]]) {
-      lines(d, lty=algorithm.lty[[i]],
-            lwd=algorithm.lwd[[i]],
-            type="s", col=color);
+  clear <- aitoa.make.color.transparent("white",
+                                        sqrt(1/length(algorithms)));
+
+  # plot polygons
+  for(j in seq_along(data)) {
+    for(i in seq_along(quantiles)) {
+      sel <- data[[j]][[i]];
+      x <- unname(unlist(c(sel[[1L]][, 1L], rev(sel[[2L]][, 1L]))));
+      y <- unname(unlist(c(sel[[1L]][, 2L], rev(sel[[2L]][, 2L]))));
+      y[!is.finite(y)] <- infinte.rep;
+      if((j > 1L) && (i == 1L)) {
+        polygon(x, y,
+                col=clear,
+                border=NA,
+                xpd=FALSE);
+      }
+      polygon(x, y,
+              col=algorithm.colors.t[[j]],
+              border=NA,
+              xpd=FALSE);
     }
+  }
+
+
+  # plot center stat
+  for(j in seq_along(data)) {
+    sel <- data[[j]];
+    sel <- sel[[length(sel)]][[1L]];
+    y <- sel[, 2L];
+    y[!is.finite(y)] <- infinte.rep;
+    lines(sel[,1L], y, lty=1L,
+          lwd=(5*center.lwd[[j]])/2,
+          col="white");
+  }
+
+  for(j in seq_along(data)) {
+    sel <- data[[j]];
+    sel <- sel[[length(sel)]][[1L]];
+    y <- sel[, 2L];
+    y[!is.finite(y)] <- infinte.rep;
+    lines(sel[,1L], y, lty=center.lty[[j]],
+          lwd=center.lwd[[j]],
+          col=algorithm.colors[[j]]);
   }
 
   # adding legend
@@ -311,8 +394,8 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
   legend.text <- c(instance.name, algorithm.names);
   legend.color <- c("black",
                     algorithm.colors[1L:length(algorithms)]);
-  legend.lty <- c(NA, algorithm.lty);
-  legend.lwd <- as.numeric(c(NA_real_, algorithm.lwd));
+  legend.lty <- c(NA, center.lty);
+  legend.lwd <- as.numeric(c(NA_real_, center.lwd));
   if(!(is.null(instance.limit) || all(is.na(instance.limit)))) {
     if(is.null(instance.limit.name) || is.na(instance.limit.name)) {
       instance.limit.name <- as.character(instance.limit);

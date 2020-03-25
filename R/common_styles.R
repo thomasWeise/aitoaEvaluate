@@ -4,6 +4,7 @@
 
 .default.lty <- 1L;
 .default.lwd <- 1L;
+.thick.lwd <- as.integer(2L * .default.lwd);
 
 .instance.limit.color <- "darkgray";
 .instance.limit.lwd <- 4/3 * .default.lwd;
