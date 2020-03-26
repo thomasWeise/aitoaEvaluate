@@ -376,7 +376,8 @@ aitoa.plot.progress.stat.on.instance <-
     y[!is.finite(y)] <- infinte.rep;
     lines(sel[,1L], y, lty=1L,
           lwd=(5*center.lwd[[j]])/2,
-          col="white");
+          col="white",
+          xpd=FALSE);
   }
 
   for(j in seq_along(data)) {
@@ -386,7 +387,8 @@ aitoa.plot.progress.stat.on.instance <-
     y[!is.finite(y)] <- infinte.rep;
     lines(sel[,1L], y, lty=center.lty[[j]],
           lwd=center.lwd[[j]],
-          col=algorithm.colors[[j]]);
+          col=algorithm.colors[[j]],
+          xpd=FALSE);
   }
 
   # adding legend
