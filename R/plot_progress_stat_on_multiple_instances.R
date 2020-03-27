@@ -1,6 +1,6 @@
-#' @title Plot the Progress for a Set of Algorithms on a Set of Problem
+#' @title Plot the Progress of a Statistic for a Set of Algorithms on a Set of Problem
 #'   Instances
-#' @description  Plot how a set of algorithms progress over a set of problem
+#' @description  Plot how a statistic for each element of set of algorithms progress over a set of problem
 #'   instances. For each instance, one diagram is plotted. The diagrams are
 #'   arranged one by one from in a vertical row.
 #' @param results.dir the directory where the results can be loaded from
@@ -13,10 +13,15 @@
 #' @param algorithm.colors the colors to be used for the different algorithms
 #' @param algorithm.colors a character vector of the same length as
 #'   \code{algorithms} providing the colors to be used for the algorithms
-#' @param algorithm.lty the line type to be used for the algorithms, can be
-#'   vector
-#' @param algorithm.lwd the line width to be used for the algorithms, can be
-#'   vector
+#' @param quantiles the quantiles to be plotted in a shaded fashion: all values
+#'   must be >= 0 and < 0.5 and are mirrored. I.e., if you specify 0.2, then the
+#'   region between the 0.2 and 0.8 quantile will be plotted semi-transparent.
+#' @param center.stat the central statistic to plot, usually the \link{median}
+#'   or \link{mean}
+#' @param center.lty the line type to be used for the median lines
+#' @param center.lwd the line width to be used for median lines
+#' @param quantile.transparency the transparency to be applied to each quantile
+#'   polygon
 #' @param instances.limit an optional vector of lower bounds or best-known
 #'   solutions for the instances
 #' @param instances.limit.name an optional name or name vector for the instances
@@ -36,6 +41,7 @@
 #'   away. If \code{make.time.unique==FALSE}, then there may be multiple
 #'   improvements at the same time index due to the resolution of the computer
 #'   clock (while each improvement will definitely have a unique FE).
+#' @param use.f.range.from.raw.data should we use the real data to compute the range of the y-axis, or should the range depend on the computed statistics only (default)?
 #' @param mgp the mgp parameter to be passed to \link[graphics]{plot}
 #' @param tck the tck parameter to be passed to \link[graphics]{plot}
 #' @param cex the default character scaling
@@ -44,16 +50,19 @@
 #' @param ... parameters to be passed to \link[graphics]{par}
 #' @export aitoa.plot.progress.on.multiple.instances
 #' @include utils.R
-#' @include plot_progress_on_instance.R
-aitoa.plot.progress.on.multiple.instances <-
+#' @include plot_progress_stat_on_instance.R
+aitoa.plot.progress.stat.on.multiple.instances <-
                        function(results.dir,
                                 algorithms,
                                 instances,
                                 time.column=c("t", "fes"),
                                 max.time=NA_integer_,
                                 algorithm.colors=aitoa.distinct.colors(length(algorithms)),
-                                algorithm.lty=.default.lty,
-                                algorithm.lwd=.default.lwd,
+                                quantiles=.stat.plot.default.quantiles,
+                                center.stat=median,
+                                center.lty=.default.lty,
+                                center.lwd=.thick.lwd,
+                                quantile.transparency=0.8,
                                 instances.limit=NA_integer_,
                                 instances.limit.name=NULL,
                                 instance.limit.color=.instance.limit.color,
@@ -64,6 +73,7 @@ aitoa.plot.progress.on.multiple.instances <-
                                 time.axis.text=if(time.column[[1L]]=="t") .time.ms.text else .time.fes.text,
                                 quality.axis.text=.quality.text,
                                 make.time.unique=(time.column[[1L]]=="t"),
+                                use.f.range.from.raw.data=FALSE,
                                 mgp=.default.mgp,
                                 tck=.default.tck,
                                 cex=.default.cex,
@@ -157,30 +167,34 @@ aitoa.plot.progress.on.multiple.instances <-
       }
     }
 
-    aitoa.plot.progress.on.instance(results.dir=results.dir,
-                                    algorithms=algorithms,
-                                    instance=instances[[i]],
-                                    instance.name=instance.names[[i]],
-                                    time.column=time.column,
-                                    max.time=max.time[[i]],
-                                    algorithm.colors=algorithm.colors,
-                                    algorithm.lty=algorithm.lty,
-                                    algorithm.lwd=algorithm.lwd,
-                                    instance.limit=inst.limit,
-                                    instance.limit.name=inst.limit.name,
-                                    instance.limit.color=instance.limit.color,
-                                    instance.limit.lty=instance.limit.lty,
-                                    instance.limit.lwd=instance.limit.lwd,
-                                    legend.cex=legend.cex,
-                                    legend.bg=legend.bg,
-                                    time.axis.text=time.axis.text,
-                                    quality.axis.text=quality.axis.text,
-                                    make.time.unique=make.time.unique,
-                                    mgp=mgp,
-                                    tck=tck,
-                                    cex=cex,
-                                    mar=if(is.null(mar.single)) NULL else mar.single[[i]],
-                                    ...);
+    aitoa.plot.progress.stat.on.instance(
+      results.dir=results.dir,
+      algorithms=algorithms,
+      instance=instances[[i]],
+      instance.name=instance.names[[i]],
+      time.column=time.column,
+      max.time=max.time[[i]],
+      algorithm.colors=algorithm.colors,
+      center.stat=median,
+      center.lty=.default.lty,
+      center.lwd=.thick.lwd,
+      quantile.transparency=0.8,
+      instance.limit=inst.limit,
+      instance.limit.name=inst.limit.name,
+      instance.limit.color=instance.limit.color,
+      instance.limit.lty=instance.limit.lty,
+      instance.limit.lwd=instance.limit.lwd,
+      legend.cex=legend.cex,
+      legend.bg=legend.bg,
+      time.axis.text=time.axis.text,
+      quality.axis.text=quality.axis.text,
+      make.time.unique=make.time.unique,
+      use.f.range.from.raw.data=use.f.range.from.raw.data,
+      mgp=mgp,
+      tck=tck,
+      cex=cex,
+      mar=if(is.null(mar.single)) NULL else mar.single[[i]],
+      ...);
   }
 
   .safe.par(old.par);

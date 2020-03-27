@@ -130,7 +130,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 height = height,
                 skip.if.exists = skip.if.exists,
                 body = {
-                  aitoa.plot.progress.on.multiple.instances(
+                  aitoa.plot.progress.stat.on.multiple.instances(
                     results.dir=results.dir,
                     algorithms=c("rs", "hc_1swap"),
                     instances=instances,
@@ -223,7 +223,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 height = height,
                 skip.if.exists = skip.if.exists,
                 body = {
-                  aitoa.plot.progress.on.multiple.instances(
+                  aitoa.plot.progress.stat.on.multiple.instances(
                     results.dir=results.dir,
                     algorithms=list(rs="rs",
                                     hc_1swap="hc_1swap",
@@ -260,7 +260,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 height = height,
                 skip.if.exists = skip.if.exists,
                 body = {
-                  aitoa.plot.progress.on.multiple.instances(
+                  aitoa.plot.progress.stat.on.multiple.instances(
                     results.dir=results.dir,
                     algorithms=list(hc_1swap="hc_1swap",
                                     hc_nswap="hc_nswap"),
@@ -337,10 +337,14 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                 height = height,
                 skip.if.exists = skip.if.exists,
                 body = {
-                  aitoa.plot.progress.on.multiple.instances(
+                  aitoa.plot.progress.stat.on.multiple.instances(
                     results.dir=results.dir,
                     algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
+                                    hc_nswap="hc_nswap",
+                                    hcr_32768_nswap="hc_rs_32768_nswap",
                                     hcr_65536_nswap="hc_rs_65536_nswap"),
+                      #list(hcr_16384_1swap="hc_rs_16384_1swap",
+                      #              hcr_65536_nswap="hc_rs_65536_nswap"),
                     instances=instances,
                     time.column = "t",
                     max.time = max.time,

@@ -45,6 +45,7 @@
 #'   However, you can also create a log where every single sampled solution is
 #'   logged, so then you must set \code{f.must.be.improving=FALSE} to load the
 #'   data.
+#' @param use.f.range.from.raw.data should we use the real data to compute the range of the y-axis, or should the range depend on the computed statistics only (default)?
 #' @param mgp the mgp parameter to be passed to \link[graphics]{plot}
 #' @param tck the tck parameter to be passed to \link[graphics]{plot}
 #' @param cex the default character scaling
@@ -83,6 +84,7 @@ aitoa.plot.progress.stat.on.instance <-
               quality.axis.text=.quality.text,
               make.time.unique=(time.column[[1L]]=="t"),
               f.must.be.improving=TRUE,
+              use.f.range.from.raw.data=FALSE,
               mgp=.default.mgp,
               tck=.default.tck,
               cex=.default.cex,
@@ -102,7 +104,11 @@ aitoa.plot.progress.stat.on.instance <-
             length(f.must.be.improving) == 1L,
             isTRUE(f.must.be.improving) || isFALSE(f.must.be.improving),
             !is.null(center.stat),
-            is.function(center.stat));
+            is.function(center.stat),
+            !is.null(use.f.range.from.raw.data),
+            is.logical(use.f.range.from.raw.data),
+            length(use.f.range.from.raw.data)==1L,
+            isTRUE(use.f.range.from.raw.data) || isFALSE(use.f.range.from.raw.data));
 
   time.column <- .time.column(match.arg(time.column));
 
@@ -204,6 +210,9 @@ aitoa.plot.progress.stat.on.instance <-
       return(function(x) quantile(x, q));
     }
 
+    f.range <- range(unname(unlist(lapply(res,
+                     function(z) range(z[, 2L])))));
+
     s <- lapply(quantiles,
                   function(q) {
                     list(aitoa.create.stat.run(
@@ -231,6 +240,7 @@ aitoa.plot.progress.stat.on.instance <-
                             x.min = x.min,
                             x.max = max.time,
                             make.stairs = TRUE));
+    attr(s, "f.range") <- f.range;
     return(s);
   });
 
@@ -254,14 +264,21 @@ aitoa.plot.progress.stat.on.instance <-
 
 
   # 2. the function range is more complex
-  f.range <- range(unname(unlist(lapply(data, function(d) {
-    range(unname(unlist(lapply(d, function(dd) {
-      range(unname(unlist(lapply(dd, function(ddd) {
-       x <- ddd[, 2L];
-       range(x[is.finite(x)])
+  if(use.f.range.from.raw.data) {
+    f.range <- range(unname(unlist(lapply(data, function(d) {
+      attr(d, "f.range")
+    }))));
+  } else {
+    f.range <- range(unname(unlist(lapply(data, function(d) {
+      range(unname(unlist(lapply(d, function(dd) {
+        range(unname(unlist(lapply(dd, function(ddd) {
+         x <- ddd[, 2L];
+         range(x[is.finite(x)])
+        }))))
       }))))
-    }))))
-  }))));
+    }))));
+  }
+
   if(!is.na(instance.limit)) {
     f.range <- range(c(instance.limit, f.range));
   }
@@ -335,6 +352,7 @@ aitoa.plot.progress.stat.on.instance <-
     infinte.rep.2 <- infinte.rep * 2L;
     if(is.finite(infinte.rep.2)) { infinte.rep <- infinte.rep.2; }
   }
+
 
   # prepare styles
   algorithm.colors.t <- vapply(algorithm.colors,
