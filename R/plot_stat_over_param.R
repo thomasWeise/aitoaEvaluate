@@ -110,9 +110,7 @@ aitoa.plot.stat.over.param <- function(
   if(!is.null(algorithm.secondary.args)) {
     algorithm.secondary.args <- sort(unique(unname(unlist(algorithm.secondary.args))));
     stopifnot(!is.null(algorithm.secondary.args),
-              length(algorithm.secondary.args) > 0L,
-              length(algorithm.secondary.args) == 1L,
-              nchar(algorithm.secondary.args) > 0L);
+              length(algorithm.secondary.args) > 0L);
   }
 
   algorithms <- unique(vapply(algorithm.primary.args, function(t)
@@ -237,6 +235,9 @@ aitoa.plot.stat.over.param <- function(
       if(length(secondary.arg.lty) < length(algorithms)) {
         use.lty <- aitoa.distinct.lty(length(algorithms));
       }
+    } else {
+      use.lty <- .lty.rep(secondary.arg.lty, .default.lty,
+                          length(algorithms));
     }
   } else {
     use.lty <- .lty(secondary.arg.lty, .default.lty);

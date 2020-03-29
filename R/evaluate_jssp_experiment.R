@@ -382,6 +382,35 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  instances=instances
                ) } );
 
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_ea_nocr_med_over_l",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- as.integer(2^(7L:13L));
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "ea_$arg1+$arg1@0d0_$arg2_sequence",
+                    algorithm.primary.args=x,
+                    algorithm.secondary.args = c("1swap", "nswap"),
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.2);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     "\u03BC=\u03BB");
+                  aitoa.legend.label("top",
+                                     "ea_l_unary");
+                });
+
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
 }
