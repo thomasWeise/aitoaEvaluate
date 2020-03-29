@@ -180,8 +180,8 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   x <- as.integer(2^(7L:18L));
                   aitoa.plot.stat.over.param(
                     end.result.stats,
-                    algorithm.template = "hc_rs_$arg_1swap",
-                    algorithm.args=x,
+                    algorithm.template = "hc_rs_$arg1_1swap",
+                    algorithm.primary.args=x,
                     instances=instances,
                     log="x",
                     instance.pch=instances.symbols,
@@ -295,8 +295,8 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   x <- as.integer(2^(7L:18L));
                   aitoa.plot.stat.over.param(
                     end.result.stats,
-                    algorithm.template = "hc_rs_$arg_nswap",
-                    algorithm.args=x,
+                    algorithm.template = "hc_rs_$arg1_nswap",
+                    algorithm.primary.args=x,
                     instances=instances,
                     log="x",
                     instance.pch=instances.symbols,

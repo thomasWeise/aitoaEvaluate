@@ -7,13 +7,16 @@
 aitoa.plot.stat.over.param(
   end.result.stats,
   algorithm.template,
-  algorithm.args,
+  algorithm.primary.args,
+  algorithm.secondary.args = NULL,
+  algorithm.secondary.args.name = NULL,
   instances,
   statistic,
   instance.colors = aitoa.distinct.colors(length(instances)),
-  instance.lty = .default.lty,
   instance.lwd = .default.lwd,
   instance.pch = NULL,
+  secondary.arg.lty = if (is.null(algorithm.secondary.args)) .default.lty else c(1L,
+    aitoa.distinct.lty(length(algorithm.secondary.args) - 1L)),
   legend.pos = "topright",
   legend.cex = .legend.cex,
   legend.bg = .legend.bg,
@@ -34,7 +37,11 @@ aitoa.plot.stat.over.param(
 will be replaced with the parameter value and which will then be matched
 with the \code{algorithm} column in the data frame}
 
-\item{algorithm.args}{the values of the argument}
+\item{algorithm.primary.args}{the values of the primary argument}
+
+\item{algorithm.secondary.args}{values of an optional secondary argument}
+
+\item{algorithm.secondary.args.name}{the optional name of the optional secondary argument}
 
 \item{instances}{a potentially named list of instances; if names are given,
 the names are diplayed in the legend, otherwise the instance strings}
@@ -43,11 +50,11 @@ the names are diplayed in the legend, otherwise the instance strings}
 
 \item{instance.colors}{the colors to use for the instances}
 
-\item{instance.lty}{the line types to be used for the instances}
-
 \item{instance.lwd}{the line widths to be used for the instances}
 
 \item{instance.pch}{the symbol to be used for the instances}
+
+\item{secondary.arg.lty}{the line types to be used for the secondary argument}
 
 \item{legend.pos}{the legend position}
 
