@@ -408,7 +408,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.legend.label("bottomright",
                                      "\u03BC=\u03BB");
                   aitoa.legend.label("top",
-                                     "ea_\u03BC_unary");
+                                     "ea_mu_unary");
                 });
 
 
@@ -433,6 +433,40 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     log = "x"
                   )
                 });
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_ea_16384_nocr_nswap_med",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.gantt.for.stat.on.multiple.instances(
+                    end.result.stats = end.result.stats,
+                    results.dir = results.dir,
+                    algorithm = "ea_16384+16384@0d0_nswap_sequence",
+                    instances = instances,
+                    print.job.names = TRUE,
+                    job.name.cex = instance.gantt.job.name.cex
+                  )
+                });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_ea_nocr_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(hc_nswap="hc_nswap",
+                                 hcr_65536_nswap="hc_rs_65536_nswap",
+                                 ea_16384_nswap="ea_16384+16384@0d0_nswap_sequence",
+                                 ea_1024_nswap="ea_1024+1024@0d0_nswap_sequence"),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
