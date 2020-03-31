@@ -384,12 +384,12 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
 
   aitoa.graphic(evaluation.dir,
-                name = "jssp_ea_nocr_med_over_l",
+                name = "jssp_ea_nocr_med_over_mu",
                 type = graphics.type,
                 width = width,
                 skip.if.exists = skip.if.exists,
                 body = {
-                  x <- as.integer(2^(7L:13L));
+                  x <- as.integer(2^(7L:16L));
                   aitoa.plot.stat.over.param(
                     end.result.stats,
                     algorithm.template = "ea_$arg1+$arg1@0d0_$arg2_sequence",
@@ -408,7 +408,30 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.legend.label("bottomright",
                                      "\u03BC=\u03BB");
                   aitoa.legend.label("top",
-                                     "ea_l_unary");
+                                     "ea_\u03BC_unary");
+                });
+
+
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_ea_nswap_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(hcr_65536_nswap="hc_rs_65536_nswap",
+                                    hc_nswap="hc_nswap",
+                                    ea_16384_nswap="ea_16384+16384@0d0_nswap_sequence",
+                                    ea_1024_nswap="ea_1024+1024@0d0_nswap_sequence"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
                 });
 
   .logger("Done processing the Results of the JSSP Experiment.");
