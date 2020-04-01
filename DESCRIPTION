@@ -13,9 +13,11 @@ Imports: bit64 (>= 0.9.7),
          stats (>= 3.5.2),
          utils (>= 3.5.2)
 Suggests: devtools (>= 2.0.2),
+          jsspInstancesAndResults (>= 0.8.0),
           roxygen2 (>= 6.1.1),
           testthat (>= 2.1.1),
           usethis (>= 1.5.0)
+Remotes: github::thomasWeise/jsspInstancesAndResults
 Depends: R (>= 3.5.0)
 ByteCompile: true
 LazyData: true
@@ -36,6 +38,7 @@ Collate:
     'graphic_out.R'
     'load_end_result_stats.R'
     'evaluate_jssp_experiment.R'
+    'find_worse_results_from_literature.R'
     'format_numbers.R'
     'legends.R'
     'parse_file_name.R'

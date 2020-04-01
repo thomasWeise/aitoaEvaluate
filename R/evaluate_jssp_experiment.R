@@ -415,7 +415,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
 
   aitoa.graphic(evaluation.dir,
-                name = "jssp_progress_ea_nswap_log",
+                name = "jssp_progress_ea_nocr_nswap_log",
                 type = graphics.type,
                 width = width,
                 height = height,
