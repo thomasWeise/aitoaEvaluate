@@ -495,8 +495,60 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.legend.label("bottomright",
                                      "\u03BC=\u03BB");
                   aitoa.legend.label("top",
-                                     "ea_mu_unary");
+                                     "ea_mu_cr_nswap");
                 });
+
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_ea_cr_nswap_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(ea_16384_nswap="ea_16384+16384@0d0_nswap_sequence",
+                                    ea_8192_nswap="ea_8192+8192@0d0_nswap_sequence",
+                                    `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_ea_cr_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(ea_16384_nswap="ea_16384+16384@0d0_nswap_sequence",
+                                 ea_8192_nswap="ea_8192+8192@0d0_nswap_sequence",
+                                 `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence"),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
+
+
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_ea_cr_comparison",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.end.result.test.table.md(
+                 end.results,
+                 algorithms=list(ea_8192_nswap="ea_8192+8192@0d0_nswap_sequence",
+                                 `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence"),
+                 instances=instances
+               ) } );
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);

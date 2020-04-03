@@ -154,7 +154,6 @@ aitoa.plot.stat.over.param <- function(
       NA_character_)
     });
   }
-  print(algorithms);
 
   # setup graph
   mgp <- .mgp(mgp, .default.mgp);
