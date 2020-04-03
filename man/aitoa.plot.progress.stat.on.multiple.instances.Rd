@@ -17,6 +17,8 @@ aitoa.plot.progress.stat.on.multiple.instances(
   center.lty = .default.lty,
   center.lwd = .thick.lwd,
   quantile.transparency = 0.8,
+  make.stairs.quantiles = FALSE,
+  make.stairs.center = FALSE,
   instances.limit = NA_integer_,
   instances.limit.name = NULL,
   instance.limit.color = .instance.limit.color,
@@ -65,6 +67,12 @@ or \link{mean}}
 
 \item{quantile.transparency}{the transparency to be applied to each quantile
 polygon}
+
+\item{make.stairs.quantiles}{should the quantiles be shown as stairs
+(\code{TRUE}) or linear interpolation (\code{FALSE})}
+
+\item{make.stairs.center}{should the center statistic be shown as stairs
+(\code{TRUE}) or linear interpolation (\code{FALSE})}
 
 \item{instances.limit}{an optional vector of lower bounds or best-known
 solutions for the instances}

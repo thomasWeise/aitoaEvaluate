@@ -22,6 +22,10 @@
 #' @param center.lwd the line width to be used for median lines
 #' @param quantile.transparency the transparency to be applied to each quantile
 #'   polygon
+#' @param make.stairs.quantiles should the quantiles be shown as stairs
+#'   (\code{TRUE}) or linear interpolation (\code{FALSE})
+#' @param make.stairs.center should the center statistic be shown as stairs
+#'   (\code{TRUE}) or linear interpolation (\code{FALSE})
 #' @param instances.limit an optional vector of lower bounds or best-known
 #'   solutions for the instances
 #' @param instances.limit.name an optional name or name vector for the instances
@@ -63,6 +67,8 @@ aitoa.plot.progress.stat.on.multiple.instances <-
                                 center.lty=.default.lty,
                                 center.lwd=.thick.lwd,
                                 quantile.transparency=0.8,
+                                make.stairs.quantiles=FALSE,
+                                make.stairs.center=FALSE,
                                 instances.limit=NA_integer_,
                                 instances.limit.name=NULL,
                                 instance.limit.color=.instance.limit.color,
@@ -85,7 +91,15 @@ aitoa.plot.progress.stat.on.multiple.instances <-
   stopifnot(is.character(algorithms) || is.list(algorithms),
             length(algorithms) > 0L,
             !any(is.na(algorithms)),
-            all(nchar(algorithms) > 0L));
+            all(nchar(algorithms) > 0L),
+            !is.null(make.stairs.quantiles),
+            is.logical(make.stairs.quantiles),
+            length(make.stairs.quantiles) == 1L,
+            isTRUE(make.stairs.quantiles) || isFALSE(make.stairs.quantiles),
+            !is.null(make.stairs.center),
+            is.logical(make.stairs.center),
+            length(make.stairs.center) == 1L,
+            isTRUE(make.stairs.center) || isFALSE(make.stairs.center));
 
   instances <- .split.names(instances);
   instance.names <- instances$names;
@@ -179,6 +193,8 @@ aitoa.plot.progress.stat.on.multiple.instances <-
       center.lty=.default.lty,
       center.lwd=.thick.lwd,
       quantile.transparency=0.8,
+      make.stairs.quantiles=make.stairs.quantiles,
+      make.stairs.center=make.stairs.center,
       instance.limit=inst.limit,
       instance.limit.name=inst.limit.name,
       instance.limit.color=instance.limit.color,

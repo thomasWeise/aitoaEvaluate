@@ -8,8 +8,10 @@ aitoa.plot.stat.over.param(
   end.result.stats,
   algorithm.template,
   algorithm.primary.args,
+  algorithm.primary.filler = .default.primary.template.filler,
   algorithm.secondary.args = NULL,
   algorithm.secondary.args.name = NULL,
+  algorithm.secondary.filler = .default.secondary.template.filler,
   instances,
   statistic,
   instance.colors = aitoa.distinct.colors(length(instances)),
@@ -39,9 +41,19 @@ with the \code{algorithm} column in the data frame}
 
 \item{algorithm.primary.args}{the values of the primary argument}
 
+\item{algorithm.primary.filler}{a function taking in an algorithm name
+template and an argument value and returning an algorithm name. The default
+replaces the string \code{$arg1} with the value.}
+
 \item{algorithm.secondary.args}{values of an optional secondary argument}
 
-\item{algorithm.secondary.args.name}{the optional name of the optional secondary argument}
+\item{algorithm.secondary.args.name}{the optional name of the optional
+secondary argument}
+
+\item{algorithm.secondary.filler}{a function taking in an algorithm name
+template (resulting from \code{algorithm.primary.filler}) and the two
+algorithm argument values and returns an algorithm name. The default
+replaces the string \code{$arg2} with the value of the secondary argument.}
 
 \item{instances}{a potentially named list of instances; if names are given,
 the names are diplayed in the legend, otherwise the instance strings}
@@ -72,14 +84,14 @@ the names are diplayed in the legend, otherwise the instance strings}
 
 \item{divide.by}{optionally, a per-instance value to divide the statistic by}
 
-\item{mark.min.fun}{the function for marking the minima. If not \code{NULL}, this must be a function with six arguments, namely\describe{
+\item{mark.min.fun}{the function for marking the minima. If not \code{NULL},
+this must be a function with six arguments, namely\describe{
 \item{min.x}{the vector with the x-coordinates minal values}
 \item{min.y}{the vector with the y-coordinates minal values}
-\item{color}{the color for these points}
-\item{pch}{the pch value for these points, or \code{NULL} if none}
-\item{lty}{the line type for these points}
-\item{lwd}{the line width for these points}}
-This function, if not \code{NULL}, is called once for each instance}
+\item{color}{the color for these points} \item{pch}{the pch value for these
+points, or \code{NULL} if none} \item{lty}{the line type for these points}
+\item{lwd}{the line width for these points}} This function, if not
+\code{NULL}, is called once for each instance}
 
 \item{x.axis.at}{the location of the x-axis ticks: optional}
 

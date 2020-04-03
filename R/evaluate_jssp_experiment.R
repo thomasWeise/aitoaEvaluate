@@ -411,9 +411,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                                      "ea_mu_unary");
                 });
 
-
-
-
   aitoa.graphic(evaluation.dir,
                 name = "jssp_progress_ea_nocr_nswap_log",
                 type = graphics.type,
@@ -467,6 +464,39 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  instances=instances,
                  instances.limit=instances.limit
                ) } );
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_ea_cr_med_over_cr",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- as.integer(2^(7L:16L));
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "ea_$arg1+$arg1@XXX_nswap_sequence",
+                    algorithm.primary.args=x,
+                    algorithm.secondary.args = c(0, 0.05, 0.3),
+                    algorithm.secondary.filler = function(t, a, b) {
+                      rep <- gsub(".", "d", as.character(b), fixed=TRUE);
+                      if(rep == "0") { rep <- "0d0"; }
+                      gsub("XXX", rep, t, fixed=TRUE);
+                    },
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.2);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     "\u03BC=\u03BB");
+                  aitoa.legend.label("top",
+                                     "ea_mu_unary");
+                });
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);

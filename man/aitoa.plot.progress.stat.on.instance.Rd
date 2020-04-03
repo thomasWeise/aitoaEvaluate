@@ -17,6 +17,8 @@ aitoa.plot.progress.stat.on.instance(
   center.lty = .default.lty,
   center.lwd = .thick.lwd,
   quantile.transparency = 0.8,
+  make.stairs.quantiles = FALSE,
+  make.stairs.center = FALSE,
   instance.limit = NA_integer_,
   instance.limit.name = NA_character_,
   instance.limit.color = .instance.limit.color,
@@ -66,6 +68,12 @@ or \link{mean}}
 
 \item{quantile.transparency}{the transparency to be applied to each quantile
 polygon}
+
+\item{make.stairs.quantiles}{should the quantiles be shown as stairs
+(\code{TRUE}) or linear interpolation (\code{FALSE})}
+
+\item{make.stairs.center}{should the center statistic be shown as stairs
+(\code{TRUE}) or linear interpolation (\code{FALSE})}
 
 \item{instance.limit}{an opional quality limit to be plotted as horizontal
 line}

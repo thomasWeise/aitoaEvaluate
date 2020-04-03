@@ -19,6 +19,17 @@
   }
 }
 
+#' @include utils.R
+.default.primary.template.filler <- function(template, value.1) {
+  .internal.gsub("$arg1", value.1, template, fixed=TRUE);
+}
+
+
+#' @include utils.R
+.default.secondary.template.filler <- function(template, value.1, value.2) {
+  .internal.gsub("$arg2", value.2, template, fixed=TRUE);
+}
+
 #' @title Plot a Statistic over the Values of a Given Parameter
 #' @description Plot an end statistic over the values of a given parameter.
 #' @param end.result.stats the end result statistics frame
@@ -26,8 +37,16 @@
 #'   will be replaced with the parameter value and which will then be matched
 #'   with the \code{algorithm} column in the data frame
 #' @param algorithm.primary.args the values of the primary argument
+#' @param algorithm.primary.filler a function taking in an algorithm name
+#'   template and an argument value and returning an algorithm name. The default
+#'   replaces the string \code{$arg1} with the value.
 #' @param algorithm.secondary.args values of an optional secondary argument
-#' @param algorithm.secondary.args.name the optional name of the optional secondary argument
+#' @param algorithm.secondary.args.name the optional name of the optional
+#'   secondary argument
+#' @param algorithm.secondary.filler a function taking in an algorithm name
+#'   template (resulting from \code{algorithm.primary.filler}) and the two
+#'   algorithm argument values and returns an algorithm name. The default
+#'   replaces the string \code{$arg2} with the value of the secondary argument.
 #' @param instances a potentially named list of instances; if names are given,
 #'   the names are diplayed in the legend, otherwise the instance strings
 #' @param statistic the statistic to plot
@@ -43,14 +62,14 @@
 #' @param cex the base character scaling
 #' @param mar the margin value
 #' @param divide.by optionally, a per-instance value to divide the statistic by
-#' @param mark.min.fun the function for marking the minima. If not \code{NULL}, this must be a function with six arguments, namely\describe{
-#' \item{min.x}{the vector with the x-coordinates minal values}
-#' \item{min.y}{the vector with the y-coordinates minal values}
-#' \item{color}{the color for these points}
-#' \item{pch}{the pch value for these points, or \code{NULL} if none}
-#' \item{lty}{the line type for these points}
-#' \item{lwd}{the line width for these points}}
-#' This function, if not \code{NULL}, is called once for each instance
+#' @param mark.min.fun the function for marking the minima. If not \code{NULL},
+#'   this must be a function with six arguments, namely\describe{
+#'   \item{min.x}{the vector with the x-coordinates minal values}
+#'   \item{min.y}{the vector with the y-coordinates minal values}
+#'   \item{color}{the color for these points} \item{pch}{the pch value for these
+#'   points, or \code{NULL} if none} \item{lty}{the line type for these points}
+#'   \item{lwd}{the line width for these points}} This function, if not
+#'   \code{NULL}, is called once for each instance
 #' @param x.axis.at the location of the x-axis ticks: optional
 #' @param ... parameters to be passed to \link[graphics]{plot}
 #' @include utils.R
@@ -64,8 +83,10 @@ aitoa.plot.stat.over.param <- function(
          end.result.stats,
          algorithm.template,
          algorithm.primary.args,
+         algorithm.primary.filler=.default.primary.template.filler,
          algorithm.secondary.args=NULL,
          algorithm.secondary.args.name=NULL,
+         algorithm.secondary.filler=.default.secondary.template.filler,
          instances,
          statistic,
          instance.colors=aitoa.distinct.colors(length(instances)),
@@ -94,8 +115,12 @@ aitoa.plot.stat.over.param <- function(
 
   stopifnot(is.list(algorithm.primary.args) || is.vector(algorithm.primary.args),
             length(algorithm.primary.args) > 0L,
+            !is.null(algorithm.primary.filler),
+            is.function(algorithm.primary.filler),
             is.null(algorithm.secondary.args) || (is.list(algorithm.primary.args) || is.vector(algorithm.primary.args)),
             is.null(algorithm.secondary.args) || (length(algorithm.secondary.args) > 0L),
+            is.null(algorithm.secondary.args) || (!is.null(algorithm.secondary.filler)),
+            is.null(algorithm.secondary.args) || (is.function(algorithm.secondary.filler)),
             !is.null(statistic),
             is.character(statistic),
             length(statistic) == 1L,
@@ -114,7 +139,7 @@ aitoa.plot.stat.over.param <- function(
   }
 
   algorithms <- unique(vapply(algorithm.primary.args, function(t)
-    .internal.gsub("$arg1", t, algorithm.template, fixed=TRUE),
+    algorithm.primary.filler(algorithm.template, t),
                    NA_character_));
   stopifnot(is.character(algorithms),
             length(algorithms) == length(algorithm.primary.args));
@@ -122,11 +147,14 @@ aitoa.plot.stat.over.param <- function(
     algorithms <- list(algorithms);
   } else {
     algorithms <- lapply(algorithm.secondary.args, function(tt) {
-      vapply(algorithms, function(t)
-        .internal.gsub("$arg2", tt, t, fixed=TRUE),
+      vapply(seq_along(algorithms), function(i)
+        algorithm.secondary.filler(algorithms[[i]],
+                                   algorithm.primary.args[[i]],
+                                   tt),
       NA_character_)
     });
   }
+  print(algorithms);
 
   # setup graph
   mgp <- .mgp(mgp, .default.mgp);

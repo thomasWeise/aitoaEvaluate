@@ -22,6 +22,10 @@
 #' @param center.lwd the line width to be used for median lines
 #' @param quantile.transparency the transparency to be applied to each quantile
 #'   polygon
+#' @param make.stairs.quantiles should the quantiles be shown as stairs
+#'   (\code{TRUE}) or linear interpolation (\code{FALSE})
+#' @param make.stairs.center should the center statistic be shown as stairs
+#'   (\code{TRUE}) or linear interpolation (\code{FALSE})
 #' @param instance.limit an opional quality limit to be plotted as horizontal
 #'   line
 #' @param instance.limit.name the optional name of the quality limit
@@ -73,6 +77,8 @@ aitoa.plot.progress.stat.on.instance <-
               center.lty=.default.lty,
               center.lwd=.thick.lwd,
               quantile.transparency=0.8,
+              make.stairs.quantiles=FALSE,
+              make.stairs.center=FALSE,
               instance.limit=NA_integer_,
               instance.limit.name=NA_character_,
               instance.limit.color=.instance.limit.color,
@@ -108,7 +114,15 @@ aitoa.plot.progress.stat.on.instance <-
             !is.null(use.f.range.from.raw.data),
             is.logical(use.f.range.from.raw.data),
             length(use.f.range.from.raw.data)==1L,
-            isTRUE(use.f.range.from.raw.data) || isFALSE(use.f.range.from.raw.data));
+            isTRUE(use.f.range.from.raw.data) || isFALSE(use.f.range.from.raw.data),
+            !is.null(make.stairs.quantiles),
+            is.logical(make.stairs.quantiles),
+            length(make.stairs.quantiles) == 1L,
+            isTRUE(make.stairs.quantiles) || isFALSE(make.stairs.quantiles),
+            !is.null(make.stairs.center),
+            is.logical(make.stairs.center),
+            length(make.stairs.center) == 1L,
+            isTRUE(make.stairs.center) || isFALSE(make.stairs.center));
 
   time.column <- .time.column(match.arg(time.column));
 
@@ -222,7 +236,7 @@ aitoa.plot.progress.stat.on.instance <-
                            stat.func = .q.func(q),
                            x.min = x.min,
                            x.max = max.time,
-                           make.stairs = TRUE),
+                           make.stairs = make.stairs.quantiles),
                          aitoa.create.stat.run(
                            res,
                            x.column = time.column,
@@ -230,7 +244,7 @@ aitoa.plot.progress.stat.on.instance <-
                            stat.func = .q.func(1-q),
                            x.min = x.min,
                            x.max = max.time,
-                           make.stairs = TRUE));
+                           make.stairs = make.stairs.quantiles));
                   });
     s[[length(s) + 1L]] <- list(aitoa.create.stat.run(
                             res,
@@ -239,7 +253,7 @@ aitoa.plot.progress.stat.on.instance <-
                             stat.func = center.stat,
                             x.min = x.min,
                             x.max = max.time,
-                            make.stairs = TRUE));
+                            make.stairs = make.stairs.center));
     attr(s, "f.range") <- f.range;
     return(s);
   });
