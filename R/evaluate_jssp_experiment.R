@@ -329,7 +329,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  instances.limit=instances.limit
                ) } );
 
-
   aitoa.graphic(evaluation.dir,
                 name = "jssp_progress_hcr_nswap_log",
                 type = graphics.type,
@@ -431,7 +430,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   )
                 });
 
-
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_ea_16384_nocr_nswap_med",
                 type = graphics.type,
@@ -476,7 +474,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     end.result.stats,
                     algorithm.template = "ea_$arg1+$arg1@XXX_nswap_sequence",
                     algorithm.primary.args=x,
-                    algorithm.secondary.args = c(0, 0.05, 0.3),
+                    algorithm.secondary.args = c(0, 0.05, 0.3, 0.98),
                     algorithm.secondary.filler = function(t, a, b) {
                       rep <- gsub(".", "d", as.character(b), fixed=TRUE);
                       if(rep == "0") { rep <- "0d0"; }
@@ -488,6 +486,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     statistic="best.f.median",
                     divide.by=instances.limit,
                     x.axis.at=x,
+                    ylim=c(1.025,1.5),
                     mar=larger.mar.2);
                   aitoa.legend.label("topleft",
                                      paste0("best f / ",
@@ -497,8 +496,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.legend.label("top",
                                      "ea_mu_cr_nswap");
                 });
-
-
 
   aitoa.graphic(evaluation.dir,
                 name = "jssp_progress_ea_cr_nswap_log",
@@ -529,16 +526,15 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                aitoa.make.stat.table.md(
                  end.result.stats,
                  algorithms=list(ea_16384_nswap="ea_16384+16384@0d0_nswap_sequence",
+                                 ea_1024_nswap="ea_1024+1024@0d0_nswap_sequence",
                                  ea_8192_nswap="ea_8192+8192@0d0_nswap_sequence",
                                  `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence"),
                  instances=instances,
                  instances.limit=instances.limit
                ) } );
 
-
-
   aitoa.text(directory = evaluation.dir,
-             name = "jssp_ea_cr_comparison",
+             name = "jssp_ea_cr_comparison_8192",
              type = "md",
              trim.ws = TRUE,
              skip.if.exists = skip.if.exists,
@@ -549,6 +545,52 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                                  `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence"),
                  instances=instances
                ) } );
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_ea_cr_comparison_16384",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.end.result.test.table.md(
+                 end.results,
+                 algorithms=list(ea_16384_nswap="ea_16384+16384@0d0_nswap_sequence",
+                                 `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence"),
+                 instances=instances
+               ) } );
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_eap_med_over_mu",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- as.integer(2^(7L:12L));
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "ea$arg2_$arg1+$arg1@0d05_nswap_sequence",
+                    algorithm.primary.args=x,
+                    algorithm.secondary.args = c("normal", "pruning"),
+                    algorithm.secondary.filler = function(t, a, b) {
+                      replace <- if(b == "normal") "" else "p";
+                      gsub("$arg2", replace, t, fixed=TRUE);
+                    },
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.2);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     "\u03BC=\u03BB");
+                  aitoa.legend.label("top",
+                                     "ea[p]_mu_5%_nswap");
+                });
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
