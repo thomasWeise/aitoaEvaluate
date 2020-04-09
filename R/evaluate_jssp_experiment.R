@@ -649,6 +649,25 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   )
                 });
 
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_eac_4_0d05_nswap_la24_min",
+                type = graphics.type,
+                width = width,
+                height = 0.25 * height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.gantt.for.stat(
+                    end.result.stats = end.result.stats,
+                    statistic = "best.f.min",
+                    results.dir = results.dir,
+                    algorithm = "eac_4+4@0d05_nswap_sequence",
+                    instance = "la24",
+                    print.job.names = TRUE,
+                    job.name.cex = 1.2*instance.gantt.job.name.cex[[2L]]
+                  )
+                });
+
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
 }

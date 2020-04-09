@@ -37,6 +37,10 @@ aitoa.find.worse.results.from.literature <- function(
   compare.to.cols[compare.to.cols == "algo.id"] <- "algorithm";
   compare.to.cols[compare.to.cols == "ref.id"] <- "reference";
   compare.to.cols[compare.to.cols == "ref.year"] <- "year";
+  .med.end <- endsWith(compare.to.cols, "med");
+  if(any(.med.end)) {
+    compare.to.cols[.med.end] <- paste0(compare.to.cols[.med.end], "ian");
+  }
   colnames(compare.to) <- compare.to.cols;
   .check.end.result.stats(data);
 
