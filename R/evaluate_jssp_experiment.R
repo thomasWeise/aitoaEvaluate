@@ -42,6 +42,8 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
   larger.mar.1[[4L]] = 0.87;
   larger.mar.2 <- .default.mar.without.labels;
   larger.mar.2[[4L]] = 1.38;
+  larger.mar.3 <- .default.mar.without.labels;
+  larger.mar.3[[4L]] = 1.5;
 
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_1rs_med",
@@ -474,8 +476,9 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     end.result.stats,
                     algorithm.template = "ea_$arg1+$arg1@XXX_nswap_sequence",
                     algorithm.primary.args=x,
-                    algorithm.secondary.args = c(0, 0.05, 0.3, 0.98),
+                    algorithm.secondary.args = c("cr=0", "cr=0.05", "cr=0.3", "cr=0.98"),
                     algorithm.secondary.filler = function(t, a, b) {
+                      b <- as.numeric(substr(b, 4L, nchar(b)));
                       rep <- gsub(".", "d", as.character(b), fixed=TRUE);
                       if(rep == "0") { rep <- "0d0"; }
                       gsub("XXX", rep, t, fixed=TRUE);
@@ -561,20 +564,22 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
 
   aitoa.graphic(evaluation.dir,
-                name = "jssp_eap_med_over_mu",
+                name = "jssp_eac_med_over_mu",
                 type = graphics.type,
                 width = width,
                 skip.if.exists = skip.if.exists,
                 body = {
-                  x <- as.integer(2^(7L:12L));
+                  x <- as.integer(2^(2L:16L));
                   aitoa.plot.stat.over.param(
                     end.result.stats,
-                    algorithm.template = "ea$arg2_$arg1+$arg1@0d05_nswap_sequence",
+                    algorithm.template = "ea$clearing_$arg1+$arg1@0d05_nswap_sequence",
                     algorithm.primary.args=x,
-                    algorithm.secondary.args = c("normal", "pruning"),
+                    algorithm.secondary.args = c("normal", "with clearing"),
                     algorithm.secondary.filler = function(t, a, b) {
-                      replace <- if(b == "normal") "" else "p";
-                      gsub("$arg2", replace, t, fixed=TRUE);
+                      clearing <- "";
+                      if(grepl("clearing", b, fixed=TRUE)) clearing <- "c";
+                      t <- gsub("$clearing", clearing, t, fixed=TRUE);
+                      return(t);
                     },
                     instances=instances,
                     log="x",
@@ -582,14 +587,66 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     statistic="best.f.median",
                     divide.by=instances.limit,
                     x.axis.at=x,
-                    mar=larger.mar.2);
+                    mar=larger.mar.3);
                   aitoa.legend.label("topleft",
                                      paste0("best f / ",
                                             instances.limit.name));
                   aitoa.legend.label("bottomright",
                                      "\u03BC=\u03BB");
                   aitoa.legend.label("top",
-                                     "ea[p]_mu_5%_nswap");
+                                     "ea[c]_mu_5%_nswap");
+                });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_eac_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(`ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence",
+                                 `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence"),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_eac_nswap_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(hcr_65536_nswap="hc_rs_65536_nswap",
+                                    `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence",
+                                    `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_eac_4_0d05_nswap_med",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.gantt.for.stat.on.multiple.instances(
+                    end.result.stats = end.result.stats,
+                    results.dir = results.dir,
+                    algorithm = "eac_4+4@0d05_nswap_sequence",
+                    instances = instances,
+                    print.job.names = TRUE,
+                    job.name.cex = instance.gantt.job.name.cex
+                  )
                 });
 
   .logger("Done processing the Results of the JSSP Experiment.");
