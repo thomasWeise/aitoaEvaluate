@@ -61,4 +61,5 @@ Collate:
     'plot_stat_over_instance.R'
     'plot_stat_over_param.R'
     'sample_function.R'
+    'simulated_annealing_temperature.R'
     'text_out.R'

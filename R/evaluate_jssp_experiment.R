@@ -1,3 +1,42 @@
+
+# An internal function to create a table with the
+# Key statistics for simulated annealing
+.make.sa.table <- function(end.result.stats,
+                           algorithm="hc_1swap",
+                           instances=c("abz7", "la24", "swv15", "yn4")) {
+  end.result.stats <- end.result.stats[
+    end.result.stats$algorithm == algorithm,
+    c("instance", "total.fes.median",
+      "best.f.sd")
+  ];
+
+  formats <- aitoa.statistics.cols.to.formats(c("total.fes.median",
+                                                "best.f.sd"));
+
+  stopifnot(nrow(end.result.stats) == length(instances));
+
+  end.result.stats <- end.result.stats[order(end.result.stats$instance), ];
+  unname(unlist(
+            c("|$\\instance$|med(total FEs)|sd|",
+              "|--:|--:|--:|",
+            vapply(seq_len(nrow(end.result.stats)),
+                   function(r) {
+              row <- end.result.stats[r, ];
+              paste0("|`", row$instance, "`|",
+                     formats[[1L]](row$total.fes.median),
+                     "|",
+                     formats[[2L]](row$best.f.sd),
+                     "|");
+                   }, NA_character_),
+            paste0("|median|",
+                   formats[[1L]](median(end.result.stats$total.fes.median)),
+                   "|",
+                   formats[[2L]](median(end.result.stats$best.f.sd)),
+                   "|"))));
+
+}
+
+
 #' @title Evaluate the Results of the JSSP Experiment
 #' @description Process the results of the JSSP experiment.
 #' @param results.dir the results directory
@@ -60,7 +99,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
       print.job.names = TRUE,
       job.name.cex = instance.gantt.job.name.cex);
                 });
-
 
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_rs_med",
@@ -490,7 +528,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     divide.by=instances.limit,
                     x.axis.at=x,
                     ylim=c(1.025,1.5),
-                    mar=larger.mar.2);
+                    mar=larger.mar.2,);
                   aitoa.legend.label("topleft",
                                      paste0("best f / ",
                                             instances.limit.name));
@@ -665,6 +703,128 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     instance = "la24",
                     print.job.names = TRUE,
                     job.name.cex = 1.2*instance.gantt.job.name.cex[[2L]]
+                  )
+                });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_hc1_swap_sa_params",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               .make.sa.table(
+                 end.result.stats,
+                 algorithm="hc_1swap",
+                 instances=instances
+               ) } );
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_sa_1swap_med_over_epsilon",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- c(0.25,
+                         0.5,
+                         1,
+                         1.5,
+                         2,
+                         4,
+                         8);
+                  n <- c("000000025",
+                         "00000005",
+                         "0000001",
+                         "00000015",
+                         "0000002",
+                         "0000004",
+                         "0000008");
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "sa_exp_20_0d$eps_1swap",
+                    algorithm.primary.args=x,
+                    algorithm.primary.filler=function(t, a) {
+                      gsub("$eps", n[x==a], t, fixed=TRUE);
+                    },
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.2);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     expression(paste("\u03B5*",10^7)));
+                  aitoa.legend.label("top",
+                                     "sa_exp_20_\u03B5_1swap");
+                });
+
+  aitoa.graphic(evaluation.dir,
+                name = "sa_temperature_schedules",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.sa.temperature.plot()
+                });
+
+
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_sa_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
+                                 `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
+                                 sa_exp_20_2_1swap="sa_exp_20_0d0000002_1swap"),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_sa_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
+                                    `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence",
+                                    `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
+                                     sa_exp_20_2_1swap="sa_exp_20_0d0000002_1swap"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_sa_exp_20_2_1swap_med",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.gantt.for.stat.on.multiple.instances(
+                    end.result.stats = end.result.stats,
+                    results.dir = results.dir,
+                    algorithm = "sa_exp_20_0d0000002_1swap",
+                    instances = instances,
+                    print.job.names = TRUE,
+                    job.name.cex = instance.gantt.job.name.cex
                   )
                 });
 
