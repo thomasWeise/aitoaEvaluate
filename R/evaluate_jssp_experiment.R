@@ -772,8 +772,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.sa.temperature.plot()
                 });
 
-
-
   aitoa.text(directory = evaluation.dir,
              name = "jssp_sa_results",
              type = "md",
@@ -788,7 +786,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  instances=instances,
                  instances.limit=instances.limit
                ) } );
-
 
   aitoa.graphic(evaluation.dir,
                 name = "jssp_progress_sa_log",
@@ -810,7 +807,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   )
                 });
 
-
   aitoa.graphic(evaluation.dir,
                 name = "jssp_gantt_sa_exp_20_2_1swap_med",
                 type = graphics.type,
@@ -827,6 +823,40 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     job.name.cex = instance.gantt.job.name.cex
                   )
                 });
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_hc2r_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
+                                    hc2r_1swap="hc2f_rs_1swap",
+                                    hc2r_1swapU="hc2f_rs_1swapU"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_hc2r_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(hcr_16384_1swap="hc_rs_16384_1swap",
+                                 hc2r_1swap="hc2f_rs_1swap",
+                                 hc2r_1swapU="hc2f_rs_1swapU"),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
