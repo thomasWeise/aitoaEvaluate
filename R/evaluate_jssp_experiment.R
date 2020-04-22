@@ -858,6 +858,80 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  instances.limit=instances.limit
                ) } );
 
+
+  # aitoa.graphic(evaluation.dir,
+  #               name = "jssp_umda_med_over_lambda",
+  #               type = graphics.type,
+  #               width = width,
+  #               skip.if.exists = skip.if.exists,
+  #               body = {
+  #                 aitoa.plot.stat.over.param(
+  #                   end.result.stats,
+  #                   algorithm.template = "eda_umda_$mu+$arg1",
+  #                   algorithm.primary.args=as.integer(2L^(10L:16L)),
+  #                   algorithm.secondary.args=c("\u03BC=\u03BB/256",
+  #                                              "\u03BC=\u03BB/128",
+  #                                              "\u03BC=\u03BB/64"),
+  #                   algorithm.secondary.filler=function(t, a, b) {
+  #                     div <- as.integer(substr(b,
+  #                             regexpr("/", b, fixed=TRUE)[[1L]] + 1L,
+  #                             nchar(b)));
+  #                     gsub("$mu", as.character(as.integer(a/div)),
+  #                          t, fixed=TRUE);
+  #                   },
+  #                   instances=instances,
+  #                   log="x",
+  #                   instance.pch=instances.symbols,
+  #                   statistic="best.f.median",
+  #                   divide.by=instances.limit,
+  #                   x.axis.at=x,
+  #                   mar=larger.mar.2);
+  #                 aitoa.legend.label("topleft",
+  #                                    paste0("best f / ",
+  #                                           instances.limit.name));
+  #                 aitoa.legend.label("bottomright",
+  #                                    expression(paste("\u03B5*",10^7)));
+  #                 aitoa.legend.label("top",
+  #                                    "eda_umda_\u03BC+\u03BB");
+  #               });
+
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_ma_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(
+                   `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
+                   hc2r_1swapU="hc2f_rs_1swapU",
+                   ma_8_1swapU="ma_8+8_1swapU_sequence"
+                   ),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_ma_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(hc2r_1swapU="hc2f_rs_1swapU",
+                                    `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
+                                    ma_8_1swapU="ma_8+8_1swapU_sequence"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
 }
