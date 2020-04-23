@@ -37,6 +37,54 @@
 }
 
 
+
+# An internal function to create a table with the
+# Key statistics for how long the hcr runs take in FEs
+# as used to justify MA settings
+.make.ma.table <- function(end.result.stats,
+                           instances=c("abz7", "la24", "swv15", "yn4")) {
+  no.rs <- "hc2f_1swapU";
+  end.result.stats <- end.result.stats[
+    (end.result.stats$algorithm == no.rs) &
+    (end.result.stats$instance %in% instances),
+    c("instance", "total.time.median")];
+
+  stopifnot(nrow(end.result.stats) == length(instances),
+            ncol(end.result.stats) == 2L);
+
+  format1 <- function(n) {
+    paste0(aitoa.format.number.markdown(round(n)), "&nbsp;ms")
+  }
+
+  format2 <- function(n) {
+    aitoa.format.number.markdown(round(n));
+  }
+
+  end.result.stats$restarts <- 180000L/end.result.stats$total.time.median;
+
+  unname(unlist(
+    c("|$\\instance$|med(total time) w/o restarts|med(restarts)|",
+      "|--:|--:|--:|",
+      vapply(instances,
+             function(instance) {
+               a <- end.result.stats$total.time.median[
+                   end.result.stats$instance == instance];
+               stopifnot(length(a) == 1L, is.finite(a));
+               b <- end.result.stats$restarts[
+                 end.result.stats$instance == instance];
+               stopifnot(length(b) == 1L, is.finite(b));
+               paste0("|`", instance, "`|", format1(a),
+                      "|", format2(b), "|");
+             }, NA_character_),
+      paste0("|median|",
+             format1(median(end.result.stats$total.time.median)),
+             "|",
+             format2(median(end.result.stats$restarts)),
+             "|"))));
+
+}
+
+
 #' @title Evaluate the Results of the JSSP Experiment
 #' @description Process the results of the JSSP experiment.
 #' @param results.dir the results directory
@@ -906,6 +954,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  end.result.stats,
                  algorithms=list(
                    `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
+                   `ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence",
                    hc2r_1swapU="hc2f_rs_1swapU",
                    ma_8_1swapU="ma_8+8_1swapU_sequence"
                    ),
@@ -931,6 +980,31 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     log = "x"
                   )
                 });
+
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_hc2_converged",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               .make.ma.table(end.result.stats)
+             } );
+
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_ma_comparison",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.end.result.test.table.md(
+                 end.results,
+                 algorithms=list(`ea_8192_5%_nswap`="ea_8192+8192@0d05_nswap_sequence",
+                                 hc2r_1swapU="hc2f_rs_1swapU",
+                                 ma_8_1swapU="ma_8+8_1swapU_sequence"),
+                 instances=instances
+               ) } );
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
