@@ -1015,7 +1015,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                aitoa.make.stat.table.md(
                  end.result.stats,
                  algorithms=list(
-                   hc_nswap="hc_nswap",
                    hcr_65536_nswap="hc_rs_65536_nswap",
                    `umdac_2+64` = "edac_umda_2+64"
                  ),
@@ -1033,8 +1032,8 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.plot.progress.stat.on.multiple.instances(
                     results.dir=results.dir,
                     algorithms=list(
-                      hc_nswap="hc_nswap",
                       hcr_65536_nswap="hc_rs_65536_nswap",
+                      `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
                       `umdac_2+64` = "edac_umda_2+64"),
                     instances=instances,
                     time.column = "t",

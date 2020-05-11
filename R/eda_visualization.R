@@ -1,27 +1,28 @@
 #' @title Visualize the Progress of a Real-Coded EDA
 #' @export aitoa.real.coded.eda.visualization
 #' @include function_to_matrix.R
-#' @include filled_contour.R
 #' @include draw_ellipse.R
 #' @include make_color_transparent.R
 #' @importFrom plot3D persp3D
 #' @importFrom grDevices terrain.colors
+#' @importFrom graphics image lines points
 aitoa.real.coded.eda.visualization <- function() {
   set.seed(10234402L);
 
   f <- function(x) aitoa.rastrigin(c(1.2, 0.9)*(x + c(-1, 1)));
   c.min <- -7L;
   c.max <- 7L;
-  n.points <- 41L;
+  n.points <- 45L;
 
   n.samples <- 101L;
   n.best.samples <- 41;
-  col.select <- "blue";
+  col.select <- "green";
   pch.select <- 1L;
   col.reject <- "red";
   pch.reject <- 2L;
-  col.model <- "cyan";
+  col.model <- "blue";
   col.model.t <- aitoa.make.color.transparent(col.model, 0.2);
+  legend.bg <- "#FFFFFFD0";
 
   # par(mfrow=c(3L, 2L))
   layout(matrix(c(1, 2, 1, 3, 4, 5),
@@ -36,8 +37,8 @@ aitoa.real.coded.eda.visualization <- function() {
                                       n.points.y=n.points,
                                       f=f);
   z.range <- range(c(data.3d$z));
-  colors <- terrain.colors(n=31L);
-  black.t <- aitoa.make.color.transparent("black", 0.6);
+  colors <- terrain.colors(n=25L);
+  #black.t <- aitoa.make.color.transparent("black", 0.6);
 
   persp3D(x=data.3d$x,
           y=data.3d$y,
@@ -64,8 +65,8 @@ aitoa.real.coded.eda.visualization <- function() {
           zlab="f(x)");
 
   aitoa.legend.label(x="topleft",
-                     legend=paste0("optimize f(x)\n",
-                              "over two dimensions\n",
+                     legend=paste0("optimize f(x) over\n",
+                              "two dimensions\n",
                               "x=(x1, x2)"),
                      bg=NA);
 
@@ -76,24 +77,16 @@ aitoa.real.coded.eda.visualization <- function() {
   for(plt in 1L:4L) {
     par(mar=c(0.3, 0.3, 0.3, 0.3));
 
-    .filled.contour3(data.3d$x, data.3d$y, data.3d$z,
-                     col=colors,
-                     nlevels=length(colors),
-                     plot.axes=function() invisible());
-    # contour(data.3d$x, data.3d$y, data.3d$z,
-    #         nlevels=5L,
-    #         drawlabels = FALSE,
-    #         add=TRUE,
-    #         lwd=0.5,
-    #         col="black");
+    image(x=data.3d$x, y=data.3d$y,
+          z=data.3d$z, col=colors,
+          axes=FALSE, useRaster = TRUE);
 
     contour(data.3d$x, data.3d$y, data.3d$z,
-            nlevels=11L,
+            nlevels=7L,
             drawlabels = FALSE,
             add=TRUE,
             lwd=0.5,
-            col=black.t);
-
+            col="#333333");
 
       f.f <- apply(samples, 1L, f);
       f.o <- order(f.f);
@@ -138,7 +131,8 @@ aitoa.real.coded.eda.visualization <- function() {
                          x.radius = sd.x,
                          y.radius = sd.y,
                          border=col.model.t,
-                         lwd=3L);
+                         lwd=3L,
+                         resolution=71L);
       lines(x=c(mean.x, mean.x),
            y=c(mean.y, mean.y+sd.y),
            col=col.model.t,
@@ -164,26 +158,28 @@ aitoa.real.coded.eda.visualization <- function() {
 
       if(plt > 1L) {
         aitoa.legend.main(x="bottomleft",
-                          legend=c(paste0(n.samples, " model ", (plt-1L), " samples"),
+                          legend=c(paste0(n.samples, " samples from M", (plt-1L)),
                                    paste0(n.best.samples, " best selected"),
                                    paste0((n.samples-n.best.samples), " worse discarted"),
-                                   paste0("model ", plt)),
+                                   paste0("model M", plt)),
                           pch=c(NA, pch.select, pch.reject, NA),
                           col=c("black",
                                 col.select,
                                 col.reject,
-                                col.model));
+                                col.model),
+                          bg=legend.bg);
       } else {
         aitoa.legend.main(x="bottomleft",
                           legend=c(paste0(n.samples, " points uniform"),
                                    paste0(n.best.samples, " best selected"),
                                    paste0((n.samples-n.best.samples), " worse discarted"),
-                                   paste0("model ", plt)),
+                                   paste0("model M", plt)),
                           pch=c(NA, pch.select, pch.reject, NA),
                           col=c("black",
                                 col.select,
                                 col.reject,
-                                col.model));
+                                col.model),
+                          bg=legend.bg);
       }
 
     aitoa.legend.label("topleft", "x2");

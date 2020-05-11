@@ -22,7 +22,7 @@ Remotes: github::thomasWeise/jsspInstancesAndResults
 Depends: R (>= 3.5.0)
 ByteCompile: true
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Collate: 
     'common_styles.R'
     'compare_vectors_statistically.R'
@@ -34,7 +34,6 @@ Collate:
     'distinct_styles.R'
     'draw_ellipse.R'
     'make_color_transparent.R'
-    'filled_contour.R'
     'function_to_matrix.R'
     'eda_visualization.R'
     'plot_gantt.R'
