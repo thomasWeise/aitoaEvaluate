@@ -12,7 +12,7 @@ aitoa.real.coded.eda.visualization <- function() {
   f <- function(x) aitoa.rastrigin(c(1.2, 0.9)*(x + c(-1, 1)));
   c.min <- -7L;
   c.max <- 7L;
-  n.points <- 45L;
+  n.points <- 43L;
 
   n.samples <- 101L;
   n.best.samples <- 41;
@@ -37,7 +37,7 @@ aitoa.real.coded.eda.visualization <- function() {
                                       n.points.y=n.points,
                                       f=f);
   z.range <- range(c(data.3d$z));
-  colors <- terrain.colors(n=25L);
+  colors <- terrain.colors(n=23L);
   #black.t <- aitoa.make.color.transparent("black", 0.6);
 
   persp3D(x=data.3d$x,
@@ -91,6 +91,7 @@ aitoa.real.coded.eda.visualization <- function() {
       f.f <- apply(samples, 1L, f);
       f.o <- order(f.f);
       samples <- samples[f.o, ];
+#     f.best <- as.character(signif(min(f.f), 3L));
 
       mean.x <- mean(samples[1L:n.best.samples, 1L]);
       mean.y <- mean(samples[1L:n.best.samples, 2L]);
@@ -160,7 +161,7 @@ aitoa.real.coded.eda.visualization <- function() {
         aitoa.legend.main(x="bottomleft",
                           legend=c(paste0(n.samples, " samples from M", (plt-1L)),
                                    paste0(n.best.samples, " best selected"),
-                                   paste0((n.samples-n.best.samples), " worse discarted"),
+                                   paste0((n.samples-n.best.samples), " worse discarded"),
                                    paste0("model M", plt)),
                           pch=c(NA, pch.select, pch.reject, NA),
                           col=c("black",
@@ -172,7 +173,7 @@ aitoa.real.coded.eda.visualization <- function() {
         aitoa.legend.main(x="bottomleft",
                           legend=c(paste0(n.samples, " points uniform"),
                                    paste0(n.best.samples, " best selected"),
-                                   paste0((n.samples-n.best.samples), " worse discarted"),
+                                   paste0((n.samples-n.best.samples), " worse discarded"),
                                    paste0("model M", plt)),
                           pch=c(NA, pch.select, pch.reject, NA),
                           col=c("black",
@@ -184,5 +185,7 @@ aitoa.real.coded.eda.visualization <- function() {
 
     aitoa.legend.label("topleft", "x2");
     aitoa.legend.label("bottomright", "x1");
+#   aitoa.legend.label("bottom",
+#                      as.expression(substitute(paste(z[b], "=", f.best), list(f.best=f.best))));
   }
 }
