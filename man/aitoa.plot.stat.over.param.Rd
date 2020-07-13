@@ -29,6 +29,7 @@ aitoa.plot.stat.over.param(
   divide.by = NULL,
   mark.min.fun = .default.mark.min,
   x.axis.at = NULL,
+  full.data.required = TRUE,
   ...
 )
 }
@@ -94,6 +95,8 @@ points, or \code{NULL} if none} \item{lty}{the line type for these points}
 \code{NULL}, is called once for each instance}
 
 \item{x.axis.at}{the location of the x-axis ticks: optional}
+
+\item{full.data.required}{if \code{TRUE}, an exception will be thrown if there is not one data point for every single x-value; if \code{FALSE}, missing data points are allowed. The default is \code{TRUE}.}
 
 \item{...}{parameters to be passed to \link[graphics]{plot}}
 }

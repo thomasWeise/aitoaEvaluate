@@ -71,6 +71,7 @@
 #'   \item{lwd}{the line width for these points}} This function, if not
 #'   \code{NULL}, is called once for each instance
 #' @param x.axis.at the location of the x-axis ticks: optional
+#' @param full.data.required if \code{TRUE}, an exception will be thrown if there is not one data point for every single x-value; if \code{FALSE}, missing data points are allowed. The default is \code{TRUE}.
 #' @param ... parameters to be passed to \link[graphics]{plot}
 #' @include utils.R
 #' @include common_styles.R
@@ -103,6 +104,7 @@ aitoa.plot.stat.over.param <- function(
          divide.by=NULL,
          mark.min.fun=.default.mark.min,
          x.axis.at=NULL,
+         full.data.required=TRUE,
          ...) {
   .check.end.result.stats(end.result.stats);
 
@@ -111,9 +113,9 @@ aitoa.plot.stat.over.param <- function(
             is.character(algorithm.template),
             length(algorithm.template) == 1L,
             !is.na(algorithm.template),
-            nchar(algorithm.template) > 0L);
-
-  stopifnot(is.list(algorithm.primary.args) || is.vector(algorithm.primary.args),
+            nchar(algorithm.template) > 0L,
+            isTRUE(full.data.required) || isFALSE(full.data.required),
+            is.list(algorithm.primary.args) || is.vector(algorithm.primary.args),
             length(algorithm.primary.args) > 0L,
             !is.null(algorithm.primary.filler),
             is.function(algorithm.primary.filler),
@@ -178,32 +180,54 @@ aitoa.plot.stat.over.param <- function(
                end.result.stats[(end.result.stats$instance == instance) &
                                 (end.result.stats$algorithm == algorithm),
                                  statistic]));
+        if((length(v) == 0L) && (!full.data.required)) {
+          return(NA_real_);
+        }
+        if(length(v) != 1L) {
+          stop(paste0("Error for ",
+                      algorithm,
+                      " on ",
+                      instance,
+                      ", length=",
+                      length(v),
+                      "\n"));
+        }
         stopifnot(length(v) == 1L,
                   is.numeric(v),
                   is.finite(v));
         return(v);
       }, NA_real_);
       stopifnot(is.numeric(r),
-                length(r) == length(setups),
-                all(is.finite(r)));
-
-      if(!is.null(divide.by)) {
-        r <- r / divide.by[[z]];
-        stopifnot(is.numeric(r),
-                  length(r) == length(setups),
-                  all(is.finite(r)));
+                length(r) == length(setups));
+      if(full.data.required) {
+        stopifnot(all(is.finite(r)));
       }
 
-      if(all((r > (-.Machine$integer.max)) &
-             (r < .Machine$integer.max))) {
+      if(!is.null(divide.by)) {
+        r2 <- r / divide.by[[z]];
+        stopifnot(is.numeric(r2),
+                  length(r2) == length(setups));
+        if(full.data.required) {
+          stopifnot(all(is.finite(r2)));
+        }
+        r <- r2;
+        r <- force(r);
+        rm("r2");
+      }
+
+      if(all(is.na(r) |
+             ((r > (-.Machine$integer.max)) &
+              (r < .Machine$integer.max)))) {
         t <- as.integer(round(r));
         if(all(t == r)) {
           r <- t;
         }
       }
       stopifnot(is.numeric(r),
-                length(r) == length(setups),
-                all(is.finite(r)));
+                length(r) == length(setups));
+      if(full.data.required) {
+        stopifnot(all(is.finite(r)));
+      }
       return(r);
     })
   });
@@ -217,17 +241,19 @@ aitoa.plot.stat.over.param <- function(
   }
   stopifnot(is.numeric(xlim),
             length(xlim) == 2L,
-            all(is.finite(xlim)));
+            all(is.finite(xlim)),
+            xlim[[1L]] < xlim[[2L]]);
   pars$x <- xlim;
 
   ylim <- pars$ylim;
   if(is.null(ylim) || all(is.na(ylim))) {
-    ylim <- range(unname(unlist(data)));
+    ylim <- range(unname(unlist(data)), na.rm = TRUE);
     pars$ylim <- ylim;
   }
   stopifnot(is.numeric(ylim),
             length(ylim) == 2L,
-            all(is.finite(ylim)));
+            all(is.finite(ylim)),
+            ylim[[2L]] > ylim[[1L]]);
   pars$y <- ylim;
 
   if(is.null(pars$type) || all(is.na(pars$type))) {
@@ -304,23 +330,24 @@ aitoa.plot.stat.over.param <- function(
     for(j in seq_along(data[[i]])) {
       y <- unname(unlist(data[[i]][[j]]));
       lty <- if(is.null(algorithm.secondary.args)) use.lty else use.lty[[j]];
-      lines(x=x,
-            y=y,
+      sel.y <- is.finite(y);
+      lines(x=x[sel.y],
+            y=y[sel.y],
             col=col,
             lty=lty,
             lwd=lwd);
       if(!is.null(pch)) {
-        points(x=x,
-               y=y,
+        points(x=x[sel.y],
+               y=y[sel.y],
                col=col,
                pch=pch);
       }
       if(!is.null(mark.min.fun)) {
-        mn <- min(y);
+        mn <- min(y, na.rm = TRUE);
         stopifnot(is.numeric(mn),
                   length(mn) == 1L,
                   is.finite(mn));
-        sel <- (y <= mn);
+        sel <- sel.y & (y <= mn);
         stopifnot(is.logical(sel),
                   length(sel) == length(y),
                   sum(sel) > 0L);
@@ -331,6 +358,9 @@ aitoa.plot.stat.over.param <- function(
                      lty,
                      lwd);
       }
+      rm("sel.y");
+      rm("sel");
+      rm("y");
     }
   }
 

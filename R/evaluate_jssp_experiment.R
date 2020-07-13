@@ -953,7 +953,6 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                .make.ma.table(end.result.stats)
              } );
 
-
   aitoa.text(directory = evaluation.dir,
              name = "jssp_ma_comparison",
              type = "md",
@@ -971,6 +970,43 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
 
 
   aitoa.graphic(evaluation.dir,
+                name = "jssp_eda_med_over_lambda",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- as.integer(2L^(4L:18L));
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "eda_umda_$arg2+$arg1",
+                    algorithm.primary.args=x,
+                    algorithm.secondary.args = c("\u03BC=2",
+                                                 "\u03BC=3",
+                                                 "\u03BC=4",
+                                                 "\u03BC=10"),
+                    algorithm.secondary.filler = function(t, a, b) {
+                      gsub("$arg2",
+                           substr(b, 3L, nchar(b)),
+                           t, fixed=TRUE);
+                    },
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.3,
+                    full.data.required=FALSE);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     "\u03BB");
+                  aitoa.legend.label("top",
+                                     "umda_mu+lambda");
+                });
+
+  aitoa.graphic(evaluation.dir,
                 name = "jssp_edac_med_over_lambda",
                 type = graphics.type,
                 width = width,
@@ -983,7 +1019,8 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     algorithm.primary.args=x,
                     algorithm.secondary.args = c("\u03BC=2",
                                                  "\u03BC=3",
-                                                 "\u03BC=4"),
+                                                 "\u03BC=4",
+                                                 "\u03BC=10"),
                     algorithm.secondary.filler = function(t, a, b) {
                       gsub("$arg2",
                            substr(b, 3L, nchar(b)),
@@ -1002,9 +1039,8 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.legend.label("bottomright",
                                      "\u03BB");
                   aitoa.legend.label("top",
-                                     "eadc_umda_mu+lambda");
+                                     "umdac_mu+lambda");
                 });
-
 
   aitoa.text(directory = evaluation.dir,
              name = "jssp_edac_results",
@@ -1016,6 +1052,7 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                  end.result.stats,
                  algorithms=list(
                    hcr_65536_nswap="hc_rs_65536_nswap",
+                   `umda_3_32768` = "eda_umda_3+32768",
                    `umdac_2+64` = "edac_umda_2+64"
                  ),
                  instances=instances,
@@ -1032,7 +1069,9 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   aitoa.plot.progress.stat.on.multiple.instances(
                     results.dir=results.dir,
                     algorithms=list(
-                      hcr_65536_nswap="hc_rs_65536_nswap",
+#                     hcr_65536_nswap="hc_rs_65536_nswap",
+                      ea_32768_nswap="ea_32768+32768@0d0_nswap_sequence",
+                      `umda_3_32768` = "eda_umda_3+32768",
                       `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence",
                       `umdac_2+64` = "edac_umda_2+64"),
                     instances=instances,
@@ -1041,6 +1080,61 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                     log = "x"
                   )
                 });
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_hedac_med_over_lambda",
+                type = graphics.type,
+                width = width,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  x <- as.integer(c(4, 8, 16, 32, 64));
+                  aitoa.plot.stat.over.param(
+                    end.result.stats,
+                    algorithm.template = "hedac_umda_$arg2+$arg1_1swapU",
+                    algorithm.primary.args=x,
+                    algorithm.secondary.args = c("\u03BC=2",
+                                                 "\u03BC=4",
+                                                 "\u03BC=8",
+                                                 "\u03BC=16"),
+                    algorithm.secondary.filler = function(t, a, b) {
+                      gsub("$arg2",
+                           substr(b, 3L, nchar(b)),
+                           t, fixed=TRUE);
+                    },
+                    instances=instances,
+                    log="x",
+                    instance.pch=instances.symbols,
+                    statistic="best.f.median",
+                    divide.by=instances.limit,
+                    x.axis.at=x,
+                    mar=larger.mar.3,
+                    full.data.required = FALSE);
+                  aitoa.legend.label("topleft",
+                                     paste0("best f / ",
+                                            instances.limit.name));
+                  aitoa.legend.label("bottomright",
+                                     "\u03BB");
+                  aitoa.legend.label("top",
+                                     "humdac_mu+lambda_1swap");
+                });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_hedac_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(
+                   hc2r_1swapU="hc2f_rs_1swapU",
+                   ma_8_1swapU="ma_8+8_1swapU_sequence",
+                   `hedac_umda_2+16_1swapU`="hedac_umda_2+16_1swapU",
+                   `hedac_umda_2+32_1swapU`="hedac_umda_2+32_1swapU"
+                 ),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
 
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
