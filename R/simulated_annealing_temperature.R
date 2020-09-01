@@ -177,6 +177,8 @@ aitoa.sa.temperature.plot <- function() {
   x.grid <- x.ticks;
 
   x.ticks2 <- sort(unique(as.integer(x.lim[2L] * 0.2 * 0L:5L)));
+  x.ticks2[x.ticks2 < 1] <- 1;
+  x.ticks2 <- sort(unique(x.ticks2))
   x.tick2.ch <- as.expression(lapply(x.ticks2,
                                      function(tick) {
                                        if(tick<=10L) { return(tick); }
