@@ -57,6 +57,7 @@ Collate:
     'make_end_result_test_table.R'
     'make_stat_table.R'
     'parse_jssp_result.R'
+    'plot_end_result_histogram.R'
     'plot_progress_on_instance.R'
     'plot_progress_on_multiple_instances.R'
     'plot_progress_stat_on_instance.R'

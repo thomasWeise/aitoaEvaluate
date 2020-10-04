@@ -5,7 +5,8 @@
 #' @include make_color_transparent.R
 #' @importFrom plot3D persp3D
 #' @importFrom grDevices terrain.colors
-#' @importFrom graphics image lines points
+#' @importFrom graphics contour image layout lines points
+#' @importFrom stats rnorm runif
 aitoa.real.coded.eda.visualization <- function() {
   set.seed(10234402L);
 
