@@ -190,3 +190,7 @@ aitoa.real.coded.eda.visualization <- function() {
 #                      as.expression(substitute(paste(z[b], "=", f.best), list(f.best=f.best))));
   }
 }
+
+library(aitoaEvaluate);
+library(plot3D);
+aitoa.real.coded.eda.visualization();

@@ -10,7 +10,6 @@ Encoding: UTF-8
 Imports: bit64 (>= 0.9.7),
          graphics (>= 3.5.2),
          grDevices (>= 3.5.2),
-         plot3D (>= 1.3),
          stats (>= 3.5.2),
          utils (>= 3.5.2)
 Suggests: devtools (>= 2.0.2),
@@ -33,9 +32,6 @@ Collate:
     'distinct_colors.R'
     'distinct_styles.R'
     'draw_ellipse.R'
-    'make_color_transparent.R'
-    'function_to_matrix.R'
-    'eda_visualization.R'
     'plot_gantt.R'
     'plot_gantt_for_stat.R'
     'plot_gantt_for_stat_on_multiple_instances.R'
@@ -45,6 +41,7 @@ Collate:
     'evaluate_jssp_experiment.R'
     'find_worse_results_from_literature.R'
     'format_numbers.R'
+    'function_to_matrix.R'
     'legends.R'
     'parse_file_name.R'
     'load_log_file.R'
@@ -54,6 +51,7 @@ Collate:
     'load_result_from_log_file.R'
     'load_results_dir.R'
     'load_stat_result.R'
+    'make_color_transparent.R'
     'make_end_result_test_table.R'
     'make_stat_table.R'
     'parse_jssp_result.R'

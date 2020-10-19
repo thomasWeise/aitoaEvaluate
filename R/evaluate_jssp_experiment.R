@@ -1102,6 +1102,60 @@ aitoa.evaluate.jssp.experiment <- function(results.dir=".",
                   )
                 });
 
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_progress_opoea_log",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.progress.stat.on.multiple.instances(
+                    results.dir=results.dir,
+                    algorithms=list(`ea_1+1_1swap`="(1+1)-EA_1swap",
+                                    `ea_1+1_nswap`="(1+1)-EA_nswap",hcr_16384_1swap="hc_rs_16384_1swap",
+                                    hcr_65536_nswap="hc_rs_65536_nswap",
+                                    `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence"),
+                    instances=instances,
+                    time.column = "t",
+                    max.time = max.time,
+                    log = "x"
+                  )
+                });
+
+  aitoa.text(directory = evaluation.dir,
+             name = "jssp_opoea_results",
+             type = "md",
+             trim.ws = TRUE,
+             skip.if.exists = skip.if.exists,
+             body = {
+               aitoa.make.stat.table.md(
+                 end.result.stats,
+                 algorithms=list(
+                   `ea_1+1_1swap`="(1+1)-EA_1swap",
+                   `ea_1+1_nswap`="(1+1)-EA_nswap",
+                   `eac_4_5%_nswap`="eac_4+4@0d05_nswap_sequence"
+                 ),
+                 instances=instances,
+                 instances.limit=instances.limit
+               ) } );
+
+  aitoa.graphic(evaluation.dir,
+                name = "jssp_gantt_opoea_1swap_med",
+                type = graphics.type,
+                width = width,
+                height = height,
+                skip.if.exists = skip.if.exists,
+                body = {
+                  aitoa.plot.gantt.for.stat.on.multiple.instances(
+                    end.result.stats = end.result.stats,
+                    results.dir = results.dir,
+                    algorithm = "(1+1)-EA_1swap",
+                    instances = instances,
+                    print.job.names = TRUE,
+                    job.name.cex = instance.gantt.job.name.cex
+                  )
+                });
+
   .logger("Done processing the Results of the JSSP Experiment.");
   invisible(NULL);
 }

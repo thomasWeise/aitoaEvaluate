@@ -4,6 +4,10 @@
 language: r
 cache: packages
 sudo: false
+# I very much hate doing warnings_are_errors: false, but:
+# If I don't do it, I get: 'Warning message: no DISPLAY variable so Tk is not available'
+warnings_are_errors: false
+#
 r:
   - oldrel
   - release
