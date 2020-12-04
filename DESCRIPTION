@@ -21,7 +21,7 @@ Remotes: github::thomasWeise/jsspInstancesAndResults
 Depends: R (>= 3.5.0)
 ByteCompile: true
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate: 
     'common_styles.R'
     'compare_vectors_statistically.R'

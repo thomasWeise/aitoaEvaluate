@@ -30,6 +30,7 @@ aitoa.plot.progress.on.instance(
   tck = .default.tck,
   cex = .default.cex,
   mar = .default.mar.without.labels,
+  execute = { },
   ...
 )
 }
@@ -100,6 +101,8 @@ to be plotted per algorithm}
 \item{cex}{the default character scaling}
 
 \item{mar}{the default margins}
+
+\item{execute}{an arbitrary block of code to be executed within the plotting process}
 
 \item{...}{parameters to be passed to \link[graphics]{par}}
 }

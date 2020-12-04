@@ -42,6 +42,7 @@
 #' @param tck the tck parameter to be passed to \link[graphics]{plot}
 #' @param cex the default character scaling
 #' @param mar the default margins
+#' @param execute an arbitrary block of code to be executed within the plotting process
 #' @param ... parameters to be passed to \link[graphics]{par}
 #' @include load_instance_dir.R
 #' @include utils.R
@@ -76,6 +77,7 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
                                             tck=.default.tck,
                                             cex=.default.cex,
                                             mar=.default.mar.without.labels,
+                                            execute={},
                                             ...) {
 
   stopifnot(!is.null(results.dir),
@@ -356,6 +358,8 @@ aitoa.plot.progress.on.instance <- function(results.dir=".",
                        cex=legend.cex,
                        bg=legend.bg);
   }
+
+  eval(execute, envir=environment());
 
   .safe.par(old.par);
   invisible(NULL);
